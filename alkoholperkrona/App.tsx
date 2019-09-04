@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { createAppContainer } from 'react-navigation';
+import { StyleSheet, Text, View, Button, Image, Platform } from 'react-native';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabIcon from './components/TabIcon';
@@ -43,7 +43,24 @@ const pageStyles = StyleSheet.create({
   },
 });
 
-const AppNavigator = createBottomTabNavigator(
+class SplashScreen extends React.Component {
+  render() {
+    return (
+      <View style={pageStyles.container}>
+        <Image source={require("./images/wine.png")} style={{ width: 200, height: 200 }}/>
+        <Text style={{ fontSize: 30 }}>apk.dev</Text>
+      </View>
+    );
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.props["navigation"].navigate('Apk')
+    }, 2000);
+  }
+}
+
+const MainNavigator = createBottomTabNavigator(
   {
     Apk: {
       screen: ApkScreen,
@@ -68,12 +85,29 @@ const AppNavigator = createBottomTabNavigator(
     },
   },
   {
-    initialRouteName: "PriceChanges",
+    initialRouteName: "Apk",
     tabBarOptions: {
       labelStyle: {
         fontSize: 14,
       }
     }
+  }
+);
+
+const AppNavigator = createSwitchNavigator(
+  {
+    Splash: SplashScreen,
+    Main: MainNavigator,
+  },
+  {
+    ...Platform.select({
+      default: {
+        initialRouteName: "Splash"
+      },
+      web: {
+        initialRouteName: "Main"
+      }
+    })
   }
 );
 
