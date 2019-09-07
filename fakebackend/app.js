@@ -4,4 +4,6 @@ const port = 3000
 
 app.get('/', (req, res) => res.send('Hello, this is the fake backend speaking!'))
 
+require("./routes/priceFeedRoute")(app);
+
 app.listen(port, () => console.log(`Fake Backend listening on port ${port}!`))
