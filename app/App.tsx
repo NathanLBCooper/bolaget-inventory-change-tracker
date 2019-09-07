@@ -1,24 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, Platform } from 'react-native';
+import { Text, View, Image, Platform } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabIcon from './components/TabIcon';
-
-class PriceChangesScreen extends React.Component {
-  render() {
-    return (
-      <View style={pageStyles.container}>
-        <Text>This is where price change content goes</Text>
-      </View>
-    );
-  }
-}
+import { PriceChangesScreen } from './screens/PriceChangesScreen';
+import { Styles } from "./screens/ScreenStyles";
 
 class AdditionsScreen extends React.Component {
   render() {
     return (
-      <View style={pageStyles.container}>
+      <View style={Styles.container}>
         <Text>This is where additions content goes</Text>
       </View>
     );
@@ -28,25 +20,17 @@ class AdditionsScreen extends React.Component {
 class ApkScreen extends React.Component {
   render() {
     return (
-      <View style={pageStyles.container}>
+      <View style={Styles.container}>
         <Text>This is where APK content goes</Text>
       </View>
     );
   }
 }
 
-const pageStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-});
-
 class SplashScreen extends React.Component {
   render() {
     return (
-      <View style={pageStyles.container}>
+      <View style={Styles.container}>
         <Image source={require("./images/wine.png")} style={{ width: 200, height: 200 }}/>
         <Text style={{ fontSize: 30 }}>apk.dev</Text>
       </View>
