@@ -11,7 +11,8 @@ import { PriceChangesScreen } from './src/screens/PriceChangesScreen';
 import { AdditionsScreen } from './src/screens/AdditionsScreen';
 import { ApkScreen } from './src/screens/ApkScreen';
 import { SplashScreen } from './src/screens/SplashScreen';
-import { container } from './src/inversify.config';
+import { ConfigureDependencies } from './src/Dependencies';
+import { Appsettings } from './src/AppSettings';
 
 const MainNavigator = createBottomTabNavigator(
   {
@@ -64,6 +65,6 @@ const AppNavigator = createSwitchNavigator(
   }
 );
 
-window["ServiceLocator"] = container;
+window["ServiceLocator"] = ConfigureDependencies(require("./appsettings.json") as Appsettings);
 
 export default createAppContainer(AppNavigator);
