@@ -1,15 +1,17 @@
 import { ProductSummary } from "./ProductSummary";
+import * as dayJs from "dayjs";
+const createDayJs = (dayJs)["default"] || dayJs; // Need this to work on my phone
 
 export class PriceChangeFeedItem {
     public static Make(dto: any): PriceChangeFeedItem {
         return new PriceChangeFeedItem(
-            ProductSummary.Make(dto.productSummary), dto.date, dto.priceChange
+            ProductSummary.Make(dto.productSummary), createDayJs(dto.date), dto.priceChange
             );
     }
 
     constructor(
         public productSummary: ProductSummary,
-        public date: Date,
+        public date: dayJs.Dayjs,
         public priceChange: number
     ) {}
 }

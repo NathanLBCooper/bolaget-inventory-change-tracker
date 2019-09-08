@@ -45,7 +45,7 @@ export class PriceChangesScreen extends React.Component {
     private renderFeedItem(obj: {item: any}) {
         return <Text>{obj.item.productSummary.name}&nbsp;
             changed price by {obj.item.priceChange}&nbsp;
-            on {obj.item.date}</Text>;
+            on {obj.item.date.toString()}</Text>;
     }
 
     private async loadChangeFeed() {
