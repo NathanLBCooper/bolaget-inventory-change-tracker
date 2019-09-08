@@ -1,6 +1,6 @@
 import { ProductSummary } from "./ProductSummary";
 import * as dayJs from "dayjs";
-const createDayJs = (dayJs)["default"] || dayJs; // Need this to work on my phone
+const createDayJs = (dayJs)["default"] || dayJs;
 
 export class PriceChangeFeedItem {
     public static Make(dto: any): PriceChangeFeedItem {

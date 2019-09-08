@@ -15,7 +15,8 @@
         "no-string-literal": false,
         "max-line-length": [true, 140],
         "max-classes-per-file": false,
-        "jsx-no-lambda": false
+        "jsx-no-lambda": false,
+        "array-type": [ true, "array" ]
     },
     "rulesDirectory": []
 }
