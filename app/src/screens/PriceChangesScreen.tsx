@@ -1,12 +1,11 @@
 import React from "react";
 import { View, Text, SectionList } from "react-native";
 import { Container } from "inversify";
-import * as dayJs from "dayjs";
-const createDayJs = (dayJs)["default"] || dayJs;
 
 import { Styles } from "./ScreenStyles";
 import { IChangeFeedService } from "../services/ChangeFeedService";
 import { PriceChangeFeedItem } from "../services/PriceChangeFeedItem";
+import { IClock } from "../lib/clock";
 
 type State = {
     changeFeed: PriceChangeFeedItem[];
@@ -20,10 +19,13 @@ export class PriceChangesScreen extends React.Component {
     };
 
     private readonly changeFeedService: IChangeFeedService;
+    private readonly clock: IClock;
 
     constructor(props: {}) {
         super(props);
-        this.changeFeedService = (window["ServiceLocator"] as Container).get("IChangeFeedService");
+        const serviceLocator = window["ServiceLocator"] as Container;
+        this.changeFeedService = serviceLocator.get("IChangeFeedService");
+        this.clock = serviceLocator.get("IClock");
     }
 
     public async componentDidMount() { await this.loadChangeFeed(); }
@@ -62,8 +64,7 @@ export class PriceChangesScreen extends React.Component {
     }
 
     private toAgeInDaysSections(feedItems: PriceChangeFeedItem[]): any {
-        const currentTime = createDayJs();
-
+        const currentTime = this.clock.now();
         const today = []
         const lastSevenDays = [];
         const lastThirtyDays = [];
