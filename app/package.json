@@ -9,6 +9,7 @@
     "lint": "tslint 'src/**/*.{ts,tsx}' 'App.{ts,tsx}'"
   },
   "dependencies": {
+    "dayjs": "^1.8.16",
     "expo": "^34.0.1",
     "inversify": "^5.0.1",
     "react": "16.8.3",
