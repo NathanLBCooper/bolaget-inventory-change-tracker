@@ -1,64 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-import TabIcon from './components/TabIcon';
+// Import once in application. Global singleton for inversify
+import "reflect-metadata";
 
-class PriceChangesScreen extends React.Component {
-  render() {
-    return (
-      <View style={pageStyles.container}>
-        <Text>This is where price change content goes</Text>
-      </View>
-    );
-  }
-}
-
-class AdditionsScreen extends React.Component {
-  render() {
-    return (
-      <View style={pageStyles.container}>
-        <Text>This is where additions content goes</Text>
-      </View>
-    );
-  }
-}
-
-class ApkScreen extends React.Component {
-  render() {
-    return (
-      <View style={pageStyles.container}>
-        <Text>This is where APK content goes</Text>
-      </View>
-    );
-  }
-}
-
-const pageStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-});
-
-class SplashScreen extends React.Component {
-  render() {
-    return (
-      <View style={pageStyles.container}>
-        <Image source={require("./images/wine.png")} style={{ width: 200, height: 200 }}/>
-        <Text style={{ fontSize: 30 }}>apk.dev</Text>
-      </View>
-    );
-  }
-
-  componentDidMount() {
-    setTimeout(() => {
-      this.props["navigation"].navigate('Apk')
-    }, 2000);
-  }
-}
+import { TabIcon } from './src/components/TabIcon';
+import { PriceChangesScreen } from './src/screens/PriceChangesScreen';
+import { AdditionsScreen } from './src/screens/AdditionsScreen';
+import { ApkScreen } from './src/screens/ApkScreen';
+import { SplashScreen } from './src/screens/SplashScreen';
+import { ConfigureDependencies } from './src/Dependencies';
+import { Appsettings } from './src/AppSettings';
 
 const MainNavigator = createBottomTabNavigator(
   {
@@ -110,5 +64,7 @@ const AppNavigator = createSwitchNavigator(
     })
   }
 );
+
+window["ServiceLocator"] = ConfigureDependencies(require("./appsettings.json") as Appsettings);
 
 export default createAppContainer(AppNavigator);

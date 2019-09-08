@@ -2,7 +2,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "live": "nodemon app.js"
+    "live": "nodemon app.js --host 0.0.0.0"
   },
   "dependencies": {
     "express": "^4.17.1"
