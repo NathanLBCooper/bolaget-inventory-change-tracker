@@ -32,6 +32,7 @@ export class PriceChangesScreen extends React.Component {
                 <FlatList
                     data={changeFeed}
                     renderItem={this.renderFeedItem}
+                    keyExtractor={(item, index) => index.toString()} 
                 />
             </View>
         } else {
