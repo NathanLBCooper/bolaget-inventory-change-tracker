@@ -1,48 +1,13 @@
 import React from 'react';
-import { Text, View, Image, Platform } from 'react-native';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { Platform, Image } from 'react-native';
+import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-import TabIcon from './components/TabIcon';
-import { PriceChangesScreen } from './screens/PriceChangesScreen';
-import { Styles } from "./screens/ScreenStyles";
-
-class AdditionsScreen extends React.Component {
-  render() {
-    return (
-      <View style={Styles.container}>
-        <Text>This is where additions content goes</Text>
-      </View>
-    );
-  }
-}
-
-class ApkScreen extends React.Component {
-  render() {
-    return (
-      <View style={Styles.container}>
-        <Text>This is where APK content goes</Text>
-      </View>
-    );
-  }
-}
-
-class SplashScreen extends React.Component {
-  render() {
-    return (
-      <View style={Styles.container}>
-        <Image source={require("./images/wine.png")} style={{ width: 200, height: 200 }}/>
-        <Text style={{ fontSize: 30 }}>apk.dev</Text>
-      </View>
-    );
-  }
-
-  componentDidMount() {
-    setTimeout(() => {
-      this.props["navigation"].navigate('Apk')
-    }, 2000);
-  }
-}
+import { TabIcon } from './src/components/TabIcon';
+import { PriceChangesScreen } from './src/screens/PriceChangesScreen';
+import { AdditionsScreen } from './src/screens/AdditionsScreen';
+import { ApkScreen } from './src/screens/ApkScreen';
+import { SplashScreen } from './src/screens/SplashScreen';
 
 const MainNavigator = createBottomTabNavigator(
   {
