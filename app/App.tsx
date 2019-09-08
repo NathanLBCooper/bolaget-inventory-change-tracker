@@ -1,13 +1,17 @@
 import React from 'react';
-import { Platform, Image } from 'react-native';
-import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
+import { Platform } from 'react-native';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+
+// Import once in application. Global singleton for inversify
+import "reflect-metadata";
 
 import { TabIcon } from './src/components/TabIcon';
 import { PriceChangesScreen } from './src/screens/PriceChangesScreen';
 import { AdditionsScreen } from './src/screens/AdditionsScreen';
 import { ApkScreen } from './src/screens/ApkScreen';
 import { SplashScreen } from './src/screens/SplashScreen';
+import { container } from './src/inversify.config';
 
 const MainNavigator = createBottomTabNavigator(
   {
@@ -59,5 +63,7 @@ const AppNavigator = createSwitchNavigator(
     })
   }
 );
+
+window["ServiceLocator"] = container;
 
 export default createAppContainer(AppNavigator);

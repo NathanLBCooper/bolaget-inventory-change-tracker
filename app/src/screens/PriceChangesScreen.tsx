@@ -1,19 +1,26 @@
 import React from "react";
 import { View, Text, FlatList } from "react-native";
+import { Container } from "inversify";
 import { Styles } from "./ScreenStyles";
-import { ChangeFeedService } from "../services/ChangeFeedService";
+import { IChangeFeedService } from "../services/ChangeFeedService";
+import { PriceChangeFeedItem } from "../services/PriceChangeFeedItem";
+
+type State = {
+    changeFeed: PriceChangeFeedItem[];
+    isLoading: boolean;
+}
 
 export class PriceChangesScreen extends React.Component {
-    public state = {
+    public state: State = {
         changeFeed: [],
         isLoading: true
     };
-    
-    private readonly _changeFeed: ChangeFeedService;
 
-    constructor(props) {
+    private readonly changeFeedService: IChangeFeedService;
+
+    constructor(props: {}) {
         super(props);
-        this._changeFeed = new ChangeFeedService("http://localhost:3000");
+        this.changeFeedService = (window["ServiceLocator"] as Container).get("IChangeFeedService");
     }
 
     public async componentDidMount() { await this.loadChangeFeed(); }
@@ -43,7 +50,7 @@ export class PriceChangesScreen extends React.Component {
     private async loadChangeFeed() {
         
         try {
-            const changeFeed = await this._changeFeed.getPriceChangeFeed();
+            const changeFeed = await this.changeFeedService.getPriceChangeFeed();
             this.setState({ changeFeed, isLoading: false });
         } catch (error) {
             console.error("Error fetching change feed in PriceChangeScreen.loadChangeFeed", error);

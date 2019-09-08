@@ -1,6 +1,12 @@
+import { injectable } from "inversify";
 import { PriceChangeFeedItem } from "./PriceChangeFeedItem";
 
-export class ChangeFeedService {
+export interface IChangeFeedService {
+    getPriceChangeFeed(): Promise<PriceChangeFeedItem[]>
+}
+
+@injectable()
+export class ChangeFeedService implements IChangeFeedService {
     constructor(private baseUri: string) {}
 
     public async getPriceChangeFeed(): Promise<PriceChangeFeedItem[]> {
