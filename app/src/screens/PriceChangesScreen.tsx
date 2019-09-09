@@ -1,12 +1,27 @@
 import React from "react";
-import { View, Text, SectionList, SectionListData } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet, ActivityIndicator } from "react-native";
+import { ListItem, Badge, Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
+import { Dayjs } from "dayjs";
 
-import { Styles } from "../styles/ScreenStyles";
+import { IClock } from "../lib/clock";
 import { IChangeFeedService } from "../services/ChangeFeedService";
 import { PriceChangeFeedItem } from "../services/PriceChangeFeedItem";
-import { IClock } from "../lib/clock";
-import { Dayjs } from "dayjs";
+import { ProductSummary } from "../services/ProductSummary";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+
+const styles: any = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});
+
+const loadingStyles: any = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center'
+    }
+});
 
 type State = {
     changeFeed: PriceChangeFeedItem[];
@@ -34,25 +49,40 @@ export class PriceChangesScreen extends React.Component {
     public render(): React.ReactNode {
         const { changeFeed, isLoading } = this.state;
         if (!isLoading) {
-            return <View style={Styles.container}>
+            return <View style={styles.container}>
                 <SectionList
                     renderItem={this.renderFeedItem}
-                    renderSectionHeader={({ section }) => <Text style={{fontWeight: "bold"}}>{section.key}</Text>}
+                    renderSectionHeader={({ section }) => <Text h4={true} style={{paddingLeft: 10}}>{section.key}</Text>}
+                    renderSectionFooter={() => <Divider />}
                     sections={this.toAgeInDaysSections(changeFeed)}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         } else {
-            return <View style={Styles.container}>
-                <Text>loading todo</Text>
+            return <View style={loadingStyles.container}>
+                <LoadingSpinner/>
             </View>
         }
     }
 
-    private renderFeedItem(obj: { item: any }): React.ReactElement {
-        return <Text>{obj.item.productSummary.name}&nbsp;
-            changed price by {obj.item.priceChange}&nbsp;
-            on {obj.item.date.toString()}</Text>;
+    private renderFeedItem(obj: { item: PriceChangeFeedItem, index: number }): React.ReactElement {
+        const summary: ProductSummary = obj.item.productSummary;
+        const change: number = obj.item.priceChange;
+        return <ListItem
+            key={obj.index}
+            title={
+                <Text><Text style={{ fontWeight: "bold" }}>{`${summary.name2},  `}</Text><Text>{`${summary.name}`}</Text></Text>
+            }
+            subtitle={`${summary.volume}ml`}
+            rightSubtitle={
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>{`${summary.priceIncMoms}kr`}</Text>
+                    <Badge
+                        value={`${change > 0 ? "+" : "-"} ${Math.abs(change)}kr`} status={change > 0 ? "error" : "success"} />
+                </View>
+            }
+            bottomDivider={true}
+        />
     }
 
     private async loadChangeFeed(): Promise<void> {
@@ -64,7 +94,7 @@ export class PriceChangesScreen extends React.Component {
         }
     }
 
-    private toAgeInDaysSections(feedItems: PriceChangeFeedItem[]) : SectionListData<any>[] {
+    private toAgeInDaysSections(feedItems: PriceChangeFeedItem[]): SectionListData<any>[] {
         const currentTime: Dayjs = this.clock.now();
         const today: PriceChangeFeedItem[] = []
         const lastSevenDays: PriceChangeFeedItem[] = [];
