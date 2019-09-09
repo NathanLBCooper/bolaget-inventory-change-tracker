@@ -1,12 +1,19 @@
 import React from "react";
-import { View, Text, SectionList, SectionListData } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet } from "react-native";
+import { ListItem, Badge, Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
+import { Dayjs } from "dayjs";
 
-import { Styles } from "../styles/ScreenStyles";
+import { IClock } from "../lib/clock";
 import { IChangeFeedService } from "../services/ChangeFeedService";
 import { PriceChangeFeedItem } from "../services/PriceChangeFeedItem";
-import { IClock } from "../lib/clock";
-import { Dayjs } from "dayjs";
+import { ProductSummary } from "../services/ProductSummary";
+
+const styles: any = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});
 
 type State = {
     changeFeed: PriceChangeFeedItem[];
@@ -34,25 +41,35 @@ export class PriceChangesScreen extends React.Component {
     public render(): React.ReactNode {
         const { changeFeed, isLoading } = this.state;
         if (!isLoading) {
-            return <View style={Styles.container}>
+            return <View style={styles.container}>
                 <SectionList
                     renderItem={this.renderFeedItem}
-                    renderSectionHeader={({ section }) => <Text style={{fontWeight: "bold"}}>{section.key}</Text>}
+                    renderSectionHeader={({ section }) => <Text h4={true}>{section.key}</Text>}
+                    renderSectionFooter={() => <Divider />}
                     sections={this.toAgeInDaysSections(changeFeed)}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         } else {
-            return <View style={Styles.container}>
+            return <View style={styles.container}>
                 <Text>loading todo</Text>
             </View>
         }
     }
 
-    private renderFeedItem(obj: { item: any }): React.ReactElement {
-        return <Text>{obj.item.productSummary.name}&nbsp;
-            changed price by {obj.item.priceChange}&nbsp;
-            on {obj.item.date.toString()}</Text>;
+    private renderFeedItem(obj: { item: PriceChangeFeedItem, index: number }): React.ReactElement {
+        const summary: ProductSummary = obj.item.productSummary;
+        const change: number = obj.item.priceChange;
+        return <ListItem
+            key={obj.index}
+            title={`${summary.name}: ${summary.name2}`}
+            subtitle={`${summary.priceIncMoms}kr, ${summary.volume}ml`}
+            rightSubtitle={
+                <Badge value={`${Math.abs(change)}kr ${change > 0 ? "increase" : "decrease"}`} status={change > 0 ? "error" : "success"} />
+            }
+            bottomDivider={true}
+            leftIcon={{ name: "money", type: "font-awesome" }}
+        />
     }
 
     private async loadChangeFeed(): Promise<void> {
@@ -64,7 +81,7 @@ export class PriceChangesScreen extends React.Component {
         }
     }
 
-    private toAgeInDaysSections(feedItems: PriceChangeFeedItem[]) : SectionListData<any>[] {
+    private toAgeInDaysSections(feedItems: PriceChangeFeedItem[]): SectionListData<any>[] {
         const currentTime: Dayjs = this.clock.now();
         const today: PriceChangeFeedItem[] = []
         const lastSevenDays: PriceChangeFeedItem[] = [];
