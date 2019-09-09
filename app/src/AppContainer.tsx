@@ -2,8 +2,8 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { Icon } from 'react-native-elements'
 
-import { MainNavigatorTabIcon } from './components/MainNavigatorTabIcon';
 import { PriceChangesScreen } from './screens/PriceChangesScreen';
 import { AdditionsScreen } from './screens/AdditionsScreen';
 import { ApkScreen } from './screens/ApkScreen';
@@ -16,21 +16,21 @@ export function createMyAppContainer(): NavigationContainer {
                 screen: ApkScreen,
                 navigationOptions: {
                     tabBarLabel: 'Alkohol per kr',
-                    tabBarIcon: () => <MainNavigatorTabIcon name="calculator" />
+                    tabBarIcon: () => <Icon name="calculator" type="font-awesome"/>
                 }
             },
             PriceChanges: {
                 screen: PriceChangesScreen,
                 navigationOptions: {
                     tabBarLabel: 'Price Changes',
-                    tabBarIcon: () => <MainNavigatorTabIcon name="tag" />
+                    tabBarIcon: () => <Icon name="tag" type="font-awesome"/>
                 }
             },
             Additions: {
                 screen: AdditionsScreen,
                 navigationOptions: {
                     tabBarLabel: 'New',
-                    tabBarIcon: () => <MainNavigatorTabIcon name="bell" />
+                    tabBarIcon: () => <Icon name="envelope-open" type="font-awesome"/>
                 }
             },
         },
