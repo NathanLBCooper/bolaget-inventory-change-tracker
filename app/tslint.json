@@ -16,7 +16,16 @@
         "max-line-length": [true, 140],
         "max-classes-per-file": false,
         "jsx-no-lambda": false,
-        "array-type": [ true, "array" ]
+        "array-type": [ true, "array" ],
+        "eofline": true,
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "property-declaration",
+            "variable-declaration",
+            "member-variable-declaration"
+        ]
     },
     "rulesDirectory": []
 }

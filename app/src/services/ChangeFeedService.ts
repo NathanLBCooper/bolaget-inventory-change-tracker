@@ -10,7 +10,7 @@ export class ChangeFeedService implements IChangeFeedService {
     constructor(private baseUri: string) {}
 
     public async getPriceChangeFeed(): Promise<PriceChangeFeedItem[]> {
-        const response = await fetch(this.baseUri + "/PriceFeed/");
+        const response: Response = await fetch(this.baseUri + "/PriceFeed/");
         const responseJson: any[] = await response.json();
         return responseJson.map(feedItemDto => PriceChangeFeedItem.Make(feedItemDto));
     }

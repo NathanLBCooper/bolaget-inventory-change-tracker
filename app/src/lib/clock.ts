@@ -1,6 +1,6 @@
 import * as dayJs from "dayjs";
 import { injectable } from "inversify";
-const createDayJs = (dayJs)["default"] || dayJs;
+const createDayJs: () => dayJs.Dayjs = (dayJs)["default"] || dayJs;
 
 export interface IClock {
     now(): dayJs.Dayjs;

@@ -1,6 +1,6 @@
 import { ProductSummary } from "./ProductSummary";
 import * as dayJs from "dayjs";
-const createDayJs = (dayJs)["default"] || dayJs;
+const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
 
 export class PriceChangeFeedItem {
     public static Make(dto: any): PriceChangeFeedItem {
