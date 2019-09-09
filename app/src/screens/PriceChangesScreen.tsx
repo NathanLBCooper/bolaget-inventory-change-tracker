@@ -52,7 +52,7 @@ export class PriceChangesScreen extends React.Component {
             return <View style={styles.container}>
                 <SectionList
                     renderItem={this.renderFeedItem}
-                    renderSectionHeader={({ section }) => <Text h4={true}>{section.key}</Text>}
+                    renderSectionHeader={({ section }) => <Text h4={true} style={{paddingLeft: 10}}>{section.key}</Text>}
                     renderSectionFooter={() => <Divider />}
                     sections={this.toAgeInDaysSections(changeFeed)}
                     keyExtractor={(item, index) => index.toString()}
