@@ -15,7 +15,7 @@ export class SplashScreen extends React.Component<{
   public render(): React.ReactNode {
     return (<View style={styles.container}>
       <Image source={require("../../images/wine.png")} style={{ width: 200, height: 200 }} />
-      <Text style={{ fontSize: 30 }}>apk.dev</Text>
+      <Text style={{ fontSize: 30 }}>Secrets of Systemet</Text>
     </View>);
   }
   public componentDidMount(): void {
