@@ -1,5 +1,5 @@
 import React from "react";
-import { View, SectionList, SectionListData, StyleSheet } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet, ActivityIndicator } from "react-native";
 import { ListItem, Badge, Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
@@ -8,11 +8,19 @@ import { IClock } from "../lib/clock";
 import { IChangeFeedService } from "../services/ChangeFeedService";
 import { PriceChangeFeedItem } from "../services/PriceChangeFeedItem";
 import { ProductSummary } from "../services/ProductSummary";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 const styles: any = StyleSheet.create({
     container: {
         flex: 1,
     },
+});
+
+const loadingStyles: any = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center'
+    }
 });
 
 type State = {
@@ -51,8 +59,8 @@ export class PriceChangesScreen extends React.Component {
                 />
             </View>
         } else {
-            return <View style={styles.container}>
-                <Text>loading todo</Text>
+            return <View style={loadingStyles.container}>
+                <LoadingSpinner/>
             </View>
         }
     }
