@@ -62,13 +62,18 @@ export class PriceChangesScreen extends React.Component {
         const change: number = obj.item.priceChange;
         return <ListItem
             key={obj.index}
-            title={`${summary.name}: ${summary.name2}`}
-            subtitle={`${summary.priceIncMoms}kr, ${summary.volume}ml`}
+            title={
+                <Text><Text style={{ fontWeight: "bold" }}>{`${summary.name2},  `}</Text><Text>{`${summary.name}`}</Text></Text>
+            }
+            subtitle={`${summary.volume}ml`}
             rightSubtitle={
-                <Badge value={`${Math.abs(change)}kr ${change > 0 ? "increase" : "decrease"}`} status={change > 0 ? "error" : "success"} />
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>{`${summary.priceIncMoms}kr`}</Text>
+                    <Badge
+                        value={`${change > 0 ? "+" : "-"} ${Math.abs(change)}kr`} status={change > 0 ? "error" : "success"} />
+                </View>
             }
             bottomDivider={true}
-            leftIcon={{ name: "money", type: "font-awesome" }}
         />
     }
 
