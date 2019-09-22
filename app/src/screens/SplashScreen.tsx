@@ -20,7 +20,7 @@ export class SplashScreen extends React.Component<{
   }
   public componentDidMount(): void {
     setTimeout(() => {
-      this.props.navigation.navigate('Changes');
+      this.props.navigation.navigate('Main');
     }, 2000);
   }
 }
