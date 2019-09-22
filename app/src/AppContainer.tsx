@@ -12,13 +12,13 @@ import { SplashScreen } from './screens/SplashScreen';
 export function createMyAppContainer(): NavigationContainer {
     const MainNavigator: NavigationContainer = createBottomTabNavigator(
         {
-            Apk: {
-                screen: ApkScreen,
-                navigationOptions: {
-                    tabBarLabel: 'Alkohol per kr',
-                    tabBarIcon: () => <Icon name="calculator" type="font-awesome"/>
-                }
-            },
+            // Apk: {
+            //     screen: ApkScreen,
+            //     navigationOptions: {
+            //         tabBarLabel: 'Alkohol per kr',
+            //         tabBarIcon: () => <Icon name="calculator" type="font-awesome"/>
+            //     }
+            // },
             Changes: {
                 screen: ChangesScreen,
                 navigationOptions: {
@@ -26,13 +26,13 @@ export function createMyAppContainer(): NavigationContainer {
                     tabBarIcon: () => <Icon name="tag" type="font-awesome"/>
                 }
             },
-            Additions: {
-                screen: AdditionsScreen,
-                navigationOptions: {
-                    tabBarLabel: 'New',
-                    tabBarIcon: () => <Icon name="envelope-open" type="font-awesome"/>
-                }
-            },
+            // Additions: {
+            //     screen: AdditionsScreen,
+            //     navigationOptions: {
+            //         tabBarLabel: 'New',
+            //         tabBarIcon: () => <Icon name="envelope-open" type="font-awesome"/>
+            //     }
+            // },
         },
         {
             initialRouteName: "Changes",
