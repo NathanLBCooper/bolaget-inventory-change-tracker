@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
-import { View, SectionList, SectionListData, StyleSheet, ActivityIndicator } from "react-native";
-import { ListItem, Text, Divider } from "react-native-elements";
+import { View, SectionList, SectionListData, StyleSheet } from "react-native";
+import { ListItem, Text, Divider, Icon, Badge } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
@@ -68,23 +68,27 @@ export class ChangesScreen extends React.Component {
     }
 
     private renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
-        const renderTitle: (_: ChangeModel) => ReactElement = (model) => {
+        const renderNames: (_: ChangeModel) => ReactElement = (model) => {
             return model.name2 != null && model.name2.length > 0 ?
-                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name2},  `}</Text><Text>{`${model.name}`}</Text></Text> :
-                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name}`}</Text></Text>;
+                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
+                <Text style={{ fontWeight: "bold" }}>{`${model.name}`}</Text>;
         }
 
+        const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
+            return <Text style={{ fontStyle: "italic" }}>{`${model.category}`}</Text>
+        }
+
+        const renderChange: (_: ChangeModel) => ReactElement = (model) => {
+            return <Text>{`${model.changeName}`}</Text>
+        }
+        
         return <ListItem
             key={obj.index}
             title={
-                renderTitle(obj.item)
+                <View>{renderNames(obj.item)}{renderCategory(obj.item)}</View>
             }
             subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
-            rightSubtitle={
-                <View>
-                    <Text style={{ fontWeight: "bold" }}>{`${obj.item.category}`}</Text>
-                </View>
-            }
+            rightSubtitle={renderChange(obj.item)}
             bottomDivider={true}
         />
     }
