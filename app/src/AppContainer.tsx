@@ -4,7 +4,7 @@ import { createAppContainer, createSwitchNavigator, NavigationContainer } from '
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { Icon } from 'react-native-elements'
 
-import { PriceChangesScreen } from './screens/PriceChangesScreen';
+import { ChangesScreen } from './screens/ChangesScreen';
 import { AdditionsScreen } from './screens/AdditionsScreen';
 import { ApkScreen } from './screens/ApkScreen';
 import { SplashScreen } from './screens/SplashScreen';
@@ -19,10 +19,10 @@ export function createMyAppContainer(): NavigationContainer {
                     tabBarIcon: () => <Icon name="calculator" type="font-awesome"/>
                 }
             },
-            PriceChanges: {
-                screen: PriceChangesScreen,
+            Changes: {
+                screen: ChangesScreen,
                 navigationOptions: {
-                    tabBarLabel: 'Price Changes',
+                    tabBarLabel: 'Changes',
                     tabBarIcon: () => <Icon name="tag" type="font-awesome"/>
                 }
             },
@@ -35,7 +35,7 @@ export function createMyAppContainer(): NavigationContainer {
             },
         },
         {
-            initialRouteName: "Apk",
+            initialRouteName: "Changes",
             tabBarOptions: {
                 labelStyle: {
                     fontSize: 14,
