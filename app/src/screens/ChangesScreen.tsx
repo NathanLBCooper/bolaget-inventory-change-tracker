@@ -1,0 +1,173 @@
+import React, { ReactElement } from "react";
+import { View, SectionList, SectionListData, StyleSheet, ActivityIndicator } from "react-native";
+import { ListItem, Text, Divider } from "react-native-elements";
+import { Container } from "inversify";
+import { Dayjs } from "dayjs";
+
+import { IClock } from "../lib/clock";
+import { IChangeFeedService } from "../services/ChangeFeedService";
+import { ChangeFeed } from "../services/ChangeFeed";
+import { Change } from "../services/Change";
+import { ChangeCollection } from "../services/ChangeCollection";
+import { ChangeFeedItem } from "../services/ChangeFeedItem";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+
+const styles: any = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});
+
+const loadingStyles: any = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center'
+    }
+});
+
+type State = {
+    changeFeed: ChangeFeed;
+    isLoading: boolean;
+}
+
+export class ChangesScreen extends React.Component {
+    public state: State = {
+        changeFeed: undefined,
+        isLoading: true
+    };
+
+    private readonly changeFeedService: IChangeFeedService;
+    private readonly clock: IClock;
+
+    constructor(props: {}) {
+        super(props);
+        const serviceLocator: Container = global.serviceLocator;
+        this.changeFeedService = serviceLocator.get("IChangeFeedService");
+        this.clock = serviceLocator.get("IClock");
+    }
+
+    public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
+
+    public render(): React.ReactNode {
+        const { changeFeed, isLoading } = this.state;
+        if (!isLoading) {
+            return <View style={styles.container}>
+                <SectionList
+                    renderItem={this.renderFeedItem}
+                    renderSectionHeader={({ section }) => <Text h4={true} style={{ paddingLeft: 10 }}>{section.key}</Text>}
+                    renderSectionFooter={() => <Divider />}
+                    sections={this.toAgeInDaysSections(this.toModel(changeFeed))}
+                    keyExtractor={(item, index) => index.toString()}
+                />
+            </View>
+        } else {
+            return <View style={loadingStyles.container}>
+                <LoadingSpinner />
+            </View>
+        }
+    }
+
+    private renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
+        const renderTitle: (_: ChangeModel) => ReactElement = (model) => {
+            return model.name2 != null && model.name2.length > 0 ?
+                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name2},  `}</Text><Text>{`${model.name}`}</Text></Text> :
+                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name}`}</Text></Text>;
+        }
+
+        return <ListItem
+            key={obj.index}
+            title={
+                renderTitle(obj.item)
+            }
+            subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
+            rightSubtitle={
+                <View>
+                    <Text style={{ fontWeight: "bold" }}>{`${obj.item.category}`}</Text>
+                </View>
+            }
+            bottomDivider={true}
+        />
+    }
+
+    private async loadChangeFeed(): Promise<void> {
+        try {
+            const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
+            this.setState({ changeFeed, isLoading: false });
+        } catch (error) {
+            console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
+        }
+    }
+
+    private toModel(feed: ChangeFeed): ChangeModel[] {
+        const models: ChangeModel[] = [];
+        for (const item of feed.data) {
+            for (const change of item.changes.changes) {
+                models.push(
+                    ChangeModel.Make(item, item.changes, change)
+                );
+            }
+        }
+
+        return models;
+    }
+
+    private toAgeInDaysSections(feedModels: ChangeModel[]): SectionListData<any>[] {
+        const currentTime: Dayjs = this.clock.now();
+        const today: ChangeModel[] = [];
+        const yesterday: ChangeModel[] = [];
+        const lastSevenDays: ChangeModel[] = [];
+        const lastThirtyDays: ChangeModel[] = [];
+        const older: ChangeModel[] = [];
+
+        for (const model of feedModels) {
+            const ageInDays: number = currentTime.diff(model.timeStamp, "day");
+            if (ageInDays < 1) {
+                today.push(model);
+                continue;
+            }
+            if (ageInDays < 2) {
+                yesterday.push(model);
+                continue;
+            }
+            if (ageInDays < 7) {
+                lastSevenDays.push(model);
+                continue;
+            }
+            if (ageInDays < 30) {
+                lastThirtyDays.push(model);
+                continue;
+            }
+            older.push(model);
+        }
+
+        return ([
+            { data: today, key: "Today" },
+            { data: yesterday, key: "Yesterday" },
+            { data: lastSevenDays, key: "Last 7 Days" },
+            { data: lastThirtyDays, key: "Last 30 Days" },
+            { data: older, key: "Older" }
+        ])
+    }
+}
+
+class ChangeModel {
+    public static Make(item: ChangeFeedItem, changeCollection: ChangeCollection, change: Change): ChangeModel {
+        return new ChangeModel(
+            item.id, item.name, item.name2, item.category, item.uri,
+            changeCollection.timestamp,
+            change.name, change.oldValue, change.newValue
+        );
+    }
+
+    constructor(
+        public id: number,
+        public name: string,
+        public name2: string,
+        public category: string,
+        public uri: string,
+        public timeStamp: Dayjs,
+        public changeName: string,
+        public oldValue: string,
+        public newValue: string
+    ) { }
+}
