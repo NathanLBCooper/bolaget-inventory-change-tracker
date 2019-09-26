@@ -28,7 +28,7 @@ const styles: {
     },
     sectionHeader: {
         paddingLeft: 10,
-        backgroundColor: "black",
+        backgroundColor: "#4b9560",
         color: "white",
         paddingTop: 12,
         paddingBottom: 8
