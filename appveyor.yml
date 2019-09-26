@@ -9,7 +9,7 @@ install:
 build_script:
   - ps: .\build.ps1
 artifacts:
-- path: .\build\*
+- path: .\build\**\*
 skip_commits:
   files:
     - '**/*.md'
