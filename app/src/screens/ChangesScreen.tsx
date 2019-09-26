@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { View, SectionList, SectionListData, StyleSheet } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle } from "react-native";
 import { ListItem, Text, Divider, Icon, Badge } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
@@ -11,29 +11,58 @@ import { Change } from "../services/Change";
 import { ChangeCollection } from "../services/ChangeCollection";
 import { ChangeFeedItem } from "../services/ChangeFeedItem";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import * as MediaPxWidths from "../style/MediaPxWidths";
 
-const styles: any = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});
-
-const loadingStyles: any = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center'
+const styles: {
+    container: ViewStyle,
+    sectionHeader: TextStyle,
+    emptySectionHeader: TextStyle,
+    loadingContainer: ViewStyle,
+    items: {
+        title: TextStyle,
+        subtitle: TextStyle
     }
-});
+} = {
+    container: {
+        flex: 1
+    },
+    sectionHeader: {
+        paddingLeft: 10,
+        backgroundColor: "#4b9560",
+        color: "white",
+        paddingTop: 12,
+        paddingBottom: 8
+    },
+    emptySectionHeader: {
+        marginBottom: 12,
+        color: "darkgray"
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center"
+    }
+    ,
+    items: {
+        title: {
+            fontWeight: "bold"
+        },
+        subtitle: {
+            fontStyle: "italic"
+        }
+    }
+};
 
 type State = {
     changeFeed: ChangeFeed;
     isLoading: boolean;
+    width: number
 }
 
 export class ChangesScreen extends React.Component {
     public state: State = {
         changeFeed: undefined,
-        isLoading: true
+        isLoading: true,
+        width: undefined
     };
 
     private readonly changeFeedService: IChangeFeedService;
@@ -44,24 +73,41 @@ export class ChangesScreen extends React.Component {
         const serviceLocator: Container = global.serviceLocator;
         this.changeFeedService = serviceLocator.get("IChangeFeedService");
         this.clock = serviceLocator.get("IClock");
+
+        const { width } = Dimensions.get("window");
+        this.state.width = width;
+        Dimensions.addEventListener("change", (e) => { this.setState({ width: e.window.width }) });
     }
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): React.ReactNode {
-        const { changeFeed, isLoading } = this.state;
+        const { changeFeed, isLoading, width } = this.state;
+
+        const responsiveStyles: any = StyleSheet.create({
+            list: {
+                width: width > MediaPxWidths.TabletsInLandscape ? "80%" : undefined,
+                alignItems: width > MediaPxWidths.TabletsInLandscape ? "center" : undefined
+            }
+        });
+
         if (!isLoading) {
             return <View style={styles.container}>
-                <SectionList
+                <SectionList style={responsiveStyles.list}
                     renderItem={this.renderFeedItem}
-                    renderSectionHeader={({ section }) => <Text h4={true} style={{ paddingLeft: 10 }}>{section.key}</Text>}
+                    renderSectionHeader={({ section }) => {
+
+                        return <Text h4={true}
+                            style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
+                        >{section.key}</Text>
+                    }}
                     renderSectionFooter={() => <Divider />}
                     sections={this.toAgeInDaysSections(this.toModel(changeFeed))}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         } else {
-            return <View style={loadingStyles.container}>
+            return <View style={styles.loadingContainer}>
                 <LoadingSpinner />
             </View>
         }
@@ -70,18 +116,18 @@ export class ChangesScreen extends React.Component {
     private renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
         const renderNames: (_: ChangeModel) => ReactElement = (model) => {
             return model.name2 != null && model.name2.length > 0 ?
-                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
-                <Text style={{ fontWeight: "bold" }}>{`${model.name}`}</Text>;
+                <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
+                <Text style={styles.items.title}>{`${model.name}`}</Text>;
         }
 
         const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text style={{ fontStyle: "italic" }}>{`${model.category}`}</Text>
+            return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
         }
 
         const renderChange: (_: ChangeModel) => ReactElement = (model) => {
             return <Text>{`${model.changeName}`}</Text>
         }
-        
+
         return <ListItem
             key={obj.index}
             title={
