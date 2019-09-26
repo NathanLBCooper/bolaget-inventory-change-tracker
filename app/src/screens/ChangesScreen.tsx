@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { View, SectionList, SectionListData, StyleSheet } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet, Dimensions } from "react-native";
 import { ListItem, Text, Divider, Icon, Badge } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
@@ -11,29 +11,34 @@ import { Change } from "../services/Change";
 import { ChangeCollection } from "../services/ChangeCollection";
 import { ChangeFeedItem } from "../services/ChangeFeedItem";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import * as MediaPxWidths from "../style/MediaPxWidths";
 
 const styles: any = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1
     },
 });
 
 const loadingStyles: any = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: "center"
     }
 });
 
 type State = {
     changeFeed: ChangeFeed;
     isLoading: boolean;
+    height: number,
+    width: number
 }
 
 export class ChangesScreen extends React.Component {
     public state: State = {
         changeFeed: undefined,
-        isLoading: true
+        isLoading: true,
+        height: undefined,
+        width: undefined
     };
 
     private readonly changeFeedService: IChangeFeedService;
@@ -44,14 +49,26 @@ export class ChangesScreen extends React.Component {
         const serviceLocator: Container = global.serviceLocator;
         this.changeFeedService = serviceLocator.get("IChangeFeedService");
         this.clock = serviceLocator.get("IClock");
+
+        const {height, width} = Dimensions.get("window");
+        this.state.height = height;
+        this.state.height = width;
+        Dimensions.addEventListener("change", (e) => { this.setState({ height: e.window.height, width: e.window.width}) });
     }
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): React.ReactNode {
-        const { changeFeed, isLoading } = this.state;
+        const { changeFeed, isLoading, height } = this.state;
+
+        const responsiveStyles: any = StyleSheet.create({
+            container: {
+                backgroundColor: height < MediaPxWidths.Phones ? "hotpink" : null
+            },
+        });
+
         if (!isLoading) {
-            return <View style={styles.container}>
+            return <View style={[styles.container,responsiveStyles.container]}>
                 <SectionList
                     renderItem={this.renderFeedItem}
                     renderSectionHeader={({ section }) => <Text h4={true} style={{ paddingLeft: 10 }}>{section.key}</Text>}
