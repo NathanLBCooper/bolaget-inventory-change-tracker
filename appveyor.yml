@@ -1,0 +1,23 @@
+version: 0.1.{build}
+environment:
+  SURGE_LOGIN: login
+  SURGE_TOKEN:
+    secure: MeRBFAZ6WmwJTxGLcr2yYvgp6mpD+Cm36ikojfBgyepFAjAkfKWv5VbbeGMbDQOM
+install:
+  - npm cache clean --force
+  - npm i npm@latest -g
+  - ps: Install-Product node
+  - npm install -g expo-cli
+  - npm install -g surge
+  - cd app && npm install
+build_script:
+  - ps: .\build.ps1
+artifacts:
+  - path: .\build\**\*
+deploy_script:
+  - surge --project ./build --domain bolaget.surge.sh
+skip_commits:
+  files:
+    - '**/*.md'
+    - LICENSE
+    - '.gitignore'
