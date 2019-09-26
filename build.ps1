@@ -13,6 +13,9 @@ if(!$LASTEXITCODE -and (Test-Path $expo_web_output_dir))
     Remove-Item $expo_web_output_dir -Recurse -Force
 }
 
+Rename-Item -Path ".\app\appsettings.json" -NewName "appsettings.dev.json"
+Rename-Item -Path ".\app\appsettings.prod.json" -NewName "appsettings.json"
+
 if(!$LASTEXITCODE) { Invoke-Expression -Command: "cd app; expo build:web --no-pwa; cd.." }
 
 if(!$LASTEXITCODE) { mkdir -path $build_dir }
