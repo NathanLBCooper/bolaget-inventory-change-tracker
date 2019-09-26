@@ -16,6 +16,7 @@ import * as MediaPxWidths from "../style/MediaPxWidths";
 const styles: {
     container: ViewStyle,
     sectionHeader: TextStyle,
+    emptySectionHeader: TextStyle,
     loadingContainer: ViewStyle,
     items: {
         title: TextStyle,
@@ -31,6 +32,10 @@ const styles: {
         color: "white",
         paddingTop: 12,
         paddingBottom: 8
+    },
+    emptySectionHeader: {
+        marginBottom: 12,
+        color: "darkgray"
     },
     loadingContainer: {
         flex: 1,
@@ -81,8 +86,8 @@ export class ChangesScreen extends React.Component {
 
         const responsiveStyles: any = StyleSheet.create({
             list: {
-                width: width > MediaPxWidths.TabletsInLandscape ? "80%" : null,
-                alignItems: width > MediaPxWidths.TabletsInLandscape ? "center" : null
+                width: width > MediaPxWidths.TabletsInLandscape ? "80%" : undefined,
+                alignItems: width > MediaPxWidths.TabletsInLandscape ? "center" : undefined
             }
         });
 
@@ -90,8 +95,12 @@ export class ChangesScreen extends React.Component {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
                     renderItem={this.renderFeedItem}
-                    renderSectionHeader={({ section }) =>
-                        <Text h4={true} style={styles.sectionHeader}>{section.key}</Text>}
+                    renderSectionHeader={({ section }) => {
+
+                        return <Text h4={true}
+                            style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
+                        >{section.key}</Text>
+                    }}
                     renderSectionFooter={() => <Divider />}
                     sections={this.toAgeInDaysSections(this.toModel(changeFeed))}
                     keyExtractor={(item, index) => index.toString()}
