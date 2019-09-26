@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { View, SectionList, SectionListData, StyleSheet, Dimensions } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle } from "react-native";
 import { ListItem, Text, Divider, Icon, Badge } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
@@ -13,18 +13,39 @@ import { ChangeFeedItem } from "../services/ChangeFeedItem";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import * as MediaPxWidths from "../style/MediaPxWidths";
 
-const styles: any = StyleSheet.create({
+const styles: {
+    container: ViewStyle,
+    sectionHeader: TextStyle,
+    loadingContainer: ViewStyle,
+    items: {
+        title: TextStyle,
+        subtitle: TextStyle
+    }
+} = {
     container: {
         flex: 1
     },
-});
-
-const loadingStyles: any = StyleSheet.create({
-    container: {
+    sectionHeader: {
+        paddingLeft: 10,
+        backgroundColor: "black",
+        color: "white",
+        paddingTop: 12,
+        paddingBottom: 8
+    },
+    loadingContainer: {
         flex: 1,
         justifyContent: "center"
     }
-});
+    ,
+    items: {
+        title: {
+            fontWeight: "bold"
+        },
+        subtitle: {
+            fontStyle: "italic"
+        }
+    }
+};
 
 type State = {
     changeFeed: ChangeFeed;
@@ -69,14 +90,15 @@ export class ChangesScreen extends React.Component {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
                     renderItem={this.renderFeedItem}
-                    renderSectionHeader={({ section }) => <Text h4={true} style={{ paddingLeft: 10 }}>{section.key}</Text>}
+                    renderSectionHeader={({ section }) =>
+                        <Text h4={true} style={styles.sectionHeader}>{section.key}</Text>}
                     renderSectionFooter={() => <Divider />}
                     sections={this.toAgeInDaysSections(this.toModel(changeFeed))}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         } else {
-            return <View style={loadingStyles.container}>
+            return <View style={styles.loadingContainer}>
                 <LoadingSpinner />
             </View>
         }
@@ -85,12 +107,12 @@ export class ChangesScreen extends React.Component {
     private renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
         const renderNames: (_: ChangeModel) => ReactElement = (model) => {
             return model.name2 != null && model.name2.length > 0 ?
-                <Text><Text style={{ fontWeight: "bold" }}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
-                <Text style={{ fontWeight: "bold" }}>{`${model.name}`}</Text>;
+                <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
+                <Text style={styles.items.title}>{`${model.name}`}</Text>;
         }
 
         const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text style={{ fontStyle: "italic" }}>{`${model.category}`}</Text>
+            return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
         }
 
         const renderChange: (_: ChangeModel) => ReactElement = (model) => {
