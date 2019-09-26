@@ -1,0 +1,17 @@
+version: 0.1.{build}
+install:
+  - npm cache clean --force
+  - npm i npm@latest -g
+  - ps: Install-Product node
+  - npm install -g expo-cli
+  - npm install -g surge
+  - cd app && npm install
+build_script:
+  - ps: .\build.ps1
+artifacts:
+- path: .\build\*
+skip_commits:
+  files:
+    - '**/*.md'
+    - LICENSE
+    - '.gitignore'
