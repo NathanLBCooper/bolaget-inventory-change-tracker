@@ -29,7 +29,6 @@ const loadingStyles: any = StyleSheet.create({
 type State = {
     changeFeed: ChangeFeed;
     isLoading: boolean;
-    height: number,
     width: number
 }
 
@@ -37,7 +36,6 @@ export class ChangesScreen extends React.Component {
     public state: State = {
         changeFeed: undefined,
         isLoading: true,
-        height: undefined,
         width: undefined
     };
 
@@ -50,26 +48,26 @@ export class ChangesScreen extends React.Component {
         this.changeFeedService = serviceLocator.get("IChangeFeedService");
         this.clock = serviceLocator.get("IClock");
 
-        const {height, width} = Dimensions.get("window");
-        this.state.height = height;
-        this.state.height = width;
-        Dimensions.addEventListener("change", (e) => { this.setState({ height: e.window.height, width: e.window.width}) });
+        const { width } = Dimensions.get("window");
+        this.state.width = width;
+        Dimensions.addEventListener("change", (e) => { this.setState({ width: e.window.width }) });
     }
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): React.ReactNode {
-        const { changeFeed, isLoading, height } = this.state;
+        const { changeFeed, isLoading, width } = this.state;
 
         const responsiveStyles: any = StyleSheet.create({
-            container: {
-                backgroundColor: height < MediaPxWidths.Phones ? "hotpink" : null
-            },
+            list: {
+                width: width > MediaPxWidths.TabletsInLandscape ? "80%" : null,
+                alignItems: width > MediaPxWidths.TabletsInLandscape ? "center" : null
+            }
         });
 
         if (!isLoading) {
-            return <View style={[styles.container,responsiveStyles.container]}>
-                <SectionList
+            return <View style={styles.container}>
+                <SectionList style={responsiveStyles.list}
                     renderItem={this.renderFeedItem}
                     renderSectionHeader={({ section }) => <Text h4={true} style={{ paddingLeft: 10 }}>{section.key}</Text>}
                     renderSectionFooter={() => <Divider />}
@@ -98,7 +96,7 @@ export class ChangesScreen extends React.Component {
         const renderChange: (_: ChangeModel) => ReactElement = (model) => {
             return <Text>{`${model.changeName}`}</Text>
         }
-        
+
         return <ListItem
             key={obj.index}
             title={
