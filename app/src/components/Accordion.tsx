@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react';
+import React, { Component, ReactElement } from 'react';
 import { View, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
 import { Icon } from 'react-native-elements';
 
@@ -32,7 +32,7 @@ const styles: {
 
 type Props = {
     summary: React.ReactElement;
-    detail: (React.ReactElement) | (() => React.ReactElement);
+    detail: (React.ReactElement) | (() => React.ReactElement) | (() => Promise<React.ReactElement>);
 }
 
 type State = {
@@ -48,8 +48,14 @@ export class Accordian extends Component<Props> {
         expanded: false
     };
 
-    constructor(props: { summary: React.ReactElement, detail: (React.ReactElement) | (() => React.ReactElement) }) {
+    constructor(props:
+        {
+            summary: React.ReactElement,
+            detail: (React.ReactElement) | (() => React.ReactElement) | (() => Promise<React.ReactElement>)
+        }
+    ) {
         super(props);
+
         if (props.detail["call"] == null) {
             this.state.detailEvaluated = true;
             this.state.detail = this.props.detail as React.ReactElement;
@@ -76,11 +82,27 @@ export class Accordian extends Component<Props> {
     }
 
     public toggleExpand = () => {
+        const resolveLazyDetail: ((state: State) => Promise<ReactElement>) = async (state) => {
+            const invoked: object = (this.props.detail as (() => object))();
+            if (invoked["then"] == null) {
+                const promise: Promise<React.ReactElement> = invoked as Promise<React.ReactElement>;
+                return promise;
+
+            } else {
+                const element: React.ReactElement = invoked as React.ReactElement;
+                return Promise.resolve(element);
+            }
+        }
+
         const expanding: boolean = !this.state.expanded;
         this.setState({ expanded: expanding });
+
         if (expanding && !this.state.detailEvaluated) {
-            const lazyDetail: () => React.ReactElement = this.props.detail as (() => React.ReactElement);
-            this.setState({ detailEvaluated: true, detail: lazyDetail() });
+            resolveLazyDetail(this.state).then(element => {
+                this.setState({
+                    detailEvaluated: true, detail: element
+                });
+            });
         }
     }
 }

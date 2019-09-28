@@ -13,6 +13,7 @@ import { ChangeFeedItem } from "../services/ChangeFeedItem";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import * as MediaPxWidths from "../style/MediaPxWidths";
 import { Accordian } from "../components/Accordion";
+import { Article } from "../services/Article";
 
 const styles: {
     container: ViewStyle,
@@ -76,6 +77,10 @@ export class ChangesScreen extends React.Component {
     constructor(props: {}) {
         super(props);
 
+        this.renderFeedItem = this.renderFeedItem.bind(this);
+        this.renderFeedItemTitle = this.renderFeedItemTitle.bind(this);
+        this.renderFeedItemDetail = this.renderFeedItemDetail.bind(this);
+
         const serviceLocator: Container = global.serviceLocator;
         this.changeFeedService = serviceLocator.get("IChangeFeedService");
         this.clock = serviceLocator.get("IClock");
@@ -100,7 +105,7 @@ export class ChangesScreen extends React.Component {
         if (!isLoading) {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
-                    renderItem={renderFeedItem}
+                    renderItem={this.renderFeedItem}
                     renderSectionHeader={({ section }) => {
 
                         return <Text h4={true}
@@ -127,45 +132,55 @@ export class ChangesScreen extends React.Component {
             console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
         }
     }
-}
 
-function renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
-    const feedItemTitle: React.ReactElement = renderFeedItemTitle(obj);
-    const feedItemDetail: () => React.ReactElement = () => renderFeedItemDetail(obj);
+    private renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
+        const feedItemTitle: React.ReactElement = this.renderFeedItemTitle(obj);
+        const feedItemDetail: () => Promise<React.ReactElement> = async () => this.renderFeedItemDetail(obj);
 
-    return <View style={styles.feedItem}><Accordian summary={feedItemTitle} detail={feedItemDetail} /></View>;
-}
-
-function renderFeedItemTitle(obj: { item: ChangeModel, index: number }): React.ReactElement {
-    const renderNames: (_: ChangeModel) => ReactElement = (model) => {
-        return model.name2 != null && model.name2.length > 0 ?
-            <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
-            <Text style={styles.items.title}>{`${model.name}`}</Text>;
+        return <View style={styles.feedItem}><Accordian summary={feedItemTitle} detail={feedItemDetail} /></View>;
     }
 
-    const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
-        return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
-    }
-
-    const renderChange: (_: ChangeModel) => ReactElement = (model) => {
-        return <Text>{`${model.changeName}`}</Text>
-    }
-
-    return <ListItem
-        key={obj.index}
-        title={
-            <View>{renderNames(obj.item)}{renderCategory(obj.item)}</View>
+    private renderFeedItemTitle(obj: { item: ChangeModel, index: number }): React.ReactElement {
+        const renderNames: (_: ChangeModel) => ReactElement = (model) => {
+            return model.name2 != null && model.name2.length > 0 ?
+                <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
+                <Text style={styles.items.title}>{`${model.name}`}</Text>;
         }
-        subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
-        rightSubtitle={renderChange(obj.item)}
-    />
-}
 
-function renderFeedItemDetail(obj: { item: ChangeModel, index: number }): React.ReactElement {
-    return <View>
-        <Text>Todo</Text>
-        <Text>This is where the article detail will go</Text>
-    </View>
+        const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
+            return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
+        }
+
+        const renderChange: (_: ChangeModel) => ReactElement = (model) => {
+            return <Text>{`${model.changeName}`}</Text>
+        }
+
+        return <ListItem
+            key={obj.index}
+            title={
+                <View>{renderNames(obj.item)}{renderCategory(obj.item)}</View>
+            }
+            subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
+            rightSubtitle={renderChange(obj.item)}
+        />
+    }
+
+    private async renderFeedItemDetail(obj: { item: ChangeModel, index: number }): Promise<React.ReactElement> {
+        try {
+            const article: Article = await this.changeFeedService.getArticle(obj.item.id);
+
+            return <View>
+                <Text>Todo</Text>
+                <Text>{article.name}</Text>
+            </View>
+        } catch (error) {
+            console.error("Error fetching article " + obj.item.id + " in ChangeScreen.loadArticle", error);
+            return <View>
+                <Text>Todo</Text>
+                <Text>error stuff</Text>
+            </View>;
+        }
+    }
 }
 
 function toModel(feed: ChangeFeed): ChangeModel[] {
