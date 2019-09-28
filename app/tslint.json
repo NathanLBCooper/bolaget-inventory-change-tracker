@@ -25,7 +25,8 @@
             "property-declaration",
             "variable-declaration",
             "member-variable-declaration"
-        ]
+        ],
+        "semicolon": true
     },
     "rulesDirectory": []
 }

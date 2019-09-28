@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from "react-native";
 
 type State = {
     display: boolean;
-}
+};
 
 export class LoadingSpinner extends React.Component {
     public state: State = {
@@ -23,7 +23,7 @@ export class LoadingSpinner extends React.Component {
     public render(): React.ReactNode {
         const {display} = this.state;
 
-        return display ? <ActivityIndicator size={100}/> : <View/>
+        return display ? <ActivityIndicator size={100}/> : <View/>;
     }
 
     public componentWillUnmount(): void {

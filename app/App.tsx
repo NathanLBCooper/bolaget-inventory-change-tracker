@@ -10,7 +10,7 @@ import { Container } from "inversify";
 import { createMyAppContainer } from "./src/AppContainer";
 import { ConfigureDependencies } from './src/Dependencies';
 import { Appsettings } from './src/AppSettings';
-import appSettingsJson from "./appsettings.json"
+import appSettingsJson from "./appsettings.json";
 
 declare global {
   const global: {

@@ -20,7 +20,7 @@ type State = {
     changeFeed: ChangeFeed;
     isLoading: boolean;
     width: number
-}
+};
 
 export class ChangesScreen extends React.Component {
     public state: State = {
@@ -45,7 +45,7 @@ export class ChangesScreen extends React.Component {
 
         const { width } = Dimensions.get("window");
         this.state.width = width;
-        Dimensions.addEventListener("change", (e) => { this.setState({ width: e.window.width }) });
+        Dimensions.addEventListener("change", (e) => { this.setState({ width: e.window.width }); });
     }
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
@@ -84,7 +84,7 @@ export class ChangesScreen extends React.Component {
                 flex: 1,
                 justifyContent: "center"
             },
-        }
+        };
 
         if (!isLoading) {
             return <View style={styles.container}>
@@ -94,17 +94,17 @@ export class ChangesScreen extends React.Component {
 
                         return <Text h4={true}
                             style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
-                        >{section.key}</Text>
+                        >{section.key}</Text>;
                     }}
                     renderSectionFooter={() => <Divider />}
                     sections={toAgeInDaysSections(toModel(changeFeed), this.clock)}
                     keyExtractor={(item, index) => index.toString()}
                 />
-            </View>
+            </View>;
         } else {
             return <View style={styles.loadingContainer}>
                 <LoadingSpinner />
-            </View>
+            </View>;
         }
     }
 
@@ -126,7 +126,7 @@ export class ChangesScreen extends React.Component {
                 borderBottomWidth: StyleSheet.hairlineWidth,
                 borderColor: "rgba(0, 0, 0, 0.12)"
             }
-        }
+        };
 
         return <View style={styles.feedItem}><Accordian summary={feedItemTitle} detail={feedItemDetail} /></View>;
     }
@@ -142,21 +142,21 @@ export class ChangesScreen extends React.Component {
             itemSubtitle: {
                 fontStyle: "italic"
             },
-        }
+        };
 
         const renderNames: (_: ChangeModel) => ReactElement = (model) => {
             return model.name2 != null && model.name2.length > 0 ?
                 <Text><Text style={styles.itemTitle}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
                 <Text style={styles.itemTitle}>{`${model.name}`}</Text>;
-        }
+        };
 
         const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text style={styles.itemSubtitle}>{`${model.category}`}</Text>
-        }
+            return <Text style={styles.itemSubtitle}>{`${model.category}`}</Text>;
+        };
 
         const renderChange: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text>{`${model.changeName}`}</Text>
-        }
+            return <Text>{`${model.changeName}`}</Text>;
+        };
 
         return <ListItem
             key={obj.index}
@@ -165,7 +165,7 @@ export class ChangesScreen extends React.Component {
             }
             subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
             rightSubtitle={renderChange(obj.item)}
-        />
+        />;
     }
 
     private async renderFeedItemDetail(obj: { item: ChangeModel, index: number }): Promise<React.ReactElement> {
@@ -173,7 +173,7 @@ export class ChangesScreen extends React.Component {
             itemKey: {
                 fontStyle: "italic"
             }
-        }
+        };
 
         try {
             const article: Article = await this.changeFeedService.getArticle(obj.item.id);
@@ -195,7 +195,7 @@ export class ChangesScreen extends React.Component {
                     renderItem={({ item }) =>
                         <Text><Text style={styles.itemKey}>{item.key}</Text> : <Text>{item.value}</Text></Text>}
                 />
-            </View>
+            </View>;
         } catch (error) {
             console.error("Error fetching article " + obj.item.id + " in ChangeScreen.loadArticle", error);
             return <View />;
@@ -251,7 +251,7 @@ function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionL
         { data: lastSevenDays, key: "Last 7 Days" },
         { data: lastThirtyDays, key: "Last 30 Days" },
         { data: older, key: "Older" }
-    ])
+    ]);
 }
 
 class ChangeModel {

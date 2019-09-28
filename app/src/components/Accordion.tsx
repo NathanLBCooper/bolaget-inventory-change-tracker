@@ -33,13 +33,13 @@ const styles: {
 type Props = {
     summary: React.ReactElement;
     detail: (React.ReactElement) | (() => React.ReactElement) | (() => Promise<React.ReactElement>);
-}
+};
 
 type State = {
     detail: React.ReactElement;
     detailEvaluated: boolean;
     expanded: boolean;
-}
+};
 
 export class Accordian extends Component<Props> {
     public state: State = {
@@ -92,7 +92,7 @@ export class Accordian extends Component<Props> {
                 const element: React.ReactElement = invoked as React.ReactElement;
                 return Promise.resolve(element);
             }
-        }
+        };
 
         const expanding: boolean = !this.state.expanded;
         this.setState({ expanded: expanding });
