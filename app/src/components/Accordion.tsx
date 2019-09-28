@@ -83,15 +83,9 @@ export class Accordian extends Component<Props> {
 
     public toggleExpand = () => {
         const resolveLazyDetail: ((state: State) => Promise<ReactElement>) = async (state) => {
-            const invoked: object = (this.props.detail as (() => object))();
-            if (invoked["then"] == null) {
-                const promise: Promise<React.ReactElement> = invoked as Promise<React.ReactElement>;
-                return promise;
-
-            } else {
-                const element: React.ReactElement = invoked as React.ReactElement;
-                return Promise.resolve(element);
-            }
+            const invoked: React.ReactElement | Promise<React.ReactElement> =
+                (this.props.detail as (() => React.ReactElement | Promise<React.ReactElement>))();
+            return Promise.resolve(invoked);
         };
 
         const expanding: boolean = !this.state.expanded;
