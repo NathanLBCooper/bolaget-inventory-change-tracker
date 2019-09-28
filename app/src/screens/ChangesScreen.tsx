@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle } from "react-native";
 import { ListItem, Text, Divider } from "react-native-elements";
+import { FlatList } from "react-native-gesture-handler";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
@@ -23,7 +24,12 @@ const styles: {
     feedItem: ViewStyle,
     items: {
         title: TextStyle,
-        subtitle: TextStyle
+        subtitle: TextStyle,
+        detail: {
+            properties: {
+                key: TextStyle
+            }
+        }
     }
 } = {
     container: {
@@ -54,6 +60,13 @@ const styles: {
         },
         subtitle: {
             fontStyle: "italic"
+        },
+        detail: {
+            properties: {
+                key: {
+                    fontStyle: "italic"
+                }
+            }
         }
     }
 };
@@ -170,15 +183,26 @@ export class ChangesScreen extends React.Component {
             const article: Article = await this.changeFeedService.getArticle(obj.item.id);
 
             return <View>
-                <Text>Todo</Text>
-                <Text>{article.name}</Text>
+                <FlatList
+                    data={[
+                        { key: "producer", value: article.producer },
+                        { key: "importer", value: article.importer },
+                        { key: "origin", value: article.origin },
+                        { key: "country of origin", value: article.countryOfOrigin },
+                        { key: "packaging", value: article.packaging },
+                        { key: "vintage", value: article.vintage },
+                        { key: "price", value: article.price },
+                        { key: "price per litre", value: article.pricePerLitre },
+                        { key: "alcohol", value: article.alcohol },
+                        { key: "volume", value: article.volume },
+                    ]}
+                    renderItem={({ item }) =>
+                        <Text><Text style={styles.items.detail.properties.key}>{item.key}</Text> : <Text>{item.value}</Text></Text>}
+                />
             </View>
         } catch (error) {
             console.error("Error fetching article " + obj.item.id + " in ChangeScreen.loadArticle", error);
-            return <View>
-                <Text>Todo</Text>
-                <Text>error stuff</Text>
-            </View>;
+            return <View />;
         }
     }
 }
