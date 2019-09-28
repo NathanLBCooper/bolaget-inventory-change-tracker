@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle } from "react-native";
+import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle, RefreshControl } from "react-native";
 import { ListItem, Text, Divider } from "react-native-elements";
 import { FlatList } from "react-native-gesture-handler";
 import { Container } from "inversify";
@@ -19,14 +19,16 @@ import { Article } from "../services/Article";
 type State = {
     changeFeed: ChangeFeed;
     isLoading: boolean;
-    width: number
+    width: number,
+    refreshing: boolean
 };
 
 export class ChangesScreen extends React.Component {
     public state: State = {
         changeFeed: undefined,
         isLoading: true,
-        width: undefined
+        width: undefined,
+        refreshing: false
     };
 
     private readonly changeFeedService: IChangeFeedService;
@@ -51,7 +53,7 @@ export class ChangesScreen extends React.Component {
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): React.ReactNode {
-        const { changeFeed, isLoading, width } = this.state;
+        const { changeFeed, isLoading, width, refreshing } = this.state;
 
         const responsiveStyles: any = StyleSheet.create({
             list: {
@@ -99,6 +101,7 @@ export class ChangesScreen extends React.Component {
                     renderSectionFooter={() => <Divider />}
                     sections={toAgeInDaysSections(toModel(changeFeed), this.clock)}
                     keyExtractor={(item, index) => index.toString()}
+                    refreshControl = {<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()}/>}
                 />
             </View>;
         } else {
