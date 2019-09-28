@@ -16,61 +16,6 @@ import * as MediaPxWidths from "../style/MediaPxWidths";
 import { Accordian } from "../components/Accordion";
 import { Article } from "../services/Article";
 
-const styles: {
-    container: ViewStyle,
-    sectionHeader: TextStyle,
-    emptySectionHeader: TextStyle,
-    loadingContainer: ViewStyle,
-    feedItem: ViewStyle,
-    items: {
-        title: TextStyle,
-        subtitle: TextStyle,
-        detail: {
-            properties: {
-                key: TextStyle
-            }
-        }
-    }
-} = {
-    container: {
-        flex: 1
-    },
-    sectionHeader: {
-        paddingLeft: 10,
-        backgroundColor: "#4b9560",
-        color: "white",
-        paddingTop: 12,
-        paddingBottom: 8
-    },
-    emptySectionHeader: {
-        marginBottom: 12,
-        color: "darkgray"
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center"
-    },
-    feedItem: {
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderColor: "rgba(0, 0, 0, 0.12)"
-    },
-    items: {
-        title: {
-            fontWeight: "bold"
-        },
-        subtitle: {
-            fontStyle: "italic"
-        },
-        detail: {
-            properties: {
-                key: {
-                    fontStyle: "italic"
-                }
-            }
-        }
-    }
-};
-
 type State = {
     changeFeed: ChangeFeed;
     isLoading: boolean;
@@ -115,6 +60,32 @@ export class ChangesScreen extends React.Component {
             }
         });
 
+        const styles: {
+            container: ViewStyle,
+            sectionHeader: TextStyle,
+            emptySectionHeader: TextStyle,
+            loadingContainer: ViewStyle
+        } = {
+            container: {
+                flex: 1
+            },
+            sectionHeader: {
+                paddingLeft: 10,
+                backgroundColor: "#4b9560",
+                color: "white",
+                paddingTop: 12,
+                paddingBottom: 8
+            },
+            emptySectionHeader: {
+                marginBottom: 12,
+                color: "darkgray"
+            },
+            loadingContainer: {
+                flex: 1,
+                justifyContent: "center"
+            },
+        }
+
         if (!isLoading) {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
@@ -150,18 +121,37 @@ export class ChangesScreen extends React.Component {
         const feedItemTitle: React.ReactElement = this.renderFeedItemTitle(obj);
         const feedItemDetail: () => Promise<React.ReactElement> = async () => this.renderFeedItemDetail(obj);
 
+        const styles: { feedItem: ViewStyle } = {
+            feedItem: {
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderColor: "rgba(0, 0, 0, 0.12)"
+            }
+        }
+
         return <View style={styles.feedItem}><Accordian summary={feedItemTitle} detail={feedItemDetail} /></View>;
     }
 
     private renderFeedItemTitle(obj: { item: ChangeModel, index: number }): React.ReactElement {
+        const styles: { 
+            itemTitle: TextStyle,
+            itemSubtitle: TextStyle
+        } = {
+            itemTitle: {
+                fontWeight: "bold"
+            },
+            itemSubtitle: {
+                fontStyle: "italic"
+            },
+        }
+
         const renderNames: (_: ChangeModel) => ReactElement = (model) => {
             return model.name2 != null && model.name2.length > 0 ?
-                <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
-                <Text style={styles.items.title}>{`${model.name}`}</Text>;
+                <Text><Text style={styles.itemTitle}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
+                <Text style={styles.itemTitle}>{`${model.name}`}</Text>;
         }
 
         const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
+            return <Text style={styles.itemSubtitle}>{`${model.category}`}</Text>
         }
 
         const renderChange: (_: ChangeModel) => ReactElement = (model) => {
@@ -179,6 +169,12 @@ export class ChangesScreen extends React.Component {
     }
 
     private async renderFeedItemDetail(obj: { item: ChangeModel, index: number }): Promise<React.ReactElement> {
+        const styles: { itemKey: TextStyle } = {
+            itemKey: {
+                fontStyle: "italic"
+            }
+        }
+
         try {
             const article: Article = await this.changeFeedService.getArticle(obj.item.id);
 
@@ -197,7 +193,7 @@ export class ChangesScreen extends React.Component {
                         { key: "volume", value: article.volume },
                     ]}
                     renderItem={({ item }) =>
-                        <Text><Text style={styles.items.detail.properties.key}>{item.key}</Text> : <Text>{item.value}</Text></Text>}
+                        <Text><Text style={styles.itemKey}>{item.key}</Text> : <Text>{item.value}</Text></Text>}
                 />
             </View>
         } catch (error) {
