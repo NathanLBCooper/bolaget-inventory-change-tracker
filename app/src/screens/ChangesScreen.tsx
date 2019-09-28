@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle } from "react-native";
-import { ListItem, Text, Divider, Icon, Badge } from "react-native-elements";
+import { ListItem, Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
@@ -12,12 +12,14 @@ import { ChangeCollection } from "../services/ChangeCollection";
 import { ChangeFeedItem } from "../services/ChangeFeedItem";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import * as MediaPxWidths from "../style/MediaPxWidths";
+import { Accordian } from "../components/Accordion";
 
 const styles: {
     container: ViewStyle,
     sectionHeader: TextStyle,
     emptySectionHeader: TextStyle,
     loadingContainer: ViewStyle,
+    feedItem: ViewStyle,
     items: {
         title: TextStyle,
         subtitle: TextStyle
@@ -40,8 +42,11 @@ const styles: {
     loadingContainer: {
         flex: 1,
         justifyContent: "center"
-    }
-    ,
+    },
+    feedItem: {
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: "rgba(0, 0, 0, 0.12)"
+    },
     items: {
         title: {
             fontWeight: "bold"
@@ -70,6 +75,7 @@ export class ChangesScreen extends React.Component {
 
     constructor(props: {}) {
         super(props);
+
         const serviceLocator: Container = global.serviceLocator;
         this.changeFeedService = serviceLocator.get("IChangeFeedService");
         this.clock = serviceLocator.get("IClock");
@@ -94,7 +100,7 @@ export class ChangesScreen extends React.Component {
         if (!isLoading) {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
-                    renderItem={this.renderFeedItem}
+                    renderItem={renderFeedItem}
                     renderSectionHeader={({ section }) => {
 
                         return <Text h4={true}
@@ -102,7 +108,7 @@ export class ChangesScreen extends React.Component {
                         >{section.key}</Text>
                     }}
                     renderSectionFooter={() => <Divider />}
-                    sections={this.toAgeInDaysSections(this.toModel(changeFeed))}
+                    sections={toAgeInDaysSections(toModel(changeFeed), this.clock)}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
@@ -113,32 +119,6 @@ export class ChangesScreen extends React.Component {
         }
     }
 
-    private renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
-        const renderNames: (_: ChangeModel) => ReactElement = (model) => {
-            return model.name2 != null && model.name2.length > 0 ?
-                <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
-                <Text style={styles.items.title}>{`${model.name}`}</Text>;
-        }
-
-        const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
-        }
-
-        const renderChange: (_: ChangeModel) => ReactElement = (model) => {
-            return <Text>{`${model.changeName}`}</Text>
-        }
-
-        return <ListItem
-            key={obj.index}
-            title={
-                <View>{renderNames(obj.item)}{renderCategory(obj.item)}</View>
-            }
-            subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
-            rightSubtitle={renderChange(obj.item)}
-            bottomDivider={true}
-        />
-    }
-
     private async loadChangeFeed(): Promise<void> {
         try {
             const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
@@ -147,57 +127,96 @@ export class ChangesScreen extends React.Component {
             console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
         }
     }
+}
 
-    private toModel(feed: ChangeFeed): ChangeModel[] {
-        const models: ChangeModel[] = [];
-        for (const item of feed.data) {
-            for (const change of item.changes.changes) {
-                models.push(
-                    ChangeModel.Make(item, item.changes, change)
-                );
-            }
-        }
+function renderFeedItem(obj: { item: ChangeModel, index: number }): React.ReactElement {
+    const feedItemTitle: React.ReactElement = renderFeedItemTitle(obj);
+    const feedItemDetail: () => React.ReactElement = () => renderFeedItemDetail(obj);
 
-        return models;
+    return <View style={styles.feedItem}><Accordian summary={feedItemTitle} detail={feedItemDetail} /></View>;
+}
+
+function renderFeedItemTitle(obj: { item: ChangeModel, index: number }): React.ReactElement {
+    const renderNames: (_: ChangeModel) => ReactElement = (model) => {
+        return model.name2 != null && model.name2.length > 0 ?
+            <Text><Text style={styles.items.title}>{`${model.name2},  `}</Text>{`${model.name}`}</Text> :
+            <Text style={styles.items.title}>{`${model.name}`}</Text>;
     }
 
-    private toAgeInDaysSections(feedModels: ChangeModel[]): SectionListData<any>[] {
-        const currentTime: Dayjs = this.clock.now();
-        const today: ChangeModel[] = [];
-        const yesterday: ChangeModel[] = [];
-        const lastSevenDays: ChangeModel[] = [];
-        const lastThirtyDays: ChangeModel[] = [];
-        const older: ChangeModel[] = [];
-
-        for (const model of feedModels) {
-            const ageInDays: number = currentTime.diff(model.timeStamp, "day");
-            if (ageInDays < 1) {
-                today.push(model);
-                continue;
-            }
-            if (ageInDays < 2) {
-                yesterday.push(model);
-                continue;
-            }
-            if (ageInDays < 7) {
-                lastSevenDays.push(model);
-                continue;
-            }
-            if (ageInDays < 30) {
-                lastThirtyDays.push(model);
-                continue;
-            }
-            older.push(model);
-        }
-
-        return ([
-            { data: today, key: "Today" },
-            { data: yesterday, key: "Yesterday" },
-            { data: lastSevenDays, key: "Last 7 Days" },
-            { data: lastThirtyDays, key: "Last 30 Days" },
-            { data: older, key: "Older" }
-        ])
+    const renderCategory: (_: ChangeModel) => ReactElement = (model) => {
+        return <Text style={styles.items.subtitle}>{`${model.category}`}</Text>
     }
+
+    const renderChange: (_: ChangeModel) => ReactElement = (model) => {
+        return <Text>{`${model.changeName}`}</Text>
+    }
+
+    return <ListItem
+        key={obj.index}
+        title={
+            <View>{renderNames(obj.item)}{renderCategory(obj.item)}</View>
+        }
+        subtitle={`${obj.item.changeName} changed from "${obj.item.oldValue}" to "${obj.item.newValue}"`}
+        rightSubtitle={renderChange(obj.item)}
+    />
+}
+
+function renderFeedItemDetail(obj: { item: ChangeModel, index: number }): React.ReactElement {
+    return <View>
+        <Text>Todo</Text>
+        <Text>This is where the article detail will go</Text>
+    </View>
+}
+
+function toModel(feed: ChangeFeed): ChangeModel[] {
+    const models: ChangeModel[] = [];
+    for (const item of feed.data) {
+        for (const change of item.changes.changes) {
+            models.push(
+                ChangeModel.Make(item, item.changes, change)
+            );
+        }
+    }
+
+    return models;
+}
+
+function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionListData<any>[] {
+    const currentTime: Dayjs = clock.now();
+    const today: ChangeModel[] = [];
+    const yesterday: ChangeModel[] = [];
+    const lastSevenDays: ChangeModel[] = [];
+    const lastThirtyDays: ChangeModel[] = [];
+    const older: ChangeModel[] = [];
+
+    for (const model of feedModels) {
+        const ageInDays: number = currentTime.diff(model.timeStamp, "day");
+        if (ageInDays < 1) {
+            today.push(model);
+            continue;
+        }
+        if (ageInDays < 2) {
+            yesterday.push(model);
+            continue;
+        }
+        if (ageInDays < 7) {
+            lastSevenDays.push(model);
+            continue;
+        }
+        if (ageInDays < 30) {
+            lastThirtyDays.push(model);
+            continue;
+        }
+        older.push(model);
+    }
+
+    return ([
+        { data: today, key: "Today" },
+        { data: yesterday, key: "Yesterday" },
+        { data: lastSevenDays, key: "Last 7 Days" },
+        { data: lastThirtyDays, key: "Last 30 Days" },
+        { data: older, key: "Older" }
+    ])
 }
 
 class ChangeModel {
