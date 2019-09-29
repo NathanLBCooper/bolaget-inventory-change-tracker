@@ -4,13 +4,14 @@ import { Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
-import { IClock } from "../lib/clock";
-import { IChangeFeedService } from "../services/ChangeFeedService";
-import { ChangeFeed } from "../services/ChangeFeed";
-import { LoadingSpinner } from "../components/LoadingSpinner";
-import * as MediaPxWidths from "../style/MediaPxWidths";
-import { ChangeModel } from "../models/ChangeModel";
-import { ChangesListItem } from "../components/ChangesListItem";
+import { IClock } from "../../lib/clock";
+import { IChangeFeedService } from "../../services/ChangeFeedService";
+import { ChangeFeed } from "../../services/ChangeFeed";
+import * as MediaPxWidths from "../../style/MediaPxWidths";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+
+import { ChangeModel } from "./ChangeModel";
+import { ChangesListItem } from "./ChangesListItem";
 
 type State = {
     changeFeed: ChangeFeed;

@@ -1,4 +1,5 @@
 import { injectable } from "inversify";
+
 import { ChangeFeed } from "./ChangeFeed";
 import { Article } from "./Article";
 

@@ -1,12 +1,14 @@
 import React, { Component, ReactElement, ReactNode } from 'react';
 import { View, ViewStyle, StyleSheet, TextStyle, FlatList } from 'react-native';
 import { ListItem, Text } from 'react-native-elements';
-
-import { Accordian } from './Accordion';
-import { ChangeModel } from '../models/ChangeModel';
-import { Article } from '../services/Article';
-import { IChangeFeedService } from '../services/ChangeFeedService';
 import { Container } from 'inversify';
+
+import { IChangeFeedService } from '../../services/ChangeFeedService';
+import { Article } from '../../services/Article';
+import { Accordian } from '../../components/Accordion';
+
+import { ChangeModel } from './ChangeModel';
+
 
 type Props = {
     model: ChangeModel,

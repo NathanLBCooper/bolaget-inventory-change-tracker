@@ -1,7 +1,9 @@
 import { Dayjs } from "dayjs";
-import { ChangeFeedItem } from "../services/ChangeFeedItem";
-import { ChangeCollection } from "../services/ChangeCollection";
-import { Change } from "../services/Change";
+
+import { ChangeFeedItem } from "../../services/ChangeFeedItem";
+import { ChangeCollection } from "../../services/ChangeCollection";
+
+import { Change } from "../../services/Change";
 
 export class ChangeModel {
     public static Make(item: ChangeFeedItem, changeCollection: ChangeCollection, change: Change): ChangeModel {
