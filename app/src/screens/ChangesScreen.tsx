@@ -216,7 +216,7 @@ function toModel(feed: ChangeFeed): ChangeModel[] {
         }
     }
 
-    return models;
+    return models.slice(0, 100);
 }
 
 function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionListData<any>[] {
