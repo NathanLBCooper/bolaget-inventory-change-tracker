@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component, ReactNode } from "react";
 import { Text, View, StyleSheet } from 'react-native';
 
 const styles: any = StyleSheet.create({
@@ -60,10 +60,10 @@ const hexagonStyles: any = StyleSheet.create({
   }
 });
 
-export class SplashScreen extends React.Component<{
+export class SplashScreen extends Component<{
   navigation: any;
 }> {
-  public render(): React.ReactNode {
+  public render(): ReactNode {
     return (<View style={styles.container}>
       <View style={hexagonStyles.hexagon}>
         <View style={hexagonStyles.hexagonInner}>

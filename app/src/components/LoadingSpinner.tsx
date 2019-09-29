@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Component, ReactNode } from "react";
 import { ActivityIndicator, View } from "react-native";
 
 type State = {
     display: boolean;
 };
 
-export class LoadingSpinner extends React.Component {
+export class LoadingSpinner extends Component {
     public state: State = {
         display: false
     };
@@ -20,7 +20,7 @@ export class LoadingSpinner extends React.Component {
         }, 1000);
     }
 
-    public render(): React.ReactNode {
+    public render(): ReactNode {
         const {display} = this.state;
 
         return display ? <ActivityIndicator size={100}/> : <View/>;

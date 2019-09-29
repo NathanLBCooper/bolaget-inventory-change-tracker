@@ -1,5 +1,5 @@
 
-import React, { Component, ReactElement } from 'react';
+import React, { Component, ReactElement, ReactNode } from 'react';
 import { View, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
 import { Icon } from 'react-native-elements';
 
@@ -31,12 +31,12 @@ const styles: {
 };
 
 type Props = {
-    summary: React.ReactElement;
-    detail: (React.ReactElement) | (() => React.ReactElement) | (() => Promise<React.ReactElement>);
+    summary: ReactElement;
+    detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>);
 };
 
 type State = {
-    detail: React.ReactElement;
+    detail: ReactElement;
     detailEvaluated: boolean;
     expanded: boolean;
 };
@@ -50,19 +50,19 @@ export class Accordian extends Component<Props> {
 
     constructor(props:
         {
-            summary: React.ReactElement,
-            detail: (React.ReactElement) | (() => React.ReactElement) | (() => Promise<React.ReactElement>)
+            summary: ReactElement,
+            detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>)
         }
     ) {
         super(props);
 
         if (props.detail["call"] == null) {
             this.state.detailEvaluated = true;
-            this.state.detail = this.props.detail as React.ReactElement;
+            this.state.detail = this.props.detail as ReactElement;
         }
     }
 
-    public render(): React.ReactNode {
+    public render(): ReactNode {
         const { summary } = this.props;
         const { detail } = this.state;
 
@@ -83,8 +83,8 @@ export class Accordian extends Component<Props> {
 
     public toggleExpand = () => {
         const resolveLazyDetail: ((state: State) => Promise<ReactElement>) = async (state) => {
-            const invoked: React.ReactElement | Promise<React.ReactElement> =
-                (this.props.detail as (() => React.ReactElement | Promise<React.ReactElement>))();
+            const invoked: ReactElement | Promise<ReactElement> =
+                (this.props.detail as (() => ReactElement | Promise<ReactElement>))();
             return Promise.resolve(invoked);
         };
 
