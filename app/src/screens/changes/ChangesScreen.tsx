@@ -12,6 +12,7 @@ import { LoadingSpinner } from "../../components/LoadingSpinner";
 
 import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
+import { ChangesListFilter } from "./ChangesListFilter";
 
 type State = {
     changeFeed: ChangeFeed;
@@ -84,6 +85,7 @@ export class ChangesScreen extends Component {
         if (!isLoading) {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
+                    ListHeaderComponent={<ChangesListFilter/>}
                     renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} />}
                     renderSectionHeader={({ section }) => {
 
