@@ -31,20 +31,29 @@ const styles: {
 };
 
 type Props = {
+    /** The part of this Component which is always shown */
     summary: ReactElement;
+    /** The initially hidden part of this Component. Can be passed as a value, as a function or as asynchronous function.
+     * The latter two will be evaluated only as the component is expanded
+     */
     detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>);
+    /**
+     * A marker property for triggering a re-render. Not neccesary when detail is changed.
+     * But when using a invokable (lazy) detail, you may want this component to call the same function again because you expect different
+     * results.
+     */
     rerenderOnData?: {};
 };
 
 type State = {
-    detail: ReactElement;
+    resolvedDetail: ReactElement;
     detailEvaluated: boolean;
     expanded: boolean;
 };
 
-export class Accordian extends Component<Props> {
+export class Accordian extends Component<Props, State> {
     public state: State = {
-        detail: undefined,
+        resolvedDetail: undefined,
         detailEvaluated: false,
         expanded: false
     };
@@ -60,13 +69,13 @@ export class Accordian extends Component<Props> {
 
         if (props.detail["call"] == null) {
             this.state.detailEvaluated = true;
-            this.state.detail = this.props.detail as ReactElement;
+            this.state.resolvedDetail = this.props.detail as ReactElement;
         }
     }
 
     public render(): ReactNode {
         const { summary } = this.props;
-        const { detail } = this.state;
+        const { resolvedDetail } = this.state;
 
         return <View>
             <TouchableOpacity style={styles.summaryRow} onPress={this.toggleExpand}>
@@ -77,7 +86,7 @@ export class Accordian extends Component<Props> {
             {
                 this.state.expanded &&
                 <View style={styles.child}>
-                    {detail}
+                    {resolvedDetail}
                 </View>
             }
         </View>;
@@ -94,7 +103,7 @@ export class Accordian extends Component<Props> {
                 this.ensureResolved(true);
             } else {
                 this.state.detailEvaluated = false;
-                this.state.detail = undefined;
+                this.state.resolvedDetail = undefined;
             }
         }
     }
@@ -105,13 +114,13 @@ export class Accordian extends Component<Props> {
         }
 
         if (this.props.detail["call"] == null) {
-            this.setState({ detailEvaluated: true, detail: this.props.detail as ReactElement });
+            this.setState({ detailEvaluated: true, resolvedDetail: this.props.detail as ReactElement });
         } else {
             const invoked: ReactElement | Promise<ReactElement> =
                 (this.props.detail as (() => ReactElement | Promise<ReactElement>))();
             Promise.resolve(invoked).then(element => {
                 this.setState({
-                    detailEvaluated: true, detail: element
+                    detailEvaluated: true, resolvedDetail: element
                 });
             });
         }
