@@ -51,7 +51,7 @@ type State = {
     expanded: boolean;
 };
 
-export class Accordian extends Component<Props, State> {
+export class CollapsingPanel extends Component<Props, State> {
     public state: State = {
         resolvedDetail: undefined,
         detailEvaluated: false,

@@ -5,7 +5,7 @@ import { Container } from 'inversify';
 
 import { IChangeFeedService } from '../../services/ChangeFeedService';
 import { Article } from '../../services/Article';
-import { Accordian } from '../../components/Accordion';
+import { CollapsingPanel } from '../../components/CollapsingPanel';
 
 import { ChangeModel } from './ChangeModel';
 
@@ -40,7 +40,7 @@ export class ChangesListItem extends Component<Props> {
             }
         };
 
-        return <View style={styles.feedItem}><Accordian summary={feedItemTitle} detail={feedItemDetail} /></View>;
+        return <View style={styles.feedItem}><CollapsingPanel summary={feedItemTitle} detail={feedItemDetail} /></View>;
     }
 
     private renderFeedItemTitle(): ReactElement {

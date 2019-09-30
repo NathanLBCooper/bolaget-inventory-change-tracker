@@ -2,7 +2,7 @@ import React, { Component, ReactNode, ReactElement } from 'react';
 import { View, TextStyle, FlatList, ViewStyle } from 'react-native';
 import { Text, CheckBox } from 'react-native-elements';
 
-import { Accordian } from '../../components/Accordion';
+import { CollapsingPanel } from '../../components/CollapsingPanel';
 
 const styles: { container: TextStyle, title: TextStyle } = {
     container: {
@@ -65,7 +65,7 @@ export class ChangesListFilter extends Component<Props> {
 
     public render(): ReactNode {
         return <View style={styles.container}>
-            {<Accordian
+            {<CollapsingPanel
                 summary={<Text style={styles.title}>Filter results</Text>}
                 detail={this.renderCheckboxes()}/>}
         </View>;
