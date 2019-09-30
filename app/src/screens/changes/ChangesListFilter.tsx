@@ -18,6 +18,20 @@ const styles: { container: TextStyle, title: TextStyle } = {
     }
 };
 
+export type Pair = {
+    key: string,
+    checked: boolean
+};
+
+type Props = {
+    pairs: Pair[],
+    onPress: (pairs: Pair[], updated: Pair) => void
+};
+
+type State = {
+    pairs: Pair[]
+};
+
 const checkBoxStyles: { container: ViewStyle, text: TextStyle } = {
     container: {
         paddingTop: 5,
@@ -36,35 +50,48 @@ const checkBoxStyles: { container: ViewStyle, text: TextStyle } = {
     }
 };
 
-export class ChangesListFilter extends Component {
-    constructor(props: {}) {
+export class ChangesListFilter extends Component<Props> {
+    public state: State = {
+        pairs: []
+    };
+
+    constructor(props: Props) {
         super(props);
 
         this.renderCheckboxes = this.renderCheckboxes.bind(this);
+
+        this.state.pairs = props.pairs;
     }
 
     public render(): ReactNode {
         return <View style={styles.container}>
-            <Accordian
+            {<Accordian
                 summary={<Text style={styles.title}>Filter results</Text>}
-                detail={this.renderCheckboxes} />
+                detail={this.renderCheckboxes()}/>}
         </View>;
     }
 
     private renderCheckboxes(): ReactElement {
+        const { pairs } = this.state;
+
         return <FlatList
-            data={[
-                { key: "Alcohol", checked: false },
-                { key: "Vintage", checked: false },
-                { key: "Price", checked: false },
-                { key: "These", checked: false },
-                { key: "Aren't", checked: false },
-                { key: "Implemented", checked: false },
-                { key: "Yet", checked: false },
-                { key: "Sorry", checked: false }
-            ]}
-            renderItem={({ item }) =>
-                <CheckBox containerStyle={checkBoxStyles.container} textStyle={checkBoxStyles.text} title={item.key} checked={item.checked}
-                />} numColumns={4} />;
+            data={pairs}
+            renderItem={({ item }) => {
+                return <CheckBox containerStyle={checkBoxStyles.container} textStyle={checkBoxStyles.text} title={item.key}
+                    checked={item.checked} onPress={() => this.onPress(item)}
+                />;
+            }} numColumns={4} extraData={this.state}/>;
+    }
+
+    private onPress(pressedPair: Pair): void {
+        const updatedPairs: Pair[] = this.state.pairs.map(p => (
+            { key: p.key, checked: p.key === pressedPair.key ? !p.checked : p.checked }
+        ));
+
+        this.setState({
+            pairs: updatedPairs
+        });
+
+        this.props.onPress(updatedPairs, { key: pressedPair.key, checked: !pressedPair.checked });
     }
 }

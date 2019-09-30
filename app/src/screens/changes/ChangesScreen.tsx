@@ -1,4 +1,4 @@
-import React, { Component, ReactNode }  from "react";
+import React, { Component, ReactNode } from "react";
 import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle, RefreshControl } from "react-native";
 import { Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
@@ -12,7 +12,7 @@ import { LoadingSpinner } from "../../components/LoadingSpinner";
 
 import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
-import { ChangesListFilter } from "./ChangesListFilter";
+import { ChangesListFilter, Pair } from "./ChangesListFilter";
 
 type State = {
     changeFeed: ChangeFeed;
@@ -82,10 +82,26 @@ export class ChangesScreen extends Component {
             },
         };
 
+        // todo
+        const filterOptions: Pair[] = [
+            { key: "Alcohol", checked: false },
+            { key: "Vintage", checked: false },
+            { key: "Price", checked: false },
+            { key: "These", checked: false },
+            { key: "Aren't", checked: false },
+            { key: "Implemented", checked: false },
+            { key: "Yet", checked: false },
+            { key: "Sorry", checked: false }
+        ];
+
         if (!isLoading) {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
-                    ListHeaderComponent={<ChangesListFilter/>}
+                    ListHeaderComponent={
+                        <ChangesListFilter pairs={filterOptions} onPress={
+                            (pairs, updatedPair) => { console.log("updated!"); }
+                        } />
+                    }
                     renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} />}
                     renderSectionHeader={({ section }) => {
 

@@ -33,6 +33,7 @@ const styles: {
 type Props = {
     summary: ReactElement;
     detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>);
+    rerenderOnData?: {};
 };
 
 type State = {
@@ -51,7 +52,8 @@ export class Accordian extends Component<Props> {
     constructor(props:
         {
             summary: ReactElement,
-            detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>)
+            detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>),
+            rerenderOnData?: {}
         }
     ) {
         super(props);
@@ -81,22 +83,46 @@ export class Accordian extends Component<Props> {
         </View>;
     }
 
-    public toggleExpand = () => {
-        const resolveLazyDetail: ((state: State) => Promise<ReactElement>) = async (state) => {
+    public componentDidUpdate(prevProps: Props): void {
+        if (!this.state.detailEvaluated) {
+            return;
+        }
+
+        if (prevProps.detail !== this.props.detail ||
+            prevProps.rerenderOnData !== this.props.rerenderOnData) {
+            if (this.state.expanded) {
+                this.ensureResolved(true);
+            } else {
+                this.state.detailEvaluated = false;
+                this.state.detail = undefined;
+            }
+        }
+    }
+
+    public ensureResolved(force: boolean = false): void {
+        if (!force && this.state.detailEvaluated) {
+            return;
+        }
+
+        if (this.props.detail["call"] == null) {
+            this.setState({ detailEvaluated: true, detail: this.props.detail as ReactElement });
+        } else {
             const invoked: ReactElement | Promise<ReactElement> =
                 (this.props.detail as (() => ReactElement | Promise<ReactElement>))();
-            return Promise.resolve(invoked);
-        };
-
-        const expanding: boolean = !this.state.expanded;
-        this.setState({ expanded: expanding });
-
-        if (expanding && !this.state.detailEvaluated) {
-            resolveLazyDetail(this.state).then(element => {
+            Promise.resolve(invoked).then(element => {
                 this.setState({
                     detailEvaluated: true, detail: element
                 });
             });
+        }
+    }
+
+    public toggleExpand = () => {
+        const expanding: boolean = !this.state.expanded;
+        this.setState({ expanded: expanding });
+
+        if (expanding) {
+            this.ensureResolved();
         }
     }
 }
