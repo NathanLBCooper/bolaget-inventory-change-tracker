@@ -12,31 +12,40 @@ import { LoadingSpinner } from "../../components/LoadingSpinner";
 
 import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
-import { ChangesListFilter, Pair } from "./ChangesListFilter";
+import { ChangesListFilter, Item } from "./ChangesListFilter";
 
 type State = {
     changeFeed: ChangeFeed;
+    filterOptions: Item<FilterableType>[];
     isLoading: boolean;
-    width: number,
-    refreshing: boolean
+    width: number;
+    refreshing: boolean;
 };
 
-export class ChangesScreen extends Component<{},State> {
+export class ChangesScreen extends Component<{}, State> {
     public state: State = {
         changeFeed: undefined,
+        filterOptions: [
+            { key: FilterableType.alcohol, text: "Alcohol", checked: false },
+            { key: FilterableType.vintage, text: "Vintage", checked: false },
+            { key: FilterableType.price, text: "Price", checked: false },
+            { key: FilterableType.type, text: "Type", checked: false }
+        ],
         isLoading: true,
         width: undefined,
         refreshing: false
     };
 
-    private readonly changeFeedService: IChangeFeedService;
+    private readonly changeFeedService: FilterableChangeFeedService;
     private readonly clock: IClock;
 
     constructor(props: {}) {
         super(props);
 
+        this.updateFilterOptions = this.updateFilterOptions.bind(this);
+
         const serviceLocator: Container = global.serviceLocator;
-        this.changeFeedService = serviceLocator.get("IChangeFeedService");
+        this.changeFeedService = new FilterableChangeFeedService(serviceLocator.get("IChangeFeedService"));
         this.clock = serviceLocator.get("IClock");
 
         const { width } = Dimensions.get("window");
@@ -45,6 +54,12 @@ export class ChangesScreen extends Component<{},State> {
     }
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
+
+    public async componentDidUpdate(_: {}, prevState: State): Promise<void> {
+        if (this.state.filterOptions !== prevState.filterOptions) {
+            await this.loadChangeFeed();
+        }
+    }
 
     public render(): ReactNode {
         const { changeFeed, isLoading, width, refreshing } = this.state;
@@ -82,24 +97,12 @@ export class ChangesScreen extends Component<{},State> {
             },
         };
 
-        // todo
-        const filterOptions: Pair[] = [
-            { key: "Alcohol", checked: false },
-            { key: "Vintage", checked: false },
-            { key: "Price", checked: false },
-            { key: "These", checked: false },
-            { key: "Aren't", checked: false },
-            { key: "Implemented", checked: false },
-            { key: "Yet", checked: false },
-            { key: "Sorry", checked: false }
-        ];
-
         if (!isLoading) {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
                     ListHeaderComponent={
-                        <ChangesListFilter pairs={filterOptions} onPress={
-                            (pairs, updatedPair) => { console.log("updated!"); }
+                        <ChangesListFilter<FilterableType> items={this.state.filterOptions} onPress={
+                            (items, updated) => { this.updateFilterOptions(updated); }
                         } />
                     }
                     renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} />}
@@ -124,11 +127,20 @@ export class ChangesScreen extends Component<{},State> {
 
     private async loadChangeFeed(): Promise<void> {
         try {
-            const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
+            const changeFeed: ChangeFeed =
+                await this.changeFeedService.getChangeFeed(this.state.filterOptions.filter(o => o.checked).map(o => o.key));
+
             this.setState({ changeFeed, isLoading: false });
         } catch (error) {
             console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
         }
+    }
+
+    private updateFilterOptions(updated: Item<FilterableType>): void {
+        const filterOptions: Item<FilterableType>[] =
+            this.state.filterOptions.map(o => ({ key: o.key, text: o.text, checked: o.key === updated.key ? updated.checked : o.checked }));
+
+        this.setState({ filterOptions });
     }
 }
 
@@ -181,4 +193,61 @@ function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionL
         { data: lastThirtyDays, key: "Last 30 Days" },
         { data: older, key: "Older" }
     ]);
+}
+
+
+enum FilterableType {
+    alcohol = "alcohol",
+    vintage = "vintage",
+    price = "price",
+    type = "type",
+    packaging = "packaging",
+    producer = "producer"
+}
+
+class FilterableChangeFeedService {
+    private readonly changeFeedService: IChangeFeedService;
+    private changeFeeds: Map<FilterableType | undefined, ChangeFeed> = new Map();
+
+    public constructor(changeFeedService: IChangeFeedService) {
+        this.changeFeedService = changeFeedService;
+    }
+
+    public async getChangeFeed(types: FilterableType[]): Promise<ChangeFeed> {
+        if (types.length === 0) {
+            return this.fetchChangeFeeds(undefined);
+        }
+
+        const feeds: ChangeFeed[] = [];
+        for (const type of types) {
+            feeds.push(await this.fetchChangeFeeds(type));
+        }
+
+        return this.flattenFeed(feeds);
+    }
+
+    private async fetchChangeFeeds(type: FilterableType | undefined): Promise<ChangeFeed> {
+        const feed: ChangeFeed = this.changeFeeds.get(type);
+        if (feed != null) {
+            return feed;
+        }
+
+        if (type == null) {
+            // todo it's a bit messed up how much data we pull down, most of it twice
+            return this.changeFeedService.getChangeFeed();
+        }
+
+        const fetched: ChangeFeed = await this.changeFeedService.getFilteredChangeFeed(type.toString());
+        // because even the filtered call will show unrelated changes on an object that hits the filter
+        for (const feedData of fetched.data) {
+            feedData.changes.changes = feedData.changes.changes.filter(c => c.name.toUpperCase() === type.toString().toUpperCase());
+        }
+
+        return fetched;
+    }
+
+    private flattenFeed(feeds: ChangeFeed[]): ChangeFeed {
+        // This doesn't re-aggrigate. Which is kind of wierd
+        return new ChangeFeed(feeds[0].timestamp, [].concat.apply([], feeds.map(f => f.data)));
+    }
 }

@@ -18,18 +18,19 @@ const styles: { container: TextStyle, title: TextStyle } = {
     }
 };
 
-export type Pair = {
-    key: string,
+export type Item<T> = {
+    key: T,
+    text: string,
     checked: boolean
 };
 
-type Props = {
-    pairs: Pair[],
-    onPress: (pairs: Pair[], updated: Pair) => void
+type Props<T> = {
+    items: Item<T>[],
+    onPress: (items: Item<T>[], updated: Item<T>) => void
 };
 
-type State = {
-    pairs: Pair[]
+type State<T> = {
+    items: Item<T>[]
 };
 
 const checkBoxStyles: { container: ViewStyle, text: TextStyle } = {
@@ -50,17 +51,17 @@ const checkBoxStyles: { container: ViewStyle, text: TextStyle } = {
     }
 };
 
-export class ChangesListFilter extends Component<Props, State> {
-    public state: State = {
-        pairs: []
+export class ChangesListFilter<T> extends Component<Props<T>, State<T>> {
+    public state: State<T> = {
+        items: []
     };
 
-    constructor(props: Props) {
+    constructor(props: Props<T>) {
         super(props);
 
         this.renderCheckboxes = this.renderCheckboxes.bind(this);
 
-        this.state.pairs = props.pairs;
+        this.state.items = props.items;
     }
 
     public render(): ReactNode {
@@ -72,26 +73,26 @@ export class ChangesListFilter extends Component<Props, State> {
     }
 
     private renderCheckboxes(): ReactElement {
-        const { pairs } = this.state;
+        const { items } = this.state;
 
         return <FlatList
-            data={pairs}
+            data={items}
             renderItem={({ item }) => {
-                return <CheckBox containerStyle={checkBoxStyles.container} textStyle={checkBoxStyles.text} title={item.key}
+                return <CheckBox containerStyle={checkBoxStyles.container} textStyle={checkBoxStyles.text} title={item.text}
                     checked={item.checked} onPress={() => this.onPress(item)}
                 />;
-            }} numColumns={4} extraData={this.state}/>;
+            }} numColumns={3} extraData={this.state}/>;
     }
 
-    private onPress(pressedPair: Pair): void {
-        const updatedPairs: Pair[] = this.state.pairs.map(p => (
-            { key: p.key, checked: p.key === pressedPair.key ? !p.checked : p.checked }
+    private onPress(pressedItem: Item<T>): void {
+        const updatedItems: Item<T>[] = this.state.items.map(p => (
+            { key: p.key, text: p.text, checked: p.key === pressedItem.key ? !p.checked : p.checked }
         ));
 
         this.setState({
-            pairs: updatedPairs
+            items: updatedItems
         });
 
-        this.props.onPress(updatedPairs, { key: pressedPair.key, checked: !pressedPair.checked });
+        this.props.onPress(updatedItems, { key: pressedItem.key, text: pressedItem.text, checked: !pressedItem.checked });
     }
 }
