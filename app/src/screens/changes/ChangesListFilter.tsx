@@ -50,7 +50,7 @@ const checkBoxStyles: { container: ViewStyle, text: TextStyle } = {
     }
 };
 
-export class ChangesListFilter extends Component<Props> {
+export class ChangesListFilter extends Component<Props, State> {
     public state: State = {
         pairs: []
     };

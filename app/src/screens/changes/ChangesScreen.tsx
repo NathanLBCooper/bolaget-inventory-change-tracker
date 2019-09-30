@@ -21,7 +21,7 @@ type State = {
     refreshing: boolean
 };
 
-export class ChangesScreen extends Component {
+export class ChangesScreen extends Component<{},State> {
     public state: State = {
         changeFeed: undefined,
         isLoading: true,
@@ -110,7 +110,7 @@ export class ChangesScreen extends Component {
                         >{section.key}</Text>;
                     }}
                     renderSectionFooter={() => <Divider />}
-                    sections={toAgeInDaysSections(toModel(changeFeed), this.clock)}
+                    sections={toAgeInDaysSections(toModel(changeFeed).slice(0, 100), this.clock)}
                     keyExtractor={(item, index) => index.toString()}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
                 />
@@ -142,7 +142,7 @@ function toModel(feed: ChangeFeed): ChangeModel[] {
         }
     }
 
-    return models.slice(0, 100);
+    return models;
 }
 
 function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionListData<any>[] {

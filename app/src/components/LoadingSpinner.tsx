@@ -5,7 +5,7 @@ type State = {
     display: boolean;
 };
 
-export class LoadingSpinner extends Component {
+export class LoadingSpinner extends Component<{}, State> {
     public state: State = {
         display: false
     };
