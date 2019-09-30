@@ -108,7 +108,16 @@ export class Accordian extends Component<Props, State> {
         }
     }
 
-    public ensureResolved(force: boolean = false): void {
+    private toggleExpand = () => {
+        const expanding: boolean = !this.state.expanded;
+        this.setState({ expanded: expanding });
+
+        if (expanding) {
+            this.ensureResolved();
+        }
+    }
+
+    private ensureResolved(force: boolean = false): void {
         if (!force && this.state.detailEvaluated) {
             return;
         }
@@ -123,15 +132,6 @@ export class Accordian extends Component<Props, State> {
                     detailEvaluated: true, resolvedDetail: element
                 });
             });
-        }
-    }
-
-    public toggleExpand = () => {
-        const expanding: boolean = !this.state.expanded;
-        this.setState({ expanded: expanding });
-
-        if (expanding) {
-            this.ensureResolved();
         }
     }
 }
