@@ -36,7 +36,7 @@ export class ChangesScreen extends Component<{}, State> {
         refreshing: false
     };
 
-    private readonly changeFeedService: FilterableChangeFeedService;
+    private readonly changeFeedService: IChangeFeedService;
     private readonly clock: IClock;
 
     constructor(props: {}) {
@@ -45,7 +45,7 @@ export class ChangesScreen extends Component<{}, State> {
         this.updateFilterOptions = this.updateFilterOptions.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.changeFeedService = new FilterableChangeFeedService(serviceLocator.get("IChangeFeedService"));
+        this.changeFeedService = serviceLocator.get("IChangeFeedService");
         this.clock = serviceLocator.get("IClock");
 
         const { width } = Dimensions.get("window");
@@ -55,14 +55,8 @@ export class ChangesScreen extends Component<{}, State> {
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
-    public async componentDidUpdate(_: {}, prevState: State): Promise<void> {
-        if (this.state.filterOptions !== prevState.filterOptions) {
-            await this.loadChangeFeed();
-        }
-    }
-
     public render(): ReactNode {
-        const { changeFeed, isLoading, width, refreshing } = this.state;
+        const { changeFeed, isLoading, width, refreshing, filterOptions } = this.state;
 
         const responsiveStyles: any = StyleSheet.create({
             list: {
@@ -101,7 +95,7 @@ export class ChangesScreen extends Component<{}, State> {
             return <View style={styles.container}>
                 <SectionList style={responsiveStyles.list}
                     ListHeaderComponent={
-                        <ChangesListFilter<FilterableType> items={this.state.filterOptions} onPress={
+                        <ChangesListFilter<FilterableType> items={filterOptions} onPress={
                             (items, updated) => { this.updateFilterOptions(updated); }
                         } />
                     }
@@ -113,7 +107,7 @@ export class ChangesScreen extends Component<{}, State> {
                         >{section.key}</Text>;
                     }}
                     renderSectionFooter={() => <Divider />}
-                    sections={toAgeInDaysSections(toModel(changeFeed).slice(0, 100), this.clock)}
+                    sections={toAgeInDaysSections(filterByType(toModel(changeFeed), filterOptions).slice(0, 100), this.clock)}
                     keyExtractor={(item, index) => index.toString()}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
                 />
@@ -127,8 +121,7 @@ export class ChangesScreen extends Component<{}, State> {
 
     private async loadChangeFeed(): Promise<void> {
         try {
-            const changeFeed: ChangeFeed =
-                await this.changeFeedService.getChangeFeed(this.state.filterOptions.filter(o => o.checked).map(o => o.key));
+            const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
 
             this.setState({ changeFeed, isLoading: false });
         } catch (error) {
@@ -195,6 +188,14 @@ function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionL
     ]);
 }
 
+function filterByType(feedModels: ChangeModel[], filterOptions: Item<FilterableType>[]): ChangeModel[] {
+    const selected: string[] = filterOptions.filter(o => o.checked).map(o => o.key.toUpperCase());
+    if (selected.length === 0) {
+        return feedModels;
+    }
+
+    return feedModels.filter(fm => selected.includes(fm.changeName.toUpperCase()));
+}
 
 enum FilterableType {
     alcohol = "alcohol",
@@ -203,51 +204,4 @@ enum FilterableType {
     type = "type",
     packaging = "packaging",
     producer = "producer"
-}
-
-class FilterableChangeFeedService {
-    private readonly changeFeedService: IChangeFeedService;
-    private changeFeeds: Map<FilterableType | undefined, ChangeFeed> = new Map();
-
-    public constructor(changeFeedService: IChangeFeedService) {
-        this.changeFeedService = changeFeedService;
-    }
-
-    public async getChangeFeed(types: FilterableType[]): Promise<ChangeFeed> {
-        if (types.length === 0) {
-            return this.fetchChangeFeeds(undefined);
-        }
-
-        const feeds: ChangeFeed[] = [];
-        for (const type of types) {
-            feeds.push(await this.fetchChangeFeeds(type));
-        }
-
-        return this.flattenFeed(feeds);
-    }
-
-    private async fetchChangeFeeds(type: FilterableType | undefined): Promise<ChangeFeed> {
-        const feed: ChangeFeed = this.changeFeeds.get(type);
-        if (feed != null) {
-            return feed;
-        }
-
-        if (type == null) {
-            // todo it's a bit messed up how much data we pull down, most of it twice
-            return this.changeFeedService.getChangeFeed();
-        }
-
-        const fetched: ChangeFeed = await this.changeFeedService.getFilteredChangeFeed(type.toString());
-        // because even the filtered call will show unrelated changes on an object that hits the filter
-        for (const feedData of fetched.data) {
-            feedData.changes.changes = feedData.changes.changes.filter(c => c.name.toUpperCase() === type.toString().toUpperCase());
-        }
-
-        return fetched;
-    }
-
-    private flattenFeed(feeds: ChangeFeed[]): ChangeFeed {
-        // This doesn't re-aggrigate. Which is kind of wierd
-        return new ChangeFeed(feeds[0].timestamp, [].concat.apply([], feeds.map(f => f.data)));
-    }
 }
