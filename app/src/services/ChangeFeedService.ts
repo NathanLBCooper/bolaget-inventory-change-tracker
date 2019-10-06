@@ -1,9 +1,11 @@
 import { injectable } from "inversify";
+
 import { ChangeFeed } from "./ChangeFeed";
 import { Article } from "./Article";
 
 export interface IChangeFeedService {
     getChangeFeed(): Promise<ChangeFeed>;
+    getFilteredChangeFeed(type: string): Promise<ChangeFeed>;
     getArticle(id: number): Promise<Article>;
 }
 
@@ -13,6 +15,12 @@ export class ChangeFeedService implements IChangeFeedService {
 
     public async getChangeFeed(): Promise<ChangeFeed> {
         const response: Response = await fetch(this.baseUri + "/change/recent/");
+        const responseJson: any = await response.json();
+        return ChangeFeed.Make(responseJson);
+    }
+
+    public async getFilteredChangeFeed(type: string): Promise<ChangeFeed> {
+        const response: Response = await fetch(this.baseUri + "/change/recent/" + type);
         const responseJson: any = await response.json();
         return ChangeFeed.Make(responseJson);
     }

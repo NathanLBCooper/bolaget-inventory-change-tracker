@@ -1,6 +1,7 @@
 import * as dayJs from "dayjs";
-import { ChangeCollection } from "./ChangeCollection";
 export const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
+
+import { ChangeCollection } from "./ChangeCollection";
 
 export class Article {
     public static Make(dto: any): Article {

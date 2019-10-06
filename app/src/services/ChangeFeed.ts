@@ -1,6 +1,7 @@
 import * as dayJs from "dayjs";
-import { ChangeFeedItem } from "./ChangeFeedItem";
 export const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
+
+import { ChangeFeedItem } from "./ChangeFeedItem";
 
 export class ChangeFeed {
     public static Make(dto: any): ChangeFeed {
