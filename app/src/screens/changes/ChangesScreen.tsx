@@ -59,9 +59,9 @@ export class ChangesScreen extends Component<{}, State> {
         const { changeFeed, isLoading, width, refreshing, filterOptions } = this.state;
 
         const responsiveStyles: any = StyleSheet.create({
-            list: {
-                width: width > MediaPxWidths.TabletsInLandscape ? "80%" : undefined,
-                alignItems: width > MediaPxWidths.TabletsInLandscape ? "center" : undefined
+            container: {
+                marginRight: width > MediaPxWidths.TabletsInLandscape ? "calc((50%) * (2 / 3) )" : undefined,
+                marginLeft: width > MediaPxWidths.TabletsInLandscape ? "calc((50%) * (1 / 3))" : undefined
             }
         });
 
@@ -92,8 +92,8 @@ export class ChangesScreen extends Component<{}, State> {
         };
 
         if (!isLoading) {
-            return <View style={styles.container}>
-                <SectionList style={responsiveStyles.list}
+            return <View style={[styles.container, responsiveStyles.container]}>
+                <SectionList
                     ListHeaderComponent={
                         <ChangesListFilter<FilterableType> items={filterOptions} onPress={
                             (items, updated) => { this.updateFilterOptions(updated); }
