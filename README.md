@@ -51,7 +51,7 @@ npm run live
 
 ```sh
 cd app/
-gulp lint
+npm run lint
 ```
 
 ## Manual deploy ##
