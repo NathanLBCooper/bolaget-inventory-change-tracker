@@ -12,50 +12,67 @@ Show changes in price, vintage, producer, alcohol content, packaging etc
 
 ## Setup ##
 
-Update your node and npm versions from here https://nodejs.org/en/download/
+Update your node and npm versions from here [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
 
-### app ###
+## Install ##
 
-Install Expo CLI by running:
-    
-    npm install -g expo-cli
+```sh
+npm install -g expo-cli
 
-Go to the *\app* folder and install project dependencies by running:
+cd app/
+npm install
+cd ..
 
-    npm install
+cd fakebackend
+npm install
+cd ..
+```
 
-Then **run with**
+## Run ##
 
-    expo start
-    
-### fake-backend ###
-    
-To also run the fake backend go to the *\fakebackend* folder and dependencies by running:
+Open two command windows.
 
-    npm install
-    
-then **run that backend with**
+Run the app in the first:
 
-    npm run live
-    
-### manual web deploy (optional) ###
+```sh
+cd app/
+expo start
+```
 
-Install surge by running
-    
-    npm install -g surge
-    
-Go to the *\app* folder and build with
+You need a backend as well. By default (in *appsettings.json*) it will use a local express server.
+In the second window, run this:
 
-    expo build:web
-    
-Go to the *\app\web-build* and run
-
-    surge
-    
-then follow the instructions on the command line
+```sh
+cd fakebackend/
+npm run live
+```
 
 ## Lint ##
 
-    gulp lint
-    
-Don't push unless this returns zero errors
+```sh
+cd app/
+gulp lint
+```
+
+## Manual deploy ##
+
+The CI sever will deploy new versions to [http://bolaget.surge.sh](http://bolaget.surge.sh), but you can also deploy your fork to surge.
+
+
+**Install** :
+```sh
+npm install -g surge
+```
+
+**Deploy**:
+
+```sh
+npm install -g expo-cli
+
+cd app/
+expo build:web
+cd web-build/
+surge
+```
+
+then follow the instructions on the command line
