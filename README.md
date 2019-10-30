@@ -10,6 +10,14 @@ Show changes in price, vintage, producer, alcohol content, packaging etc
 
 ![Photo and Screenshots](https://i.imgur.com/F7IfRqJ.jpg)
 
+# Docker Setup
+
+```sh
+docker-compose up --build
+```
+
+# Non-docker setup
+
 ## Setup ##
 
 Update your node and npm versions from here [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
@@ -17,8 +25,6 @@ Update your node and npm versions from here [https://nodejs.org/en/download/](ht
 ## Install ##
 
 ```sh
-npm install -g expo-cli
-
 cd app/
 npm install
 cd ..
@@ -36,7 +42,7 @@ Run the app in the first:
 
 ```sh
 cd app/
-expo start
+npm run web
 ```
 
 You need a backend as well. By default (in *appsettings.json*) it will use a local express server.
@@ -47,14 +53,14 @@ cd fakebackend/
 npm run live
 ```
 
-## Lint ##
+# Lint #
 
 ```sh
 cd app/
 npm run lint
 ```
 
-## Manual deploy ##
+# Manual deploy #
 
 The CI sever will deploy new versions to [http://bolaget.surge.sh](http://bolaget.surge.sh), but you can also deploy your fork to surge.
 
@@ -67,10 +73,8 @@ npm install -g surge
 **Deploy**:
 
 ```sh
-npm install -g expo-cli
-
 cd app/
-expo build:web
+npm run build-web
 cd web-build/
 surge
 ```

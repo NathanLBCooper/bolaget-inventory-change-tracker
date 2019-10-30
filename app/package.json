@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "lint": "tslint 'src/**/*.{ts,tsx}' 'App.{ts,tsx}'"
+    "lint": "tslint 'src/**/*.{ts,tsx}' 'App.{ts,tsx}'",
+    "build-web": "expo build:web"
   },
   "dependencies": {
     "dayjs": "^1.8.16",
