@@ -20,17 +20,17 @@ docker-compose up --build
 
 ## Setup ##
 
-Update your node and npm versions from here [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+Update your node and npm versions from here [https://nodejs.org/en/download/](https://nodejs.org/en/download/), and get yarn here [https://yarnpkg.com/lang/en/docs/install/#windows-stable](https://yarnpkg.com/lang/en/docs/install/#windows-stable)
 
 ## Install ##
 
 ```sh
-cd app/
-npm install
+cd app
+yarn
 cd ..
 
 cd fakebackend
-npm install
+yarn
 cd ..
 ```
 
@@ -41,23 +41,23 @@ Open two command windows.
 Run the app in the first:
 
 ```sh
-cd app/
-npm run web
+cd app
+yarn run web
 ```
 
 You need a backend as well. By default (in *appsettings.json*) it will use a local express server.
 In the second window, run this:
 
 ```sh
-cd fakebackend/
-npm run live
+cd fakebackend
+yarn run live
 ```
 
 # Lint #
 
 ```sh
-cd app/
-npm run lint
+cd app
+yarn run lint
 ```
 
 # Manual deploy #
@@ -73,9 +73,10 @@ npm install -g surge
 **Deploy**:
 
 ```sh
-cd app/
-npm run build-web
-cd web-build/
+cd app
+yarn
+yarn run build-web
+cd web-build
 surge
 ```
 
