@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  fakebackend:
+    image: ${DOCKER_REGISTRY-}bolagetfrontendfakebackend
+    build:
+      context: ./fakebackend
+    ports:
+      - 3000:3000
+
+  app:
+    image: ${DOCKER_REGISTRY-}bolagetfrontendapp
+    build:
+      context: ./app
+    ports:
+      - 19000:19000
+      - 19001:19001
+      - 19006:19006

@@ -10,21 +10,27 @@ Show changes in price, vintage, producer, alcohol content, packaging etc
 
 ![Photo and Screenshots](https://i.imgur.com/F7IfRqJ.jpg)
 
+# Docker Setup
+
+```sh
+docker-compose up --build
+```
+
+# Non-docker setup
+
 ## Setup ##
 
-Update your node and npm versions from here [https://nodejs.org/en/download/](https://nodejs.org/en/download/)
+Update your node and npm versions from here [https://nodejs.org/en/download/](https://nodejs.org/en/download/), and get yarn here [https://yarnpkg.com/lang/en/docs/install/#windows-stable](https://yarnpkg.com/lang/en/docs/install/#windows-stable)
 
 ## Install ##
 
 ```sh
-npm install -g expo-cli
-
-cd app/
-npm install
+cd app
+yarn
 cd ..
 
 cd fakebackend
-npm install
+yarn
 cd ..
 ```
 
@@ -35,26 +41,26 @@ Open two command windows.
 Run the app in the first:
 
 ```sh
-cd app/
-expo start
+cd app
+yarn run web
 ```
 
 You need a backend as well. By default (in *appsettings.json*) it will use a local express server.
 In the second window, run this:
 
 ```sh
-cd fakebackend/
-npm run live
+cd fakebackend
+yarn run live
 ```
 
-## Lint ##
+# Lint #
 
 ```sh
-cd app/
-npm run lint
+cd app
+yarn run lint
 ```
 
-## Manual deploy ##
+# Manual deploy #
 
 The CI sever will deploy new versions to [http://bolaget.surge.sh](http://bolaget.surge.sh), but you can also deploy your fork to surge.
 
@@ -67,11 +73,10 @@ npm install -g surge
 **Deploy**:
 
 ```sh
-npm install -g expo-cli
-
-cd app/
-expo build:web
-cd web-build/
+cd app
+yarn
+yarn run build-web
+cd web-build
 surge
 ```
 
