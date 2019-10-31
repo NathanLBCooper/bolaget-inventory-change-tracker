@@ -14,7 +14,7 @@ if(Test-Path $expo_web_output_dir)
 Rename-Item -Path ".\app\appsettings.json" -NewName "appsettings.dev.json"
 Rename-Item -Path ".\app\appsettings.prod.json" -NewName "appsettings.json"
 
-Invoke-Expression -Command: "cd app; expo build:web --no-pwa; cd.."
+Invoke-Expression -Command: "cd app; yarn build-web; cd.."
 
 mkdir -path $build_dir
 Copy-Item -Path $expo_web_output -Destination $build_dir -Recurse

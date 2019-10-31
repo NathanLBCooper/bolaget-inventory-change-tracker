@@ -7,7 +7,6 @@ install:
   - npm cache clean --force
   - npm i npm@latest -g
   - ps: Install-Product node
-  - npm install -g expo-cli
   - npm install -g surge
   - cd app && npm install
 build_script:
