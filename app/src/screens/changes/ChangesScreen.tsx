@@ -76,7 +76,7 @@ export class ChangesScreen extends Component<{}, State> {
             },
             sectionHeader: {
                 paddingLeft: 10,
-                backgroundColor: "#4b9560",
+                backgroundColor: "mediumslateblue",
                 color: "white",
                 paddingTop: 12,
                 paddingBottom: 8
