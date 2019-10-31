@@ -3,6 +3,7 @@ environment:
   SURGE_LOGIN: login
   SURGE_TOKEN:
     secure: MeRBFAZ6WmwJTxGLcr2yYvgp6mpD+Cm36ikojfBgyepFAjAkfKWv5VbbeGMbDQOM
+  EXPO_DEBUG: true
 install:
   - npm cache clean --force
   - npm i npm@latest -g
