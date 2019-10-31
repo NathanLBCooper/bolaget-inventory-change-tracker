@@ -7,6 +7,10 @@ services:
       context: ./fakebackend
     ports:
       - 3000:3000
+      - 5858:5858
+    volumes:
+      - ./fakebackend:/workspace
+      - /workspace/node_modules
 
   app:
     image: ${DOCKER_REGISTRY-}bolagetfrontendapp
@@ -16,3 +20,9 @@ services:
       - 19000:19000
       - 19001:19001
       - 19006:19006
+      - 35729:35729
+    volumes:
+      - ./app:/workspace
+      - /workspace/node_modules
+      - /workspace/web-build
+

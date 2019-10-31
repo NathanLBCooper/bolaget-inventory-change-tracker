@@ -1,7 +1,9 @@
 FROM node:11-alpine
-RUN mkdir -p /workspace
-WORKDIR /workspace
-COPY . .
-RUN npm install
 EXPOSE 3000
-CMD ["npm", "run", "live"]
+EXPOSE 5858
+
+WORKDIR /workspace
+COPY package.json /workspace/package.json
+RUN yarn install --production=false
+
+CMD ["yarn","nodemon","app.js","0.0.0.0","5858","--legacy-watch"]
