@@ -11,6 +11,7 @@ services:
     volumes:
       - ./fakebackend:/workspace
       - /workspace/node_modules
+      - /workspace/web-build
 
   app:
     image: ${DOCKER_REGISTRY-}bolagetfrontendapp
@@ -25,5 +26,4 @@ services:
     volumes:
       - ./app:/workspace
       - /workspace/node_modules
-      - /workspace/web-build
 
