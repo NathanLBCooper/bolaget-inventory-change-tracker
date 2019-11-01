@@ -1,21 +1,15 @@
 version: 0.1.{build}
+image: Visual Studio 2017
+
 environment:
-  SURGE_LOGIN: login
   SURGE_TOKEN:
-    secure: MeRBFAZ6WmwJTxGLcr2yYvgp6mpD+Cm36ikojfBgyepFAjAkfKWv5VbbeGMbDQOM
-  EXPO_DEBUG: true
+    secure: 63B7vnTM8cXBQOIDUP9JZnBq4H6QCOkuiWX5IsPtpIshzIuK166eGMCtZPXs3+cj
 install:
-  - npm cache clean --force
-  - npm i npm@latest -g
-  - ps: Install-Product node
-  - npm install -g surge
-  - cd app && npm install
+  - docker version
 build_script:
-  - ps: .\build.ps1
-artifacts:
-  - path: .\build\**\*
+  - docker build -f Dockerfile-windows-deploy -t surgebuild .
 deploy_script:
-  - surge --project ./build --domain bolaget.surge.sh
+  - docker run -it surgebuild %SURGE_TOKEN%
 skip_commits:
   files:
     - '**/*.md'
