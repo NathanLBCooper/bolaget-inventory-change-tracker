@@ -1,6 +1,6 @@
-# bologat-frontend
+# bologat-inventory-change-tracker
 
-React Native app displaying changes to the System Bolgat inventory. The back-end (not in this repo) is built on top of the System Bolaget Open API.
+React Native app displaying changes to the System Bolgat inventory.
 
 Show changes in price, vintage, producer, alcohol content, packaging etc
 
