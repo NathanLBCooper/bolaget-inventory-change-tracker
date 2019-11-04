@@ -8,7 +8,7 @@ Show changes in price, vintage, producer, alcohol content, packaging etc
 |-------------|-------------------|
 | **Frontend**  |<a href="http://bolaget.surge.sh" target="_blank">bolaget.surge.sh</a>|
 
-![Photo and Screenshots](https://i.imgur.com/F7IfRqJ.jpg)
+![Photo and Screenshots](preview.jpg)
 
 # Docker Setup
 
