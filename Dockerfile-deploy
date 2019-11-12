@@ -2,7 +2,6 @@ FROM node:12
 
 ENV EXPO_DEBUG=true
 
-RUN  yarn global add surge
 WORKDIR /workspace
 
 COPY app/package.json /workspace/package.json
@@ -15,5 +14,3 @@ RUN rm appsettings.json
 RUN mv appsettings.prod.json appsettings.json
 
 RUN yarn build-web
-
-ENTRYPOINT  ["/bin/sh", "deployEntrypoint.sh"]

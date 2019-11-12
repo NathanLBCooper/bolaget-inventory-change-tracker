@@ -6,10 +6,14 @@ environment:
     secure: 63B7vnTM8cXBQOIDUP9JZnBq4H6QCOkuiWX5IsPtpIshzIuK166eGMCtZPXs3+cj
 install:
   - docker version
+  - npm install -g surge
 build_script:
-  - docker build -f Dockerfile-windows-deploy -t surgebuild .
+  - docker build -f Dockerfile-windows-deploy -t buildimage .
 deploy_script:
-  - docker run -it surgebuild %SURGE_TOKEN%
+  - docker create -it --name buildcontainer buildimage
+  - docker cp buildcontainer:/workspace/web-build ./
+  - docker rm -f buildcontainer
+  - surge --project ./web-build --domain bolaget.surge.sh --token %SURGE_TOKEN%
 skip_commits:
   files:
     - '**/*.md'

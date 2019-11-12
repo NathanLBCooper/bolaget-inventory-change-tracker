@@ -2,7 +2,6 @@ FROM stefanscherer/node-windows:10
 
 ENV EXPO_DEBUG=true
 
-RUN  yarn global add surge
 WORKDIR /workspace
 
 COPY app/package.json /workspace/package.json
@@ -15,5 +14,3 @@ RUN del appsettings.json
 RUN move appsettings.prod.json appsettings.json
 
 RUN yarn build-web
-
-ENTRYPOINT  ["/bin/sh", "deployEntrypoint.sh"]
