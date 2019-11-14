@@ -8,6 +8,8 @@ install:
   - docker version
   - npm install -g surge
 build_script:
+  - ps: Rename-Item -Path ".\app\appsettings.json" -NewName "appsettings.dev.json"
+  - ps: Rename-Item -Path ".\app\appsettings.prod.json" -NewName "appsettings.json"
   - docker build -f Dockerfile-windows-deploy -t buildimage .
 deploy_script:
   - docker create -it --name buildcontainer buildimage

@@ -10,7 +10,7 @@ RUN yarn install --production=false
 
 COPY /app .
 
-RUN del appsettings.json
-RUN move appsettings.prod.json appsettings.json
+# RUN del appsettings.json
+# RUN move appsettings.prod.json appsettings.json
 
 RUN yarn build-web
