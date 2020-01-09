@@ -4,15 +4,22 @@ image: Visual Studio 2017
 environment:
   SURGE_TOKEN:
     secure: 63B7vnTM8cXBQOIDUP9JZnBq4H6QCOkuiWX5IsPtpIshzIuK166eGMCtZPXs3+cj
+  DOCKER_USER:
+    secure: BXKX36HASWd1cZrXrjRidg==
+  DOCKER_PASS:
+    secure: OYO50+CVIAFx/l2PdliNGg==
 install:
   - docker version
   - npm install -g surge
 build_script:
   - ps: Rename-Item -Path ".\app\appsettings.json" -NewName "appsettings.dev.json"
   - ps: Rename-Item -Path ".\app\appsettings.prod.json" -NewName "appsettings.json"
-  - docker build -f Dockerfile-windows-deploy -t buildimage .
+  - docker login -u=%DOCKER_USER% -p=%DOCKER_PASS%
+  - docker pull nathanlbcooper/bologat-inventory-change-tracker-windows-deploy:latest || true
+  - docker build --cache-from nathanlbcooper/bologat-inventory-change-tracker-windows-deploy:latest -t nathanlbcooper/bologat-inventory-change-tracker-windows-deploy:latest -f Dockerfile-windows-deploy .
+  - docker push nathanlbcooper/bologat-inventory-change-tracker-windows-deploy:latest
 deploy_script:
-  - docker create -it --name buildcontainer buildimage
+  - docker create -it --name buildcontainer nathanlbcooper/bologat-inventory-change-tracker-windows-deploy:latest
   - docker cp buildcontainer:/workspace/web-build ./
   - docker rm -f buildcontainer
   - surge --project ./web-build --domain bolaget.surge.sh --token %SURGE_TOKEN%
