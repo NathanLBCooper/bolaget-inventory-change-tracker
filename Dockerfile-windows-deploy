@@ -10,6 +10,7 @@ RUN yarn install --production=false
 
 COPY /app .
 
+# these are run in the appveyor.yml
 # RUN del appsettings.json
 # RUN move appsettings.prod.json appsettings.json
 
