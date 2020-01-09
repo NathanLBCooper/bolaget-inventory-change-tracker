@@ -7,7 +7,7 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "lint": "tslint 'src/**/*.{ts,tsx}' 'App.{ts,tsx}'",
-    "build-web": "expo build:web"
+    "build-web": "expo build:web --no-pwa"
   },
   "dependencies": {
     "dayjs": "^1.8.16",

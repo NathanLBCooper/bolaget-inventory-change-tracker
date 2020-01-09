@@ -1,0 +1,16 @@
+FROM stefanscherer/node-windows:10
+
+ENV EXPO_DEBUG=true
+
+WORKDIR /workspace
+
+COPY app/package.json /workspace/package.json
+COPY app/yarn.lock /workspace/yarn.lock
+RUN yarn install --production=false
+
+COPY /app .
+
+# RUN del appsettings.json
+# RUN move appsettings.prod.json appsettings.json
+
+RUN yarn build-web
