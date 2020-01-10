@@ -17,7 +17,8 @@ import { ChangesListFilter, Item } from "./ChangesListFilter";
 type State = {
     changeFeed: ChangeFeed;
     filterOptions: Item<FilterableType>[];
-    isLoading: boolean;
+    hasLoaded: boolean;
+    hasError: boolean;
     width: number;
     refreshing: boolean;
 };
@@ -31,7 +32,8 @@ export class ChangesScreen extends Component<{}, State> {
             { key: FilterableType.price, text: "Price", checked: false },
             { key: FilterableType.type, text: "Type", checked: false }
         ],
-        isLoading: true,
+        hasLoaded: false,
+        hasError: false,
         width: undefined,
         refreshing: false
     };
@@ -56,7 +58,7 @@ export class ChangesScreen extends Component<{}, State> {
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): ReactNode {
-        const { changeFeed, isLoading, width, refreshing, filterOptions } = this.state;
+        const { changeFeed, hasLoaded, hasError, width, refreshing, filterOptions } = this.state;
 
         const responsiveStyles: any = StyleSheet.create({
             container: {
@@ -69,7 +71,9 @@ export class ChangesScreen extends Component<{}, State> {
             container: ViewStyle,
             sectionHeader: TextStyle,
             emptySectionHeader: TextStyle,
-            loadingContainer: ViewStyle
+            loadingContainer: ViewStyle,
+            errorContainer: ViewStyle,
+            errorMessage: TextStyle
         } = {
             container: {
                 flex: 1
@@ -89,9 +93,17 @@ export class ChangesScreen extends Component<{}, State> {
                 flex: 1,
                 justifyContent: "center"
             },
+            errorContainer: {
+                flex: 1
+            },
+            errorMessage: {
+                margin: "auto",
+                width: "50%",
+                textAlign: "center"
+            }
         };
 
-        if (!isLoading) {
+        if (hasLoaded) {
             return <View style={[styles.container, responsiveStyles.container]}>
                 <SectionList
                     ListHeaderComponent={
@@ -112,6 +124,10 @@ export class ChangesScreen extends Component<{}, State> {
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
                 />
             </View>;
+        } else if (hasError) {
+            return <View style={styles.errorContainer}>
+                <View style={styles.errorMessage}><Text>Sorry! Something went wrong.</Text></View>
+            </View>;
         } else {
             return <View style={styles.loadingContainer}>
                 <LoadingSpinner />
@@ -123,9 +139,10 @@ export class ChangesScreen extends Component<{}, State> {
         try {
             const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
 
-            this.setState({ changeFeed, isLoading: false });
+            this.setState({ changeFeed, hasLoaded: true });
         } catch (error) {
             console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
+            this.setState({ hasError: true });
         }
     }
 

@@ -10,12 +10,12 @@ export class LoadingSpinner extends Component<{}, State> {
         display: false
     };
 
-    private timeout: number;
+    private startDelayTimeout: number;
 
     constructor(props: {}) {
         super(props);
 
-        this.timeout = setTimeout(() => {
+        this.startDelayTimeout = setTimeout(() => {
             this.setState({ display: true });
         }, 1000);
     }
@@ -27,6 +27,6 @@ export class LoadingSpinner extends Component<{}, State> {
     }
 
     public componentWillUnmount(): void {
-        clearTimeout(this.timeout);
+        clearTimeout(this.startDelayTimeout);
     }
 }
