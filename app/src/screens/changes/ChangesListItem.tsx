@@ -40,21 +40,14 @@ export class ChangesListItem extends Component<Props> {
                 <Text style={styles.itemTitle}>{`${model.name}`}</Text>;
         };
 
-        const renderCategory: () => ReactElement = () => {
-            return <Text style={styles.itemSubtitle}>{`${model.category}`}</Text>;
-        };
-
-        const renderChange: () => ReactElement = () => {
-            return <Text>{`${model.changeName}`}</Text>;
-        };
-
         return <ListItem
             key={index}
             title={
-                <View>{renderNames()}{renderCategory()}</View>
+                <View>{renderNames()}<Text style={styles.itemSubtitle}>{`${model.category}`}</Text></View>
             }
             subtitle={`${model.changeName} changed from "${model.oldValue}" to "${model.newValue}"`}
-            rightSubtitle={renderChange()}
+            rightSubtitle={`${model.timeStamp.format('D MMM')}`}
+            rightTitle={`${model.changeName}`}
             style={styles.item}
         />;
     }
