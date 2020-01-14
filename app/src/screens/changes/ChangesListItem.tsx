@@ -1,14 +1,8 @@
 import React, { Component, ReactElement, ReactNode } from 'react';
 import { View, ViewStyle, StyleSheet, TextStyle, FlatList } from 'react-native';
 import { ListItem, Text } from 'react-native-elements';
-import { Container } from 'inversify';
-
-import { IChangeFeedService } from '../../services/ChangeFeedService';
-import { Article } from '../../services/Article';
-import { CollapsingPanel } from '../../components/CollapsingPanel';
 
 import { ChangeModel } from './ChangeModel';
-
 
 type Props = {
     model: ChangeModel,
@@ -16,38 +10,20 @@ type Props = {
 };
 
 export class ChangesListItem extends Component<Props> {
-
-    private readonly changeFeedService: IChangeFeedService;
-
     constructor(props: Props) {
         super(props);
-
-        this.renderFeedItemTitle = this.renderFeedItemTitle.bind(this);
-        this.renderFeedItemDetail = this.renderFeedItemDetail.bind(this);
-
-        const serviceLocator: Container = global.serviceLocator;
-        this.changeFeedService = serviceLocator.get("IChangeFeedService");
     }
 
     public render(): ReactNode {
-        const feedItemTitle: ReactElement = this.renderFeedItemTitle();
-        const feedItemDetail: () => Promise<ReactElement> = async () => this.renderFeedItemDetail();
-
-        const styles: { feedItem: ViewStyle } = {
-            feedItem: {
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                borderColor: "rgba(0, 0, 0, 0.12)"
-            }
-        };
-
-        return <View style={styles.feedItem}><CollapsingPanel summary={feedItemTitle} detail={feedItemDetail} /></View>;
-    }
-
-    private renderFeedItemTitle(): ReactElement {
         const styles: {
+            item: ViewStyle,
             itemTitle: TextStyle,
             itemSubtitle: TextStyle
         } = {
+            item: {
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderColor: "rgba(0, 0, 0, 0.12)"
+            },
             itemTitle: {
                 fontWeight: "bold"
             },
@@ -79,42 +55,7 @@ export class ChangesListItem extends Component<Props> {
             }
             subtitle={`${model.changeName} changed from "${model.oldValue}" to "${model.newValue}"`}
             rightSubtitle={renderChange()}
+            style={styles.item}
         />;
-    }
-
-    private async renderFeedItemDetail(): Promise<ReactElement> {
-        const styles: { itemKey: TextStyle } = {
-            itemKey: {
-                fontStyle: "italic"
-            }
-        };
-
-        const { model } = this.props;
-
-        try {
-            const article: Article = await this.changeFeedService.getArticle(model.id);
-
-            return <View>
-                <FlatList
-                    data={[
-                        { key: "producer", value: article.producer },
-                        { key: "importer", value: article.importer },
-                        { key: "origin", value: article.origin },
-                        { key: "country of origin", value: article.countryOfOrigin },
-                        { key: "packaging", value: article.packaging },
-                        { key: "vintage", value: article.vintage },
-                        { key: "price", value: article.price },
-                        { key: "price per litre", value: article.pricePerLitre },
-                        { key: "alcohol", value: article.alcohol },
-                        { key: "volume", value: article.volume },
-                    ]}
-                    renderItem={({ item }) =>
-                        <Text><Text style={styles.itemKey}>{item.key}</Text> : <Text>{item.value}</Text></Text>}
-                />
-            </View>;
-        } catch (error) {
-            console.error("Error fetching article " + model.id + " in ChangeScreen.loadArticle", error);
-            return <View />;
-        }
     }
 }
