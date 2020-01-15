@@ -4,12 +4,14 @@ import { createAppContainer, createSwitchNavigator, NavigationContainer, Navigat
 
 import { ChangesScreen } from './screens/changes/ChangesScreen';
 import { SplashScreen } from './screens/splash/SplashScreen';
+import { ArticleScreen } from './screens/article/ArticleScreen';
 
 export function createMyAppContainer(): NavigationContainer {
     const AppNavigator: NavigationNavigator<{}, NavigationProp<NavigationState>> = createSwitchNavigator(
         {
             Splash: SplashScreen,
-            Main: ChangesScreen,
+            Changes: ChangesScreen,
+            Article: ArticleScreen
         },
         {
             ...Platform.select({
@@ -17,7 +19,7 @@ export function createMyAppContainer(): NavigationContainer {
                     initialRouteName: "Splash"
                 },
                 web: {
-                    initialRouteName: "Main"
+                    initialRouteName: "Changes"
                 }
             })
         }

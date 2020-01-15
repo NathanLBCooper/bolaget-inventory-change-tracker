@@ -3,13 +3,13 @@ import { injectable } from "inversify";
 import { ChangeFeed } from "./ChangeFeed";
 import { Article } from "./Article";
 
-export interface IChangeFeedService {
+export interface IInventoryService {
     getChangeFeed(): Promise<ChangeFeed>;
     getArticle(id: number): Promise<Article>;
 }
 
 @injectable()
-export class ChangeFeedService implements IChangeFeedService {
+export class InventoryService implements IInventoryService {
     constructor(private baseUri: string) { }
 
     public async getChangeFeed(): Promise<ChangeFeed> {

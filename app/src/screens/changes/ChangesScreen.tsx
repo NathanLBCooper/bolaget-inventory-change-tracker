@@ -5,14 +5,15 @@ import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
 import { IClock } from "../../lib/clock";
-import { IChangeFeedService } from "../../services/ChangeFeedService";
+import { IInventoryService } from "../../services/InventoryService";
 import { ChangeFeed } from "../../services/ChangeFeed";
 import * as MediaPxWidths from "../../style/MediaPxWidths";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
-
+import { INavigation } from "../../Navigation";
 import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
 import { ChangesListFilter, Item } from "./ChangesListFilter";
+
 
 type State = {
     changeFeed: ChangeFeed;
@@ -23,7 +24,11 @@ type State = {
     refreshing: boolean;
 };
 
-export class ChangesScreen extends Component<{}, State> {
+type Props = {
+    navigation: INavigation
+};
+
+export class ChangesScreen extends Component<Props, State> {
     public state: State = {
         changeFeed: undefined,
         filterOptions: [
@@ -38,16 +43,16 @@ export class ChangesScreen extends Component<{}, State> {
         refreshing: false
     };
 
-    private readonly changeFeedService: IChangeFeedService;
+    private readonly inventoryService: IInventoryService;
     private readonly clock: IClock;
 
-    constructor(props: {}) {
+    constructor(props: Props) {
         super(props);
 
         this.updateFilterOptions = this.updateFilterOptions.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.changeFeedService = serviceLocator.get("IChangeFeedService");
+        this.inventoryService = serviceLocator.get("IInventoryService");
         this.clock = serviceLocator.get("IClock");
 
         const { width } = Dimensions.get("window");
@@ -59,6 +64,7 @@ export class ChangesScreen extends Component<{}, State> {
 
     public render(): ReactNode {
         const { changeFeed, hasLoaded, hasError, width, refreshing, filterOptions } = this.state;
+        const { navigation } = this.props;
 
         const responsiveStyles: any = StyleSheet.create({
             container: {
@@ -111,7 +117,7 @@ export class ChangesScreen extends Component<{}, State> {
                             (items, updated) => { this.updateFilterOptions(updated); }
                         } />
                     }
-                    renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} />}
+                    renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation}/>}
                     renderSectionHeader={({ section }) => {
 
                         return <Text h4={true}
@@ -137,7 +143,7 @@ export class ChangesScreen extends Component<{}, State> {
 
     private async loadChangeFeed(): Promise<void> {
         try {
-            const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
+            const changeFeed: ChangeFeed = await this.inventoryService.getChangeFeed();
 
             this.setState({ changeFeed, hasLoaded: true });
         } catch (error) {
