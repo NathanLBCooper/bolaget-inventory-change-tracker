@@ -126,7 +126,7 @@ export class ChangesScreen extends Component<{}, State> {
             </View>;
         } else if (hasError) {
             return <View style={styles.errorContainer}>
-                <View style={styles.errorMessage}><Text>Sorry! Something went wrong.</Text></View>
+                <Text style={styles.errorMessage}>Sorry! Something went wrong.</Text>
             </View>;
         } else {
             return <View style={styles.loadingContainer}>
