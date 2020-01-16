@@ -1,6 +1,9 @@
 version: 0.1.{build}
 image: Visual Studio 2017
 
+branches:
+  only:
+  - master
 environment:
   SURGE_TOKEN:
     secure: 63B7vnTM8cXBQOIDUP9JZnBq4H6QCOkuiWX5IsPtpIshzIuK166eGMCtZPXs3+cj
