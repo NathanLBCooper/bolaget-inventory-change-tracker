@@ -42,8 +42,7 @@ export class ChangesListItem extends Component<Props> {
                 <Text style={styles.itemTitle}>{`${model.name}`}</Text>;
         };
 
-        return <TouchableOpacity onPress = {() => navigation.navigate("Article", { articleId:  model.id })}><ListItem 
-        // todo getting Uncaught (in promise) Error: 3000ms timeout exceeded problems
+        return <TouchableOpacity onPress={() => navigation.navigate("Article", { articleId: model.id })}><ListItem
             key={index}
             title={
                 <View>{renderNames()}<Text style={styles.itemSubtitle}>{`${model.category}`}</Text></View>

@@ -21,9 +21,9 @@ export class LoadingSpinner extends Component<{}, State> {
     }
 
     public render(): ReactNode {
-        const {display} = this.state;
+        const { display } = this.state;
 
-        return display ? <ActivityIndicator size={100}/> : <View/>;
+        return display ? <ActivityIndicator size={100} /> : <View />;
     }
 
     public componentWillUnmount(): void {
