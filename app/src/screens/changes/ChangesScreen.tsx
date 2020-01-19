@@ -1,29 +1,32 @@
 import React, { Component, ReactNode } from "react";
-import { View, SectionList, SectionListData, StyleSheet, Dimensions, ViewStyle, TextStyle, RefreshControl } from "react-native";
+import { View, SectionList, SectionListData, ViewStyle, TextStyle, RefreshControl } from "react-native";
 import { Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
 import { IClock } from "../../lib/clock";
-import { IChangeFeedService } from "../../services/ChangeFeedService";
+import { IInventoryService } from "../../services/InventoryService";
 import { ChangeFeed } from "../../services/ChangeFeed";
-import * as MediaPxWidths from "../../style/MediaPxWidths";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
-
+import { INavigation } from "../../Navigation";
 import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
 import { ChangesListFilter, Item } from "./ChangesListFilter";
+
 
 type State = {
     changeFeed: ChangeFeed;
     filterOptions: Item<FilterableType>[];
     hasLoaded: boolean;
     hasError: boolean;
-    width: number;
     refreshing: boolean;
 };
 
-export class ChangesScreen extends Component<{}, State> {
+type Props = {
+    navigation: INavigation
+};
+
+export class ChangesScreen extends Component<Props, State> {
     public state: State = {
         changeFeed: undefined,
         filterOptions: [
@@ -34,38 +37,27 @@ export class ChangesScreen extends Component<{}, State> {
         ],
         hasLoaded: false,
         hasError: false,
-        width: undefined,
         refreshing: false
     };
 
-    private readonly changeFeedService: IChangeFeedService;
+    private readonly inventoryService: IInventoryService;
     private readonly clock: IClock;
 
-    constructor(props: {}) {
+    constructor(props: Props) {
         super(props);
 
         this.updateFilterOptions = this.updateFilterOptions.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.changeFeedService = serviceLocator.get("IChangeFeedService");
+        this.inventoryService = serviceLocator.get("IInventoryService");
         this.clock = serviceLocator.get("IClock");
-
-        const { width } = Dimensions.get("window");
-        this.state.width = width;
-        Dimensions.addEventListener("change", (e) => { this.setState({ width: e.window.width }); });
     }
 
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): ReactNode {
-        const { changeFeed, hasLoaded, hasError, width, refreshing, filterOptions } = this.state;
-
-        const responsiveStyles: any = StyleSheet.create({
-            container: {
-                marginRight: width > MediaPxWidths.TabletsInLandscape ? "calc((50%) * (2 / 3) )" : undefined,
-                marginLeft: width > MediaPxWidths.TabletsInLandscape ? "calc((50%) * (1 / 3))" : undefined
-            }
-        });
+        const { changeFeed, hasLoaded, hasError, refreshing, filterOptions } = this.state;
+        const { navigation } = this.props;
 
         const styles: {
             container: ViewStyle,
@@ -104,14 +96,14 @@ export class ChangesScreen extends Component<{}, State> {
         };
 
         if (hasLoaded) {
-            return <View style={[styles.container, responsiveStyles.container]}>
+            return <View style={styles.container}>
                 <SectionList
                     ListHeaderComponent={
                         <ChangesListFilter<FilterableType> items={filterOptions} onPress={
                             (items, updated) => { this.updateFilterOptions(updated); }
                         } />
                     }
-                    renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} />}
+                    renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
                     renderSectionHeader={({ section }) => {
 
                         return <Text h4={true}
@@ -126,7 +118,7 @@ export class ChangesScreen extends Component<{}, State> {
             </View>;
         } else if (hasError) {
             return <View style={styles.errorContainer}>
-                <View style={styles.errorMessage}><Text>Sorry! Something went wrong.</Text></View>
+                <Text style={styles.errorMessage}>Sorry! Something went wrong.</Text>
             </View>;
         } else {
             return <View style={styles.loadingContainer}>
@@ -137,7 +129,7 @@ export class ChangesScreen extends Component<{}, State> {
 
     private async loadChangeFeed(): Promise<void> {
         try {
-            const changeFeed: ChangeFeed = await this.changeFeedService.getChangeFeed();
+            const changeFeed: ChangeFeed = await this.inventoryService.getChangeFeed();
 
             this.setState({ changeFeed, hasLoaded: true });
         } catch (error) {

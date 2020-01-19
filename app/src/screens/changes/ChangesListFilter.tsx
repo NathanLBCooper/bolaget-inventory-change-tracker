@@ -68,7 +68,7 @@ export class ChangesListFilter<T> extends Component<Props<T>, State<T>> {
         return <View style={styles.container}>
             {<CollapsingPanel
                 summary={<Text style={styles.title}>Filter results</Text>}
-                detail={this.renderCheckboxes()}/>}
+                detail={this.renderCheckboxes()} />}
         </View>;
     }
 
@@ -81,7 +81,7 @@ export class ChangesListFilter<T> extends Component<Props<T>, State<T>> {
                 return <CheckBox containerStyle={checkBoxStyles.container} textStyle={checkBoxStyles.text} title={item.text}
                     checked={item.checked} onPress={() => this.onPress(item)}
                 />;
-            }} numColumns={3} extraData={this.state}/>;
+            }} numColumns={3} extraData={this.state} />;
     }
 
     private onPress(pressedItem: Item<T>): void {

@@ -1,5 +1,6 @@
 import React, { Component, ReactNode } from "react";
 import { Text, View, StyleSheet } from 'react-native';
+import { INavigation } from "../../Navigation";
 
 const styles: any = StyleSheet.create({
   container: {
@@ -61,7 +62,7 @@ const hexagonStyles: any = StyleSheet.create({
 });
 
 export class SplashScreen extends Component<{
-  navigation: any;
+  navigation: INavigation;
 }> {
   public render(): ReactNode {
     return (<View style={styles.container}>
@@ -80,7 +81,7 @@ export class SplashScreen extends Component<{
   }
   public componentDidMount(): void {
     setTimeout(() => {
-      this.props.navigation.navigate('Main');
+      this.props.navigation.navigate('Changes');
     }, 2000);
   }
 }
