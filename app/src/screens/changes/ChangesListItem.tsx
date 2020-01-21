@@ -16,6 +16,10 @@ export class ChangesListItem extends Component<Props> {
         super(props);
     }
 
+    public shouldComponentUpdate(): boolean {
+        return false;
+    }
+
     public render(): ReactNode {
         const styles: {
             item: ViewStyle,

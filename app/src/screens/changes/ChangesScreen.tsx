@@ -1,5 +1,5 @@
-import React, { Component, ReactNode } from "react";
-import { View, SectionList, SectionListData, ViewStyle, TextStyle, RefreshControl } from "react-native";
+import React, { Component, ReactNode, ReactElement } from "react";
+import { View, SectionList, SectionListData, ViewStyle, TextStyle, RefreshControl, ScrollView } from "react-native";
 import { Text, Divider } from "react-native-elements";
 import { Container } from "inversify";
 import { Dayjs } from "dayjs";
@@ -47,6 +47,7 @@ export class ChangesScreen extends Component<Props, State> {
         super(props);
 
         this.updateFilterOptions = this.updateFilterOptions.bind(this);
+        this.renderFeedItem = this.renderFeedItem.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
         this.inventoryService = serviceLocator.get("IInventoryService");
@@ -57,7 +58,6 @@ export class ChangesScreen extends Component<Props, State> {
 
     public render(): ReactNode {
         const { changeFeed, hasLoaded, hasError, refreshing, filterOptions } = this.state;
-        const { navigation } = this.props;
 
         const styles: {
             container: ViewStyle,
@@ -97,24 +97,26 @@ export class ChangesScreen extends Component<Props, State> {
 
         if (hasLoaded) {
             return <View style={styles.container}>
-                <SectionList
-                    ListHeaderComponent={
-                        <ChangesListFilter<FilterableType> items={filterOptions} onPress={
-                            (items, updated) => { this.updateFilterOptions(updated); }
-                        } />
-                    }
-                    renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
-                    renderSectionHeader={({ section }) => {
+                <ScrollView>
+                    <SectionList
+                        ListHeaderComponent={
+                            <ChangesListFilter<FilterableType> items={filterOptions} onPress={
+                                (items, updated) => { this.updateFilterOptions(updated); }
+                            } />
+                        }
+                        renderItem={this.renderFeedItem}
+                        renderSectionHeader={({ section }) => {
 
-                        return <Text h4={true}
-                            style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
-                        >{section.key}</Text>;
-                    }}
-                    renderSectionFooter={() => <Divider />}
-                    sections={toAgeInDaysSections(filterByType(toModel(changeFeed), filterOptions).slice(0, 100), this.clock)}
-                    keyExtractor={(item, index) => index.toString()}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
-                />
+                            return <Text h4={true}
+                                style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
+                            >{section.key}</Text>;
+                        }}
+                        renderSectionFooter={() => <Divider />}
+                        sections={toAgeInDaysSections(filterByType(toModel(changeFeed), filterOptions).slice(0, 100), this.clock)}
+                        keyExtractor={(item, index) => index.toString()}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
+                    />
+                </ScrollView>
             </View>;
         } else if (hasError) {
             return <View style={styles.errorContainer}>
@@ -125,6 +127,10 @@ export class ChangesScreen extends Component<Props, State> {
                 <LoadingSpinner />
             </View>;
         }
+    }
+
+    private renderFeedItem(obj: { item: ChangeModel, index: number }): ReactElement {
+        return <ChangesListItem model={obj.item} index={obj.index} navigation={this.props.navigation} />;
     }
 
     private async loadChangeFeed(): Promise<void> {
