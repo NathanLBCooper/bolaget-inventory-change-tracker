@@ -4,6 +4,7 @@ import { ChangeFeedItem } from "../../services/ChangeFeedItem";
 import { ChangeCollection } from "../../services/ChangeCollection";
 
 import { Change } from "../../services/Change";
+import { Article } from "../../services/Article";
 
 export class ChangeModel {
     public static Make(item: ChangeFeedItem, changeCollection: ChangeCollection, change: Change): ChangeModel {
@@ -13,6 +14,14 @@ export class ChangeModel {
             change.name, change.oldValue, change.newValue
         );
     }
+
+    public static MakeWithArticle(article: Article, changeCollection: ChangeCollection, change: Change): ChangeModel {
+        return new ChangeModel(
+            article.id, article.name, article.name2, article.category, article.uri,
+            changeCollection.timestamp,
+            change.name, change.oldValue, change.newValue
+        );
+    } 
 
     constructor(
         public id: number,
