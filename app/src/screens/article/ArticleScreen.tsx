@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from "react";
-import { View, TextStyle, ViewStyle } from "react-native";
+import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
 import { Text } from "react-native-elements";
 import { Container } from "inversify";
 
@@ -7,7 +7,6 @@ import { IInventoryService } from "../../services/InventoryService";
 import { Article } from "../../services/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { ChangesListItem } from "../changes/ChangesListItem";
 import { ChangeModel } from "../changes/ChangeModel";
 
