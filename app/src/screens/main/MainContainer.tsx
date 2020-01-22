@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, ScaledSize } from "react-native";
 import { NavigationRouter, NavigationNavigator, NavigationProp, NavigationState } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -106,9 +106,15 @@ export default class MainContainer extends Component<any, State> {
     constructor(props: any) {
         super(props);
 
+        this.handleWindowWidthChange = this.handleWindowWidthChange.bind(this);
+
         const { width } = Dimensions.get("window");
         this.state.width = width;
-        Dimensions.addEventListener("change", (e) => { this.setState({ width: e.window.width }); }); // todo cleanup
+        Dimensions.addEventListener("change", this.handleWindowWidthChange);
+    }
+
+    public componentWillUnmount(): void {
+        Dimensions.removeEventListener("change", this.handleWindowWidthChange);
     }
 
     public render(): ReactNode {
@@ -127,5 +133,14 @@ export default class MainContainer extends Component<any, State> {
                 <TabNavigator navigation={navigation} />
             </View>
         );
+    }
+
+    private handleWindowWidthChange(e: {
+        window: ScaledSize;
+        screen: ScaledSize;
+    }): void {
+        this.setState({
+            width: e.window.width
+        });
     }
 }
