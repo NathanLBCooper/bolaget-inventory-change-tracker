@@ -6,7 +6,6 @@ import { Container } from "inversify";
 import { IInventoryService } from "../../services/InventoryService";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { CategoryCollection } from "../../services/CategoryCollection";
 import { ArticleSummaryCollection } from "../../services/ArticleCollection";
 import { ArticleSummary } from "../../services/ArticleSummary";
 
@@ -15,7 +14,7 @@ type Props = {
 };
 
 type State = {
-    articles: ArticleSummaryCollection;
+    articles: ArticleSummary[];
     hasLoaded: boolean;
     hasError: boolean;
 };
@@ -77,14 +76,14 @@ export class CategoryScreen extends Component<Props, State> {
             const renderNames: (model: ArticleSummary) => ReactElement = (model) => {
                 return model.name2 != null && model.name2.length > 0 ?
                     <Text>
-                        <Text>{`${model.name2},  `}</Text><Text style={{ fontStyle: "italic" }}>{`${model.name}, ${model.volume}ml`}</Text>
+                        <Text>{`${model.name},  `}</Text><Text style={{ fontStyle: "italic" }}>{`${model.name2}, ${model.volume}ml`}</Text>
                     </Text> :
                     <Text>{`${model.name}`}</Text>;
             };
 
             return <View style={styles.container}>
                 <FlatList
-                    data={articles.data}
+                    data={articles}
                     renderItem={(obj) => <ListItem
                         key={obj.index}
                         title={renderNames(obj.item)}
@@ -108,10 +107,16 @@ export class CategoryScreen extends Component<Props, State> {
         try {
             const articles: ArticleSummaryCollection = await this.inventoryService.getArticlesByCategory(categoryName);
 
-            this.setState({ articles, hasLoaded: true });
+            this.setState({ articles: sortAlphabetically(articles.data), hasLoaded: true });
         } catch (error) {
             console.error("Error fetching categories in Category.loadArticles", error);
             this.setState({ hasError: true });
         }
     }
+}
+
+function sortAlphabetically(articles: ArticleSummary[]): ArticleSummary[] {
+    return articles.sort((left, right) => {
+        return left.name < right.name ? -1 : left.name > right.name ? 1 : 0;
+    });
 }
