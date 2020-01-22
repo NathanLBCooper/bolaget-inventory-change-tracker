@@ -2,10 +2,14 @@ import { injectable } from "inversify";
 
 import { ChangeFeed } from "./ChangeFeed";
 import { Article } from "./Article";
+import { CategoryCollection } from "./CategoryCollection";
+import { ArticleSummaryCollection } from "./ArticleCollection";
 
 export interface IInventoryService {
     getChangeFeed(): Promise<ChangeFeed>;
     getArticle(id: number): Promise<Article>;
+    getCategories(): Promise<CategoryCollection>;
+    getArticlesByCategory(categoryName: string): Promise<ArticleSummaryCollection>;
 }
 
 @injectable()
@@ -22,5 +26,17 @@ export class InventoryService implements IInventoryService {
         const response: Response = await fetch(this.baseUri + "/article/" + id);
         const responseJson: any = await response.json();
         return Article.Make(responseJson);
+    }
+
+    public async getCategories(): Promise<CategoryCollection> {
+        const response: Response = await fetch(this.baseUri + "/assortment/");
+        const responseJson: any = await response.json();
+        return CategoryCollection.Make(responseJson);
+    }
+
+    public async getArticlesByCategory(categoryName: string): Promise<ArticleSummaryCollection> {
+        const response: Response = await fetch(this.baseUri + "/assortment/" + categoryName);
+        const responseJson: any = await response.json();
+        return ArticleSummaryCollection.Make(responseJson);
     }
 }

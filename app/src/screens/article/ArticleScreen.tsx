@@ -7,7 +7,7 @@ import { IInventoryService } from "../../services/InventoryService";
 import { Article } from "../../services/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { ChangesListItem } from "../changes/ChangesListItem";
+import { ChangesListItem, EmptyChangeListItem } from "../changes/ChangesListItem";
 import { ChangeModel } from "../changes/ChangeModel";
 
 type Props = {
@@ -59,7 +59,10 @@ export class ArticleScreen extends Component<Props, State> {
             summaryRow: ViewStyle,
             summaryKey: TextStyle,
             summaryValue: TextStyle,
-            changeList: ViewStyle
+            changeList: ViewStyle,
+            loadingContainer: ViewStyle,
+            errorContainer: ViewStyle,
+            errorMessage: TextStyle
         } = {
             container: {
                 flex: 1,
@@ -98,6 +101,18 @@ export class ArticleScreen extends Component<Props, State> {
             },
             changeList: {
                 padding: 10
+            },
+            loadingContainer: {
+                flex: 1,
+                justifyContent: "center"
+            },
+            errorContainer: {
+                flex: 1,
+            },
+            errorMessage: {
+                margin: "auto",
+                width: "50%",
+                textAlign: "center"
             }
         };
 
@@ -142,15 +157,16 @@ export class ArticleScreen extends Component<Props, State> {
                         data={toChangeListModel(article)}
                         renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
                         keyExtractor={(item, index) => index.toString()}
+                        ListEmptyComponent={<EmptyChangeListItem />}
                     />
                 </ScrollView>
             </View>;
         } else if (hasError) {
-            return <View>
-                <Text>todo error</Text>
+            return <View style={styles.errorContainer}>
+                <Text style={styles.errorMessage}>Sorry! Something went wrong.</Text>
             </View>;
         } else {
-            return <View>
+            return <View style={styles.loadingContainer}>
                 <LoadingSpinner />
             </View>;
         }
