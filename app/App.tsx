@@ -15,7 +15,7 @@ import { Appsettings } from './src/AppSettings';
 import appSettingsJson from "./appsettings.json";
 
 import { SplashScreen } from './src/screens/splash/SplashScreen';
-import MainContainer, { MainNavigation } from "./src/screens/main/MainContainer";
+import MainContainer from "./src/screens/main/MainContainer";
 
 declare global {
   const global: {

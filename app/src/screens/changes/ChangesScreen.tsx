@@ -97,26 +97,24 @@ export class ChangesScreen extends Component<Props, State> {
 
         if (hasLoaded) {
             return <View style={styles.container}>
-                <ScrollView>
-                    <SectionList
-                        ListHeaderComponent={
-                            <ChangesListFilter<FilterableType> items={filterOptions} onPress={
-                                (items, updated) => { this.updateFilterOptions(updated); }
-                            } />
-                        }
-                        renderItem={this.renderFeedItem}
-                        renderSectionHeader={({ section }) => {
+                <SectionList
+                    ListHeaderComponent={
+                        <ChangesListFilter<FilterableType> items={filterOptions} onPress={
+                            (items, updated) => { this.updateFilterOptions(updated); }
+                        } />
+                    }
+                    renderItem={this.renderFeedItem}
+                    renderSectionHeader={({ section }) => {
 
-                            return <Text h4={true}
-                                style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
-                            >{section.key}</Text>;
-                        }}
-                        renderSectionFooter={() => <Divider />}
-                        sections={toAgeInDaysSections(filterByType(toModel(changeFeed), filterOptions).slice(0, 100), this.clock)}
-                        keyExtractor={(item, index) => index.toString()}
-                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
-                    />
-                </ScrollView>
+                        return <Text h4={true}
+                            style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
+                        >{section.key}</Text>;
+                    }}
+                    renderSectionFooter={() => <Divider />}
+                    sections={toAgeInDaysSections(filterByType(toModel(changeFeed), filterOptions).slice(0, 100), this.clock)}
+                    keyExtractor={(item, index) => index.toString()}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
+                />
             </View>;
         } else if (hasError) {
             return <View style={styles.errorContainer}>
