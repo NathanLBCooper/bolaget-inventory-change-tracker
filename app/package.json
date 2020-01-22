@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.5",
+    "apipeline": "^3.0.1",
     "dayjs": "^1.8.19",
     "expo": "^36.0.0",
     "expo-constants": "~8.0.0",
