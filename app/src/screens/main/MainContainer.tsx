@@ -43,7 +43,7 @@ const AssortmentNavigation: NavigationNavigator<any, NavigationProp<NavigationSt
             screen: AssortmentScreen,
             path: 'assortment',
             navigationOptions: {
-                headerShown: false,
+                headerTitle: "Categories",
             }
         }
     },
