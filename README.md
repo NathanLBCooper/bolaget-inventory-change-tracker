@@ -75,15 +75,14 @@ yarn run lint
 
 # Manual deploy #
 
-The CI sever will deploy new versions to [http://bolaget.surge.sh](http://bolaget.surge.sh), but you can also deploy your fork to surge.
-
-
 **Install** :
 ```sh
 npm install -g surge
 ```
 
 **Deploy**:
+
+First make sure the appsettings.json is configured to your environment.
 
 ```sh
 cd app
@@ -93,4 +92,4 @@ cd web-build
 surge
 ```
 
-then follow the instructions on the command line
+then follow the instructions on the command line.
