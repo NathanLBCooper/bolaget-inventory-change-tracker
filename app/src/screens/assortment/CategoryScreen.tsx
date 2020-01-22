@@ -1,5 +1,5 @@
-import React, { Component, ReactNode } from "react";
-import { View, TextStyle, ViewStyle, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import React, { Component, ReactNode, ReactElement } from "react";
+import { View, TextStyle, ViewStyle, FlatList, StyleSheet } from "react-native";
 import { Text, ListItem } from "react-native-elements";
 import { Container } from "inversify";
 
@@ -7,20 +7,22 @@ import { IInventoryService } from "../../services/InventoryService";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { CategoryCollection } from "../../services/CategoryCollection";
+import { ArticleSummaryCollection } from "../../services/ArticleCollection";
+import { ArticleSummary } from "../../services/ArticleSummary";
 
 type Props = {
     navigation: INavigation
 };
 
 type State = {
-    categories: CategoryCollection,
+    articles: ArticleSummaryCollection;
     hasLoaded: boolean;
     hasError: boolean;
 };
 
-export class AssortmentScreen extends Component<Props, State> {
+export class CategoryScreen extends Component<Props, State> {
     public state: State = {
-        categories: undefined,
+        articles: undefined,
         hasLoaded: false,
         hasError: false
     };
@@ -34,15 +36,18 @@ export class AssortmentScreen extends Component<Props, State> {
         this.inventoryService = serviceLocator.get("IInventoryService");
     }
 
-    public async componentDidMount(): Promise<void> { await this.loadCategories(); }
+    public async componentDidMount(): Promise<void> {
+        const categoryName: string = this.props.navigation.getParam("categoryName", undefined);
+        await this.loadArticles(categoryName);
+    }
 
     public render(): ReactNode {
-        const { categories, hasLoaded, hasError } = this.state;
+        const { articles, hasLoaded, hasError } = this.state;
         const { navigation } = this.props;
 
         const styles: {
             container: ViewStyle,
-            categoryItem: ViewStyle
+            categoryItem: ViewStyle,
             loadingContainer: ViewStyle,
             errorContainer: ViewStyle,
             errorMessage: TextStyle
@@ -69,17 +74,22 @@ export class AssortmentScreen extends Component<Props, State> {
         };
 
         if (hasLoaded) {
+            const renderNames: (model: ArticleSummary) => ReactElement = (model) => {
+                return model.name2 != null && model.name2.length > 0 ?
+                    <Text>
+                        <Text>{`${model.name2},  `}</Text><Text style={{ fontStyle: "italic" }}>{`${model.name}, ${model.volume}ml`}</Text>
+                    </Text> :
+                    <Text>{`${model.name}`}</Text>;
+            };
+
             return <View style={styles.container}>
                 <FlatList
-                    data={categories.data}
-                    renderItem={(obj) =>
-                        <TouchableOpacity onPress={() => navigation.navigate("Category", { categoryName: obj.item.name })}><ListItem
-                            key={obj.index}
-                            title={
-                                <Text>{obj.item.name}</Text>
-                            }
-                            style={styles.categoryItem}
-                        /></TouchableOpacity>}
+                    data={articles.data}
+                    renderItem={(obj) => <ListItem
+                        key={obj.index}
+                        title={renderNames(obj.item)}
+                        style={styles.categoryItem}
+                    />}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>;
@@ -94,13 +104,13 @@ export class AssortmentScreen extends Component<Props, State> {
         }
     }
 
-    private async loadCategories(): Promise<void> {
+    private async loadArticles(categoryName: string): Promise<void> {
         try {
-            const categories: CategoryCollection = await this.inventoryService.getCategories();
+            const articles: ArticleSummaryCollection = await this.inventoryService.getArticlesByCategory(categoryName);
 
-            this.setState({ categories, hasLoaded: true });
+            this.setState({ articles, hasLoaded: true });
         } catch (error) {
-            console.error("Error fetching categories in AssortmentScreen.loadCategories", error);
+            console.error("Error fetching categories in Category.loadArticles", error);
             this.setState({ hasError: true });
         }
     }

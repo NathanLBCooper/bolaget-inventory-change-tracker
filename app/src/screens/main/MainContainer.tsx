@@ -8,6 +8,7 @@ import * as MediaPxWidths from "../../style/MediaPxWidths";
 import { ChangesScreen } from "../changes/ChangesScreen";
 import { ArticleScreen } from "../article/ArticleScreen";
 import { AssortmentScreen } from "../assortment/AssortmentScreen";
+import { CategoryScreen } from "../assortment/CategoryScreen";
 
 const ChangesNavigation: NavigationNavigator<any, NavigationProp<NavigationState>> = createStackNavigator(
     {
@@ -41,9 +42,16 @@ const AssortmentNavigation: NavigationNavigator<any, NavigationProp<NavigationSt
     {
         Assortment: {
             screen: AssortmentScreen,
-            path: 'assortment',
+            path: 'categories',
             navigationOptions: {
                 headerTitle: "Categories",
+            }
+        },
+        Category: {
+            screen: CategoryScreen,
+            path: 'category/:categoryName',
+            navigationOptions: {
+                headerTitle: "Articles",
             }
         }
     },
