@@ -53,7 +53,11 @@ const AssortmentNavigation: NavigationNavigator<any, NavigationProp<NavigationSt
             navigationOptions: {
                 headerTitle: "Articles",
             }
-        }
+        },
+        Article: {
+            screen: ArticleScreen,
+            path: 'article/:articleId'
+        },
     },
     {
         initialRouteName: "Assortment",

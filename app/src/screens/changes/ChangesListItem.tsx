@@ -58,3 +58,20 @@ export class ChangesListItem extends Component<Props> {
         /></TouchableOpacity>;
     }
 }
+
+export class EmptyChangeListItem extends Component {
+    public shouldComponentUpdate(): boolean {
+        return false;
+    }
+
+    public render(): ReactNode {
+        return <ListItem
+            key={0}
+            title={<Text>no changes</Text>}
+            style={{
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderColor: "rgba(0, 0, 0, 0.12)"
+            }}
+        />;
+    }
+}

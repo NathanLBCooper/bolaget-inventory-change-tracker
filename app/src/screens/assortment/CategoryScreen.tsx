@@ -1,5 +1,5 @@
 import React, { Component, ReactNode, ReactElement } from "react";
-import { View, TextStyle, ViewStyle, FlatList, StyleSheet } from "react-native";
+import { View, TextStyle, ViewStyle, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, ListItem } from "react-native-elements";
 import { Container } from "inversify";
 
@@ -84,11 +84,12 @@ export class CategoryScreen extends Component<Props, State> {
             return <View style={styles.container}>
                 <FlatList
                     data={articles}
-                    renderItem={(obj) => <ListItem
-                        key={obj.index}
-                        title={renderNames(obj.item)}
-                        style={styles.categoryItem}
-                    />}
+                    renderItem={(obj) =>
+                        <TouchableOpacity onPress={() => navigation.navigate("Article", { articleId: obj.item.id })}><ListItem
+                            key={obj.index}
+                            title={renderNames(obj.item)}
+                            style={styles.categoryItem}
+                        /></TouchableOpacity>}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>;

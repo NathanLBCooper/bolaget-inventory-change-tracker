@@ -7,7 +7,7 @@ import { IInventoryService } from "../../services/InventoryService";
 import { Article } from "../../services/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { ChangesListItem } from "../changes/ChangesListItem";
+import { ChangesListItem, EmptyChangeListItem } from "../changes/ChangesListItem";
 import { ChangeModel } from "../changes/ChangeModel";
 
 type Props = {
@@ -142,6 +142,7 @@ export class ArticleScreen extends Component<Props, State> {
                         data={toChangeListModel(article)}
                         renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
                         keyExtractor={(item, index) => index.toString()}
+                        ListEmptyComponent={<EmptyChangeListItem/>}
                     />
                 </ScrollView>
             </View>;
