@@ -4,7 +4,7 @@ module.exports = function (app) {
     });
 
     app.get("/assortment/:category", function (req, res) {
-        // Todo, just Vodka och Brännvin (there's a lot of data)
+        // just Vodka och Brännvin (there's a lot of data)
         res.send(assortment[req.params.category]);
     });
 };
