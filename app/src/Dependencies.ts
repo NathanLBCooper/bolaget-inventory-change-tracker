@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import { Container } from "inversify";
-import APIPeline from "apipeline";
+import APIpeline from 'apipeline';
 import { IAPICacheDriver, IAPIOptions, IAPIServices } from 'apipeline/src/interfaces';
 
 import { IInventoryService, InventoryService } from "./services/InventoryService";
@@ -9,7 +9,7 @@ import { IClock, Clock } from "./lib/clock";
 
 export function ConfigureDependencies(settings: Appsettings): Container {
     const container: Container = new Container();
-    const api: APIPeline = configureCachingApi(settings.baseUrl);
+    const api: APIpeline = configureCachingApi(settings.baseUrl);
 
     container.bind<IInventoryService>("IInventoryService").toConstantValue(new InventoryService(api));
     container.bind<IClock>("IClock").to(Clock);
@@ -17,7 +17,7 @@ export function ConfigureDependencies(settings: Appsettings): Container {
     return container;
 }
 
-function configureCachingApi(baseUrl: string): APIPeline {
+function configureCachingApi(baseUrl: string): APIpeline {
     const apiOptions: IAPIOptions = {
         // Why lambda?: it's important fetch resolves from the window at call-time, not now
         fetchMethod: (input: RequestInfo, init?: RequestInit) => fetch(input, init),
@@ -48,7 +48,7 @@ function configureCachingApi(baseUrl: string): APIPeline {
         }
     };
 
-    return new APIPeline(apiOptions, apiServices, new AsyncStorageWrapper());
+    return new APIpeline(apiOptions, apiServices, new AsyncStorageWrapper());
 }
 
 class AsyncStorageWrapper implements IAPICacheDriver {
