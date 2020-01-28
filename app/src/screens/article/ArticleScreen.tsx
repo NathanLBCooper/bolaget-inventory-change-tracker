@@ -101,10 +101,10 @@ export class ArticleScreen extends Component<Props, State> {
                 <ScrollView>
                     <Text h4={true} style={styles.sectionHeader}>Summary</Text>
                     {this.renderSummary()}
-                    <Text h4={true} style={styles.sectionHeader}>Changes</Text>
-                    {this.renderChanges()}
                     <Text h4={true} style={styles.sectionHeader}>Notifications</Text>
                     {this.renderNotification()}
+                    <Text h4={true} style={styles.sectionHeader}>Recent Changes</Text>
+                    {this.renderChanges()}
                 </ScrollView>
             </View>;
         } else if (hasError) {
@@ -191,23 +191,28 @@ export class ArticleScreen extends Component<Props, State> {
     }
 
     private renderNotification(): ReactElement {
+        const { article } = this.state;
+        const { navigation } = this.props;
+
         const styles: {
             container: ViewStyle,
-            button: ViewStyle
+            buttonContainer: ViewStyle
         } = {
             container: {
-                padding: 10
+                padding: 10,
+                display: "flex",
+                alignItems: "center"
             },
-            button: {
+            buttonContainer: {
                 padding: 10
             }
         };
 
         return <View style={styles.container}>
             <Button
-                style={styles.button}
+                containerStyle={styles.buttonContainer}
                 title="Notify me when something changes"
-                disabled={true}
+                onPress={() => navigation.navigate("CreateNotification", { articleId: article.id })}
             />
         </View>;
     }

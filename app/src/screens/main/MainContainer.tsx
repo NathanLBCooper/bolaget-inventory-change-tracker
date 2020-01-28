@@ -9,6 +9,7 @@ import { ChangesScreen } from "../changes/ChangesScreen";
 import { ArticleScreen } from "../article/ArticleScreen";
 import { AssortmentScreen } from "../assortment/AssortmentScreen";
 import { CategoryScreen } from "../assortment/CategoryScreen";
+import { CreateNotificationScreen } from "../notifications/CreateNotificationScreen";
 
 const ChangesNavigation: NavigationNavigator<any, NavigationProp<NavigationState>> = createStackNavigator(
     {
@@ -23,6 +24,13 @@ const ChangesNavigation: NavigationNavigator<any, NavigationProp<NavigationState
             screen: ArticleScreen,
             path: 'changes/:articleId'
         },
+        CreateNotification: {
+            screen: CreateNotificationScreen,
+            path: 'changes/:articleId/notification/create',
+            navigationOptions: {
+                headerTitle: "Create Notification"
+            }
+        }
     },
     {
         initialRouteName: "Changes",
@@ -58,6 +66,13 @@ const AssortmentNavigation: NavigationNavigator<any, NavigationProp<NavigationSt
             screen: ArticleScreen,
             path: 'article/:articleId'
         },
+        CreateNotification: {
+            screen: CreateNotificationScreen,
+            path: 'article/:articleId/notification/create',
+            navigationOptions: {
+                headerTitle: "Create Notification"
+            }
+        }
     },
     {
         initialRouteName: "Assortment",
