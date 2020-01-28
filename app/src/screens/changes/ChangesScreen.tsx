@@ -11,12 +11,9 @@ import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
-import { ChangesListFilter, Item } from "./ChangesListFilter";
-
 
 type State = {
     changeFeed: ChangeFeed;
-    filterOptions: Item<FilterableType>[];
     hasLoaded: boolean;
     hasError: boolean;
     refreshing: boolean;
@@ -29,12 +26,6 @@ type Props = {
 export class ChangesScreen extends Component<Props, State> {
     public state: State = {
         changeFeed: undefined,
-        filterOptions: [
-            { key: FilterableType.alcohol, text: "Alcohol", checked: false },
-            { key: FilterableType.vintage, text: "Vintage", checked: false },
-            { key: FilterableType.price, text: "Price", checked: false },
-            { key: FilterableType.type, text: "Type", checked: false }
-        ],
         hasLoaded: false,
         hasError: false,
         refreshing: false
@@ -46,7 +37,6 @@ export class ChangesScreen extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.updateFilterOptions = this.updateFilterOptions.bind(this);
         this.renderFeedItem = this.renderFeedItem.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
@@ -57,7 +47,7 @@ export class ChangesScreen extends Component<Props, State> {
     public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
 
     public render(): ReactNode {
-        const { changeFeed, hasLoaded, hasError, refreshing, filterOptions } = this.state;
+        const { changeFeed, hasLoaded, hasError, refreshing } = this.state;
 
         const styles: {
             container: ViewStyle,
@@ -98,11 +88,6 @@ export class ChangesScreen extends Component<Props, State> {
         if (hasLoaded) {
             return <View style={styles.container}>
                 <SectionList
-                    ListHeaderComponent={
-                        <ChangesListFilter<FilterableType> items={filterOptions} onPress={
-                            (items, updated) => { this.updateFilterOptions(updated); }
-                        } />
-                    }
                     renderItem={this.renderFeedItem}
                     renderSectionHeader={({ section }) => {
 
@@ -111,7 +96,7 @@ export class ChangesScreen extends Component<Props, State> {
                         >{section.key}</Text>;
                     }}
                     renderSectionFooter={() => <Divider />}
-                    sections={toAgeInDaysSections(filterByType(toModel(changeFeed), filterOptions).slice(0, 100), this.clock)}
+                    sections={toAgeInDaysSections(toModel(changeFeed).slice(0, 100), this.clock)}
                     keyExtractor={(item, index) => index.toString()}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
                 />
@@ -140,13 +125,6 @@ export class ChangesScreen extends Component<Props, State> {
             console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
             this.setState({ hasError: true });
         }
-    }
-
-    private updateFilterOptions(updated: Item<FilterableType>): void {
-        const filterOptions: Item<FilterableType>[] =
-            this.state.filterOptions.map(o => ({ key: o.key, text: o.text, checked: o.key === updated.key ? updated.checked : o.checked }));
-
-        this.setState({ filterOptions });
     }
 }
 
@@ -199,22 +177,4 @@ function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionL
         { data: lastThirtyDays, key: "Last 30 Days" },
         { data: older, key: "Older" }
     ]);
-}
-
-function filterByType(feedModels: ChangeModel[], filterOptions: Item<FilterableType>[]): ChangeModel[] {
-    const selected: string[] = filterOptions.filter(o => o.checked).map(o => o.key.toUpperCase());
-    if (selected.length === 0) {
-        return feedModels;
-    }
-
-    return feedModels.filter(fm => selected.includes(fm.changeName.toUpperCase()));
-}
-
-enum FilterableType {
-    alcohol = "alcohol",
-    vintage = "vintage",
-    price = "price",
-    type = "type",
-    packaging = "packaging",
-    producer = "producer"
 }
