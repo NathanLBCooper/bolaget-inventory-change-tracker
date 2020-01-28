@@ -1,5 +1,4 @@
 import { injectable } from "inversify";
-import APIPeline from "apipeline";
 
 import { ChangeFeed } from "./ChangeFeed";
 import { Article } from "./Article";
@@ -15,21 +14,29 @@ export interface IInventoryService {
 
 @injectable()
 export class InventoryService implements IInventoryService {
-    constructor(private api: APIPeline) { }
+    constructor(private baseUri: string) { }
 
     public async getChangeFeed(): Promise<ChangeFeed> {
-        return ChangeFeed.Make(await this.api.fetch("change/recent"));
+        const response: Response = await fetch(this.baseUri + "/change/recent/");
+        const responseJson: any = await response.json();
+        return ChangeFeed.Make(responseJson);
     }
 
     public async getArticle(id: number): Promise<Article> {
-        return Article.Make(await this.api.fetch(`article/:id`, { pathParameters: { id } }));
+        const response: Response = await fetch(this.baseUri + "/article/" + id);
+        const responseJson: any = await response.json();
+        return Article.Make(responseJson);
     }
 
     public async getCategories(): Promise<CategoryCollection> {
-        return CategoryCollection.Make(await this.api.fetch("assortment"));
+        const response: Response = await fetch(this.baseUri + "/assortment/");
+        const responseJson: any = await response.json();
+        return CategoryCollection.Make(responseJson);
     }
 
     public async getArticlesByCategory(categoryName: string): Promise<ArticleSummaryCollection> {
-        return ArticleSummaryCollection.Make(await this.api.fetch(`assortment/:categoryName`, { pathParameters: { categoryName } }));
+        const response: Response = await fetch(this.baseUri + "/assortment/" + categoryName);
+        const responseJson: any = await response.json();
+        return ArticleSummaryCollection.Make(responseJson);
     }
 }
