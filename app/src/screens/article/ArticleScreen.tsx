@@ -77,7 +77,7 @@ export class ArticleScreen extends Component<Props, State> {
             },
             sectionHeader: {
                 paddingLeft: 10,
-                backgroundColor: "darkgray",
+                backgroundColor: "rgb(80,80,80)",
                 color: "white",
                 paddingTop: 5,
                 paddingBottom: 5,
