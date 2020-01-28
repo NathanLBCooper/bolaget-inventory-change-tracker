@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from "react";
+import React, { Component, ReactNode, ReactElement } from "react";
 import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
 import { Text } from "react-native-elements";
 import { Container } from "inversify";
@@ -32,6 +32,9 @@ export class ArticleScreen extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        this.renderSummary = this.renderSummary.bind(this);
+        this.renderChanges = this.renderChanges.bind(this);
+
         const serviceLocator: Container = global.serviceLocator;
         this.inventoryService = serviceLocator.get("IInventoryService");
     }
@@ -49,17 +52,11 @@ export class ArticleScreen extends Component<Props, State> {
 
     public render(): ReactNode {
         const { article, hasLoaded, hasError } = this.state;
-        const { navigation } = this.props;
 
         const styles: {
             container: ViewStyle
             header: TextStyle,
             sectionHeader: TextStyle,
-            summaryList: ViewStyle,
-            summaryRow: ViewStyle,
-            summaryKey: TextStyle,
-            summaryValue: TextStyle,
-            changeList: ViewStyle,
             loadingContainer: ViewStyle,
             errorContainer: ViewStyle,
             errorMessage: TextStyle
@@ -83,25 +80,6 @@ export class ArticleScreen extends Component<Props, State> {
                 paddingBottom: 5,
                 marginTop: 10
             },
-            summaryList: {
-                padding: 10
-            },
-            summaryRow: {
-                flexDirection: "row",
-                height: 28
-            },
-            summaryKey: {
-                flex: 1,
-                fontSize: 16
-            },
-            summaryValue: {
-                flex: 2,
-                fontSize: 14,
-                color: "rgba(0, 0, 0, 0.54)"
-            },
-            changeList: {
-                padding: 10
-            },
             loadingContainer: {
                 flex: 1,
                 justifyContent: "center"
@@ -117,48 +95,13 @@ export class ArticleScreen extends Component<Props, State> {
         };
 
         if (hasLoaded) {
-            const summaryData: {
-                key: string;
-                value: string;
-            }[] = [
-                    { key: "Name", value: `${article.name}` },
-                    { key: "Name2", value: `${article.name2}` },
-                    { key: "Producer", value: `${article.producer}` },
-                    { key: "Importer", value: `${article.importer}` },
-                    { key: "Type", value: `${article.type}` },
-                    { key: "Category", value: `${article.category}` },
-                    { key: "Origin", value: `${article.origin}` },
-                    { key: "CountryOfOrigin", value: `${article.countryOfOrigin}` },
-                    { key: "Packaging", value: `${article.packaging}` },
-                    { key: "Vintage", value: `${article.vintage}` },
-                    { key: "Price", value: `${article.price}` },
-                    { key: "PricePerLitre", value: `${article.pricePerLitre}` },
-                    { key: "Alcohol", value: `${article.alcohol}` },
-                    { key: "Volume", value: `${article.volume}` },
-                    { key: "Expired", value: `${article.expired}` },
-                    { key: "Timestamp", value: `${article.timestamp.format("MMMM D YYYY, h:mm:ss a")}` },
-                    { key: "Uri", value: `${article.uri}` }
-                ];
-
             return <View style={styles.container}>
                 <Text h4={true} style={styles.header}>{article.name}</Text>
                 <ScrollView>
                     <Text h4={true} style={styles.sectionHeader}>Summary</Text>
-                    <FlatList
-                        style={styles.summaryList}
-                        data={summaryData}
-                        renderItem={({ item }) => <View style={styles.summaryRow}>
-                            <Text style={styles.summaryKey}>{item.key}</Text><Text style={styles.summaryValue}>{`${item.value}`}</Text>
-                        </View>}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
+                    {this.renderSummary()}
                     <Text h4={true} style={styles.sectionHeader}>Changes</Text>
-                    <FlatList
-                        data={toChangeListModel(article)}
-                        renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
-                        keyExtractor={(item, index) => index.toString()}
-                        ListEmptyComponent={<EmptyChangeListItem />}
-                    />
+                    {this.renderChanges()}
                 </ScrollView>
             </View>;
         } else if (hasError) {
@@ -170,6 +113,78 @@ export class ArticleScreen extends Component<Props, State> {
                 <LoadingSpinner />
             </View>;
         }
+    }
+
+    private renderSummary(): ReactElement {
+        const { article } = this.state;
+
+        const summaryData: {
+            key: string;
+            value: string;
+        }[] = [
+                { key: "Name", value: `${article.name}` },
+                { key: "Name2", value: `${article.name2}` },
+                { key: "Producer", value: `${article.producer}` },
+                { key: "Importer", value: `${article.importer}` },
+                { key: "Type", value: `${article.type}` },
+                { key: "Category", value: `${article.category}` },
+                { key: "Origin", value: `${article.origin}` },
+                { key: "CountryOfOrigin", value: `${article.countryOfOrigin}` },
+                { key: "Packaging", value: `${article.packaging}` },
+                { key: "Vintage", value: `${article.vintage}` },
+                { key: "Price", value: `${article.price}` },
+                { key: "PricePerLitre", value: `${article.pricePerLitre}` },
+                { key: "Alcohol", value: `${article.alcohol}` },
+                { key: "Volume", value: `${article.volume}` },
+                { key: "Expired", value: `${article.expired}` },
+                { key: "Timestamp", value: `${article.timestamp.format("MMMM D YYYY, h:mm:ss a")}` },
+                { key: "Uri", value: `${article.uri}` }
+            ];
+
+        const styles: {
+            list: ViewStyle,
+            row: ViewStyle,
+            key: TextStyle,
+            value: TextStyle
+        } = {
+            list: {
+                padding: 10
+            },
+            row: {
+                flexDirection: "row",
+                height: 28
+            },
+            key: {
+                flex: 1,
+                fontSize: 16
+            },
+            value: {
+                flex: 2,
+                fontSize: 14,
+                color: "rgba(0, 0, 0, 0.54)"
+            }
+        };
+
+        return <FlatList
+            style={styles.list}
+            data={summaryData}
+            renderItem={({ item }) => <View style={styles.row}>
+                <Text style={styles.key}>{item.key}</Text><Text style={styles.value}>{`${item.value}`}</Text>
+            </View>}
+            keyExtractor={(item, index) => index.toString()}
+        />;
+    }
+
+    private renderChanges(): ReactElement {
+        const { article } = this.state;
+        const { navigation } = this.props;
+
+        return <FlatList
+            data={toChangeListModel(article)}
+            renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={<EmptyChangeListItem />}
+        />;
     }
 
     private async loadArticle(articleId: number): Promise<void> {
