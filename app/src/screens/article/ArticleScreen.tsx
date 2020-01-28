@@ -1,6 +1,6 @@
 import React, { Component, ReactNode, ReactElement } from "react";
 import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
-import { Text } from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 import { Container } from "inversify";
 
 import { IInventoryService } from "../../services/InventoryService";
@@ -34,6 +34,7 @@ export class ArticleScreen extends Component<Props, State> {
 
         this.renderSummary = this.renderSummary.bind(this);
         this.renderChanges = this.renderChanges.bind(this);
+        this.renderNotification = this.renderNotification.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
         this.inventoryService = serviceLocator.get("IInventoryService");
@@ -102,6 +103,8 @@ export class ArticleScreen extends Component<Props, State> {
                     {this.renderSummary()}
                     <Text h4={true} style={styles.sectionHeader}>Changes</Text>
                     {this.renderChanges()}
+                    <Text h4={true} style={styles.sectionHeader}>Notifications</Text>
+                    {this.renderNotification()}
                 </ScrollView>
             </View>;
         } else if (hasError) {
@@ -185,6 +188,28 @@ export class ArticleScreen extends Component<Props, State> {
             keyExtractor={(item, index) => index.toString()}
             ListEmptyComponent={<EmptyChangeListItem />}
         />;
+    }
+
+    private renderNotification(): ReactElement {
+        const styles: {
+            container: ViewStyle,
+            button: ViewStyle
+        } = {
+            container: {
+                padding: 10
+            },
+            button: {
+                padding: 10
+            }
+        };
+
+        return <View style={styles.container}>
+            <Button
+                style={styles.button}
+                title="Notify me when something changes"
+                disabled={true}
+            />
+        </View>;
     }
 
     private async loadArticle(articleId: number): Promise<void> {
