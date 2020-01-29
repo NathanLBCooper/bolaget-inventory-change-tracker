@@ -222,7 +222,7 @@ export class ArticleScreen extends Component<Props, State> {
             const article: Article = await this.inventoryService.getArticle(articleId);
             this.setState({ article, hasLoaded: true });
         } catch (error) {
-            console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
+            console.error("Error fetching article in ArticleScreen.loadArticle", error);
             this.setState({ hasError: true });
         }
     }

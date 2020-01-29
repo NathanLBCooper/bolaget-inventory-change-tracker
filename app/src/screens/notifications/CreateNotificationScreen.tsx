@@ -1,19 +1,53 @@
-import React, { Component, ReactNode, ReactElement } from "react";
-import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
+import React, { Component, ReactNode } from "react";
+import { View, TextStyle, ViewStyle, ScrollView } from "react-native";
 import { Text, Button, Input } from "react-native-elements";
 import MultiSelect from 'react-native-multiple-select';
+import { Container } from "inversify";
+
+import { INavigation } from "../../Navigation";
+import { Article } from "../../services/Article";
+import { IInventoryService } from "../../services/InventoryService";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+
+type Props = {
+    navigation: INavigation
+};
 
 type State = {
+    article: Article;
+    hasError: boolean;
+    hasLoaded: boolean;
+    hasSubmitted: boolean;
     selectedFields: string[];
 };
 
-export class CreateNotificationScreen extends Component<{}, State> {
+export class CreateNotificationScreen extends Component<Props, State> {
     public state: State = {
+        article: undefined,
+        hasError: false,
+        hasLoaded: false,
+        hasSubmitted: false,
         selectedFields: []
     };
 
-    constructor(props: {}) {
+    private readonly inventoryService: IInventoryService;
+
+    constructor(props: Props) {
         super(props);
+
+        const serviceLocator: Container = global.serviceLocator;
+        this.inventoryService = serviceLocator.get("IInventoryService");
+    }
+
+    public async componentDidMount(): Promise<void> {
+        const articleId: number = this.props.navigation.getParam("articleId", -1);
+        if (articleId == null) {
+            console.error("Error reading property articleId");
+            this.state.hasError = true;
+            return;
+        }
+
+        await this.loadArticle(articleId);
     }
 
     public render(): ReactNode {
@@ -23,7 +57,9 @@ export class CreateNotificationScreen extends Component<{}, State> {
             formInput: ViewStyle,
             intraInputText: TextStyle,
             label: TextStyle,
-            dropdown: ViewStyle
+            loadingContainer: ViewStyle,
+            errorContainer: ViewStyle,
+            errorMessage: TextStyle
         } = {
             container: {
                 flex: 1,
@@ -49,9 +85,17 @@ export class CreateNotificationScreen extends Component<{}, State> {
                 fontWeight: "bold",
                 paddingHorizontal: 10
             },
-            dropdown: {
-                marginVertical: 15,
-                paddingHorizontal: 10
+            loadingContainer: {
+                flex: 1,
+                justifyContent: "center"
+            },
+            errorContainer: {
+                flex: 1,
+            },
+            errorMessage: {
+                margin: "auto",
+                width: "50%",
+                textAlign: "center"
             }
         };
 
@@ -80,28 +124,56 @@ export class CreateNotificationScreen extends Component<{}, State> {
                 { name: "Uri", id: 28 }
             ];
 
-        const { selectedFields } = this.state;
+        const { article, hasLoaded, hasError, hasSubmitted, selectedFields } = this.state;
 
-        return <View style={styles.container}>
-            <ScrollView>
-                <View style={styles.formInputContainer}>
-                    <Text style={styles.intraInputText}>Notify me when...</Text>
-                    <Input containerStyle={styles.formInput} label="One of these articles changes" />
-                    <View style={styles.formInput}>
-                        <Text style={styles.label}>and the change is to one of these fields</Text>
-                        <MultiSelect
-                            items={fieldOptions}
-                            uniqueKey="id"
-                            selectedItems={selectedFields}
-                            onSelectedItemsChange={selected => { this.setState({ selectedFields: selected }); }}
-                            styleMainWrapper={styles.dropdown}
-                            styleItemsContainer={{ width: 120 }}
-                        />
+        if (hasLoaded) {
+            return <View style={styles.container}>
+                <ScrollView>
+                    <View style={styles.formInputContainer}>
+                        <Text style={styles.intraInputText}>Notify me when...</Text>
+                        <Input containerStyle={styles.formInput} label="When this article changes" value={article.name}
+                            disabled={true} />
+                        <View style={styles.formInput}>
+                            <Text style={styles.label}>and the change is to one of these fields</Text>
+                            <MultiSelect
+                                items={fieldOptions}
+                                uniqueKey="id"
+                                selectedItems={selectedFields}
+                                onSelectedItemsChange={selected => { this.setState({ selectedFields: selected }); }}
+                                styleMainWrapper={{ marginVertical: 15, paddingHorizontal: 10 }}
+                                styleListContainer={{ width: 200 }}
+                                styleTextDropdown={{ paddingHorizontal: 10 }}
+                                selectText="Choose one or more of these fields"
+                                searchInputPlaceholderText="Search for a field..."
+                                submitButtonText="Choose"
+                            />
+                        </View>
                     </View>
-                </View>
-                <Button title="Notify me" />
-            </ScrollView>
-        </View>;
+                    <Button title="Notify me" disabled={selectedFields.length < 1 || hasSubmitted}
+                        onPress={() => this.setState({ hasSubmitted: true })} />
+                    <Text style={hasSubmitted ? { color: "red", textAlign: "center", padding: 30 } : { display: "none" }}>
+                        Whoops! Looks like our lazy developers haven't implemented this yet. Sorry!</Text>
+                </ScrollView>
+            </View>;
+        } else if (hasError) {
+            return <View style={styles.errorContainer}>
+                <Text style={styles.errorMessage}>Sorry! Something went wrong.</Text>
+            </View>;
+        } else {
+            return <View style={styles.loadingContainer}>
+                <LoadingSpinner />
+            </View>;
+        }
+    }
+
+    private async loadArticle(articleId: number): Promise<void> {
+        try {
+            const article: Article = await this.inventoryService.getArticle(articleId);
+            this.setState({ article, hasLoaded: true });
+        } catch (error) {
+            console.error("Error fetching article in CreateNotification.loadArticle", error);
+            this.setState({ hasError: true });
+        }
     }
 }
 
