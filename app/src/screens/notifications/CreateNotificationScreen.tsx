@@ -145,6 +145,7 @@ export class CreateNotificationScreen extends Component<Props, State> {
                                 styleTextDropdown={{ paddingHorizontal: 10 }}
                                 selectText="Choose one or more of these fields"
                                 submitButtonText="Choose"
+                                submitButtonColor="rgb(32, 137, 220)"
                                 textInputProps={{ editable: false }}
                                 searchInputPlaceholderText=""
                                 searchIcon={false}
