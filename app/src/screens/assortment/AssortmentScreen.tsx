@@ -189,6 +189,6 @@ function sort<T>(entities: T[], predicate: ((t: T) => {})): T[] {
 
 function searchFilter(search: string, data: SectionListData<ArticleSummary>[]): SectionListData<ArticleSummary>[] {
     return sort(data.map(d => (
-        { key: d.key, data: d.data.filter(article => article.name.includes(search)) }
+        { key: d.key, data: d.data.filter(article => article.name.toLowerCase().includes(search.toLowerCase())) }
     )), section => section.data.length === 0);
 }
