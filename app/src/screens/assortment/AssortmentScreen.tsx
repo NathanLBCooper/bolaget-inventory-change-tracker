@@ -189,6 +189,14 @@ function sort<T>(entities: T[], predicate: ((t: T) => {})): T[] {
 
 function searchFilter(search: string, data: SectionListData<ArticleSummary>[]): SectionListData<ArticleSummary>[] {
     return sort(data.map(d => (
-        { key: d.key, data: d.data.filter(article => article.name.toLowerCase().includes(search.toLowerCase())) }
+        { key: d.key, data: d.data.filter(article => isSearchMatch(search, article)) }
     )), section => section.data.length === 0);
+}
+
+function isSearchMatch(search: string, article: ArticleSummary): boolean {
+    const lowerCaseSearch: string = search.toLowerCase();
+    const strCompare: (s: string) => boolean = (s: string) => s.toLowerCase().includes(lowerCaseSearch);
+
+    return strCompare(article.name)
+        || strCompare(article.name2);
 }
