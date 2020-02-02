@@ -158,7 +158,7 @@ export class AssortmentScreen extends Component<Props, State> {
         try {
             const assortment: { category: Category, articles: ArticleSummary[] }[] = [];
             const categories: Category[] = (await this.inventoryApi.getCategories()).data;
-            for (const category of categories) {
+            for (const category of sort(categories, cat => cat.name)) {
                 try {
                     assortment.push({ category, articles: (await this.inventoryApi.getArticlesByCategory(category)).data });
                 } catch (error) {
@@ -168,7 +168,7 @@ export class AssortmentScreen extends Component<Props, State> {
             }
 
             const assortmentList: SectionListData<ArticleSummary>[] =
-                assortment.map(a => ({ key: a.category.name, data: sortAlphabetically(a.articles) }));
+                assortment.map(a => ({ key: a.category.name, data: sort(a.articles, art => art.name) }));
 
             this.setState({ assortmentList, hasLoaded: true });
         } catch (error) {
@@ -178,12 +178,17 @@ export class AssortmentScreen extends Component<Props, State> {
     }
 }
 
-function sortAlphabetically(articles: ArticleSummary[]): ArticleSummary[] {
-    return articles.sort((left, right) => {
-        return left.name < right.name ? -1 : left.name > right.name ? 1 : 0;
+function sort<T>(entities: T[], predicate: ((t: T) => {})): T[] {
+    return entities.sort((left, right) => {
+        const leftStr: {} = predicate(left);
+        const rightStr: {} = predicate(right);
+
+        return leftStr < rightStr ? -1 : leftStr > rightStr ? 1 : 0;
     });
 }
 
 function searchFilter(search: string, data: SectionListData<ArticleSummary>[]): SectionListData<ArticleSummary>[] {
-    return data.map(d => ({ key: d.key, data: d.data.filter(article => article.name.includes(search)) }));
+    return sort(data.map(d => (
+        { key: d.key, data: d.data.filter(article => article.name.includes(search)) }
+    )), section => section.data.length === 0);
 }
