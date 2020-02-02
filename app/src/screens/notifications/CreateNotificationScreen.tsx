@@ -5,8 +5,8 @@ import MultiSelect from 'react-native-multiple-select';
 import { Container } from "inversify";
 
 import { INavigation } from "../../Navigation";
-import { Article } from "../../services/Article";
-import { IInventoryService } from "../../services/InventoryService";
+import { Article } from "../../api/Article";
+import { IInventoryApi } from "../../api/InventoryApi";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 
 type Props = {
@@ -30,13 +30,13 @@ export class CreateNotificationScreen extends Component<Props, State> {
         selectedFields: []
     };
 
-    private readonly inventoryService: IInventoryService;
+    private readonly InventoryApi: IInventoryApi;
 
     constructor(props: Props) {
         super(props);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.inventoryService = serviceLocator.get("IInventoryService");
+        this.InventoryApi = serviceLocator.get("IInventoryApi");
     }
 
     public async componentDidMount(): Promise<void> {
@@ -171,7 +171,7 @@ export class CreateNotificationScreen extends Component<Props, State> {
 
     private async loadArticle(articleId: number): Promise<void> {
         try {
-            const article: Article = await this.inventoryService.getArticle(articleId);
+            const article: Article = await this.InventoryApi.getArticle(articleId);
             this.setState({ article, hasLoaded: true });
         } catch (error) {
             console.error("Error fetching article in CreateNotification.loadArticle", error);

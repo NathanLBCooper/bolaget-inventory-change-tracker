@@ -297,7 +297,7 @@
     "@babel/helper-create-class-features-plugin" "^7.8.3"
     "@babel/helper-plugin-utils" "^7.8.3"
 
-"@babel/plugin-proposal-decorators@^7.1.0", "@babel/plugin-proposal-decorators@^7.6.0":
+"@babel/plugin-proposal-decorators@^7.1.0", "@babel/plugin-proposal-decorators@^7.6.0", "@babel/plugin-proposal-decorators@^7.8.3":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-decorators/-/plugin-proposal-decorators-7.8.3.tgz#2156860ab65c5abf068c3f67042184041066543e"
   integrity sha512-e3RvdvS4qPJVTe288DlXjwKflpfy1hr0j5dz5WpIYYeP7vQZg2WfAEIp8k5/Lwis/m5REXEteIz6rrcDtXXG7w==
@@ -2739,6 +2739,11 @@ babel-plugin-module-resolver@^3.1.1, babel-plugin-module-resolver@^3.2.0:
     pkg-up "^2.0.0"
     reselect "^3.0.1"
     resolve "^1.4.0"
+
+babel-plugin-parameter-decorator@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/babel-plugin-parameter-decorator/-/babel-plugin-parameter-decorator-1.0.15.tgz#26d38b64a97e0dbda3b09224b7839e04e9cb9a2c"
+  integrity sha512-yyBpvopjscQiPw9lS0lgLfw+aIy1lciOsKhmexf2MOIz/qMvhemyl4w0kqfH4u/UX57kon3NDfUvr4moMP78xQ==
 
 babel-plugin-react-native-web@^0.11.2, babel-plugin-react-native-web@^0.11.7:
   version "0.11.7"
