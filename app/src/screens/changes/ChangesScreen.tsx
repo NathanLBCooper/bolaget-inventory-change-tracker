@@ -13,7 +13,7 @@ import { ChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
 
 type State = {
-    changeFeed: ChangeFeed;
+    changeFeedList: SectionListData<ChangeModel>[];
     hasLoaded: boolean;
     hasError: boolean;
     refreshing: boolean;
@@ -25,7 +25,7 @@ type Props = {
 
 export class ChangesScreen extends Component<Props, State> {
     public state: State = {
-        changeFeed: undefined,
+        changeFeedList: undefined,
         hasLoaded: false,
         hasError: false,
         refreshing: false
@@ -37,17 +37,15 @@ export class ChangesScreen extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.renderFeedItem = this.renderFeedItem.bind(this);
-
         const serviceLocator: Container = global.serviceLocator;
         this.InventoryApi = serviceLocator.get("IInventoryApi");
         this.clock = serviceLocator.get("IClock");
     }
 
-    public async componentDidMount(): Promise<void> { await this.loadChangeFeed(); }
+    public async componentDidMount(): Promise<void> { await this.load(); }
 
     public render(): ReactNode {
-        const { changeFeed, hasLoaded, hasError, refreshing } = this.state;
+        const { changeFeedList, hasLoaded, hasError, refreshing } = this.state;
 
         const styles: {
             container: ViewStyle,
@@ -88,7 +86,7 @@ export class ChangesScreen extends Component<Props, State> {
         if (hasLoaded) {
             return <View style={styles.container}>
                 <SectionList
-                    renderItem={this.renderFeedItem}
+                    renderItem={obj => <ChangesListItem model={obj.item} index={obj.index} navigation={this.props.navigation} />}
                     renderSectionHeader={({ section }) => {
 
                         return <Text h4={true}
@@ -96,9 +94,9 @@ export class ChangesScreen extends Component<Props, State> {
                         >{section.key}</Text>;
                     }}
                     renderSectionFooter={() => <Divider />}
-                    sections={toAgeInDaysSections(toModel(changeFeed).slice(0, 100), this.clock)}
+                    sections={changeFeedList}
                     keyExtractor={(item, index) => index.toString()}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.loadChangeFeed()} />}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.load()} />}
                 />
             </View>;
         } else if (hasError) {
@@ -112,17 +110,14 @@ export class ChangesScreen extends Component<Props, State> {
         }
     }
 
-    private renderFeedItem(obj: { item: ChangeModel, index: number }): ReactElement {
-        return <ChangesListItem model={obj.item} index={obj.index} navigation={this.props.navigation} />;
-    }
-
-    private async loadChangeFeed(): Promise<void> {
+    private async load(): Promise<void> {
         try {
             const changeFeed: ChangeFeed = await this.InventoryApi.getChangeFeed();
+            const changeFeedList: SectionListData<ChangeModel>[] = toAgeInDaysSections(toModel(changeFeed).slice(0, 100), this.clock);
 
-            this.setState({ changeFeed, hasLoaded: true });
+            this.setState({ changeFeedList, hasLoaded: true });
         } catch (error) {
-            console.error("Error fetching change feed in ChangeScreen.loadChangeFeed", error);
+            console.error("Error fetching change feed in ChangeScreen.load", error);
             this.setState({ hasError: true });
         }
     }
