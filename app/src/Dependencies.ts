@@ -1,12 +1,15 @@
-import { Container } from "inversify";
-import { IInventoryApi, InventoryApi } from "./services/InventoryApi";
+import { Container, inject } from "inversify";
+import { IInventoryApi, InventoryApi, IInventoryLinksApi, InventoryLinksApi } from "./services/InventoryApi";
 import { Appsettings } from "./AppSettings";
 import { IClock, Clock } from "./lib/clock";
 
 export function ConfigureDependencies(settings: Appsettings): Container {
     const container: Container = new Container();
 
-    container.bind<IInventoryApi>("IInventoryApi").toConstantValue(new InventoryApi(settings.baseUrl));
+    container.bind<Appsettings>("Appsettings").toConstantValue(settings);
+
+    container.bind<IInventoryApi>("IInventoryApi").to(InventoryApi).inSingletonScope();
+    container.bind<IInventoryLinksApi>("IInventoryLinksApi").to(InventoryLinksApi).inSingletonScope();
     container.bind<IClock>("IClock").to(Clock);
 
     return container;

@@ -1,3 +1,6 @@
-export type Appsettings = {
-    baseUrl: string;
-};
+import { injectable } from "inversify";
+
+@injectable()
+export class Appsettings {
+    constructor(public baseUrl: string) { }
+}
