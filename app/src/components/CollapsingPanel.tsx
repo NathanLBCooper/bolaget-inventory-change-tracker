@@ -1,34 +1,7 @@
 
 import React, { Component, ReactElement, ReactNode } from 'react';
-import { View, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
+import { View, TouchableOpacity, ViewStyle, TextStyle, StyleProp } from "react-native";
 import { Icon } from 'react-native-elements';
-
-const styles: {
-    summaryRow: ViewStyle,
-    summary: ViewStyle,
-    icon: TextStyle,
-    parentHr: ViewStyle,
-    child: ViewStyle,
-} = {
-    summaryRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    summary: {
-        flex: 1
-    },
-    icon: {
-        fontSize: 30
-    },
-    parentHr: {
-        height: 1,
-        width: '100%'
-    },
-    child: {
-        padding: 16,
-    },
-};
 
 type Props = {
     /** The part of this Component which is always shown */
@@ -43,6 +16,8 @@ type Props = {
      * results.
      */
     rerenderOnData?: {};
+    summaryContainerStyle?: StyleProp<ViewStyle>;
+    iconStyle?: object;
 };
 
 type State = {
@@ -62,7 +37,9 @@ export class CollapsingPanel extends Component<Props, State> {
         {
             summary: ReactElement,
             detail: (ReactElement) | (() => ReactElement) | (() => Promise<ReactElement>),
-            rerenderOnData?: {}
+            rerenderOnData?: {},
+            summaryContainerStyle?: StyleProp<ViewStyle>,
+            iconStyle?: object
         }
     ) {
         super(props);
@@ -74,18 +51,41 @@ export class CollapsingPanel extends Component<Props, State> {
     }
 
     public render(): ReactNode {
-        const { summary } = this.props;
+        const { summary, summaryContainerStyle, iconStyle } = this.props;
         const { resolvedDetail } = this.state;
 
+        const styles: {
+            summaryContainer: ViewStyle,
+            summaryContent: ViewStyle,
+            icon: TextStyle,
+            parentHr: ViewStyle
+        } = {
+            summaryContainer: {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            },
+            summaryContent: {
+                flex: 1
+            },
+            icon: {
+                fontSize: 30
+            },
+            parentHr: {
+                width: '100%'
+            }
+        };
+
         return <View>
-            <TouchableOpacity style={styles.summaryRow} onPress={this.toggleExpand}>
-                <View style={styles.summary}>{summary}</View>
-                <Icon name={this.state.expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} style={styles.icon} />
+            <TouchableOpacity style={[styles.summaryContainer, summaryContainerStyle]} onPress={this.toggleExpand}>
+                <Icon name={this.state.expanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
+                    iconStyle={{ ...styles.icon, ...iconStyle }} />
+                <View style={styles.summaryContent}>{summary}</View>
             </TouchableOpacity>
             <View style={styles.parentHr} />
             {
                 this.state.expanded &&
-                <View style={styles.child}>
+                <View>
                     {resolvedDetail}
                 </View>
             }

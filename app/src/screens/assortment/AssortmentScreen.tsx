@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from "react";
-import { View, TextStyle, ViewStyle, StyleSheet, TouchableOpacity, SectionList, RefreshControl, SectionListData } from "react-native";
-import { Text, ListItem, Divider } from "react-native-elements";
+import { View, TextStyle, ViewStyle, StyleSheet, TouchableOpacity, RefreshControl, SectionListData, FlatList } from "react-native";
+import { Text, ListItem } from "react-native-elements";
 import { Container } from "inversify";
 
 import { LoadingSpinner } from "../../components/LoadingSpinner";
@@ -8,6 +8,7 @@ import { INavigation } from "../../Navigation";
 import { Category } from "../../api/Category";
 import { ArticleSummary } from "../../api/ArticleSummary";
 import { IInventoryLinksApi } from "../../api/InventoryApi";
+import { CollapsingPanel } from "../../components/CollapsingPanel";
 
 type Props = {
     navigation: INavigation
@@ -47,8 +48,10 @@ export class AssortmentScreen extends Component<Props, State> {
 
         const styles: {
             container: ViewStyle,
-            sectionHeader: TextStyle,
-            emptySectionHeader: TextStyle,
+            categoryTitleContainer: ViewStyle,
+            arrowIconStyle: TextStyle,
+            categoryTitle: TextStyle,
+            emptyCategoryTitle: TextStyle,
             categoryItem: ViewStyle,
             loadingContainer: ViewStyle,
             errorContainer: ViewStyle,
@@ -57,15 +60,21 @@ export class AssortmentScreen extends Component<Props, State> {
             container: {
                 flex: 1,
             },
-            sectionHeader: {
-                paddingLeft: 10,
+            categoryTitleContainer: {
                 backgroundColor: "mediumslateblue",
+                borderBottomColor: "#8877ef",
+                borderBottomWidth: 2
+            },
+            arrowIconStyle: {
+                color: "white"
+            },
+            categoryTitle: {
+                paddingLeft: 10,
                 color: "white",
                 paddingTop: 12,
                 paddingBottom: 8
             },
-            emptySectionHeader: {
-                marginBottom: 12,
+            emptyCategoryTitle: {
                 color: "darkgray"
             },
             categoryItem: {
@@ -88,25 +97,41 @@ export class AssortmentScreen extends Component<Props, State> {
 
         if (hasLoaded) {
             return <View style={styles.container}>
-                <SectionList
-                    renderItem={(obj: { item: ArticleSummary, index: number }) => {
-                        return <TouchableOpacity onPress={() => navigation.navigate("Article", { articleId: obj.item.id })}><ListItem
-                            key={obj.index}
-                            title={
-                                <Text>{obj.item.name}</Text>
-                            }
-                            style={styles.categoryItem}
-                        /></TouchableOpacity>;
-                    }}
-                    renderSectionHeader={({ section }) => {
-                        return <Text h4={true}
-                            style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
-                        >{section.key}</Text>;
-                    }}
-                    renderSectionFooter={() => <Divider />}
-                    sections={assortmentList}
+                <FlatList
+                    data={assortmentList}
                     keyExtractor={(item, index) => index.toString()}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.load()} />}
+                    renderItem={({ item }) => {
+                        if (item.data.length > 0) {
+                            return <CollapsingPanel
+                                summaryContainerStyle={styles.categoryTitleContainer}
+                                iconStyle={styles.arrowIconStyle}
+                                summary={<Text h4={true}
+                                    style={styles.categoryTitle}
+                                >{item.key}</Text>}
+                                detail={
+                                    <FlatList
+                                        data={item.data}
+                                        keyExtractor={(i, index) => index.toString()}
+                                        renderItem={(obj: { item: ArticleSummary, index: number }) => {
+                                            return <TouchableOpacity
+                                                onPress={() => navigation.navigate("Article", { articleId: obj.item.id })}>
+                                                <ListItem
+                                                    key={obj.index}
+                                                    title={
+                                                        <Text>{obj.item.name}</Text>
+                                                    }
+                                                    style={styles.categoryItem}
+                                                /></TouchableOpacity>;
+                                        }}
+                                    />
+                                } />;
+                        } else {
+                            return <Text h4={true}
+                                style={[styles.categoryTitle, styles.emptyCategoryTitle, styles.categoryTitleContainer]}
+                            >{item.key}</Text>;
+                        }
+                    }}
                 />
             </View>;
         } else if (hasError) {
