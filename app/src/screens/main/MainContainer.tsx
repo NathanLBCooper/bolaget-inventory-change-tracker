@@ -41,8 +41,9 @@ const ChangesNavigation: NavigationNavigator<any, NavigationProp<NavigationState
             },
             headerTitleStyle: {
                 color: "white"
-            }
-        }
+            },
+            gestureEnabled: false
+        },
     }
 );
 
@@ -83,7 +84,8 @@ const AssortmentNavigation: NavigationNavigator<any, NavigationProp<NavigationSt
             },
             headerTitleStyle: {
                 color: "white"
-            }
+            },
+            gestureEnabled: false
         }
     }
 );
