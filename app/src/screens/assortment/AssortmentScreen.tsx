@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from "react";
 import { View, TextStyle, ViewStyle, StyleSheet, TouchableOpacity, RefreshControl, SectionListData, FlatList } from "react-native";
-import { Text, ListItem } from "react-native-elements";
+import { Text, ListItem, SearchBar } from "react-native-elements";
 import { Container } from "inversify";
 
 import { LoadingSpinner } from "../../components/LoadingSpinner";
@@ -19,6 +19,7 @@ type State = {
     hasLoaded: boolean;
     hasError: boolean;
     refreshing: boolean;
+    search: string;
 };
 
 export class AssortmentScreen extends Component<Props, State> {
@@ -26,7 +27,8 @@ export class AssortmentScreen extends Component<Props, State> {
         assortmentList: undefined,
         hasLoaded: false,
         hasError: false,
-        refreshing: false
+        refreshing: false,
+        search: ""
     };
 
     private readonly inventoryApi: IInventoryLinksApi;
@@ -43,7 +45,7 @@ export class AssortmentScreen extends Component<Props, State> {
     public async componentDidMount(): Promise<void> { await this.load(); }
 
     public render(): ReactNode {
-        const { assortmentList, hasLoaded, hasError, refreshing } = this.state;
+        const { assortmentList, hasLoaded, hasError, refreshing, search } = this.state;
         const { navigation } = this.props;
 
         const styles: {
@@ -97,8 +99,15 @@ export class AssortmentScreen extends Component<Props, State> {
 
         if (hasLoaded) {
             return <View style={styles.container}>
+                <SearchBar
+                    placeholder="Type Here..."
+                    onChangeText={(text: string) => {
+                        this.setState({ search: text });
+                    }}
+                    value={search}
+                />
                 <FlatList
-                    data={assortmentList}
+                    data={searchFilter(search, assortmentList)}
                     keyExtractor={(item, index) => index.toString()}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.load()} />}
                     renderItem={({ item }) => {
@@ -173,4 +182,8 @@ function sortAlphabetically(articles: ArticleSummary[]): ArticleSummary[] {
     return articles.sort((left, right) => {
         return left.name < right.name ? -1 : left.name > right.name ? 1 : 0;
     });
+}
+
+function searchFilter(search: string, data: SectionListData<ArticleSummary>[]): SectionListData<ArticleSummary>[] {
+    return data.map(d => ({ key: d.key, data: d.data.filter(article => article.name.includes(search)) }));
 }
