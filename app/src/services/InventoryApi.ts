@@ -5,7 +5,7 @@ import { Article } from "./Article";
 import { CategoryCollection } from "./CategoryCollection";
 import { ArticleSummaryCollection } from "./ArticleCollection";
 
-export interface IInventoryService {
+export interface IInventoryApi {
     getChangeFeed(): Promise<ChangeFeed>;
     getArticle(id: number): Promise<Article>;
     getCategories(): Promise<CategoryCollection>;
@@ -13,7 +13,7 @@ export interface IInventoryService {
 }
 
 @injectable()
-export class InventoryService implements IInventoryService {
+export class InventoryApi implements IInventoryApi {
     constructor(private baseUri: string) { }
 
     public async getChangeFeed(): Promise<ChangeFeed> {

@@ -3,7 +3,7 @@ import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { Container } from "inversify";
 
-import { IInventoryService } from "../../services/InventoryService";
+import { IInventoryApi } from "../../services/InventoryApi";
 import { Article } from "../../services/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
@@ -27,7 +27,7 @@ export class ArticleScreen extends Component<Props, State> {
         hasError: false
     };
 
-    private readonly inventoryService: IInventoryService;
+    private readonly InventoryApi: IInventoryApi;
 
     constructor(props: Props) {
         super(props);
@@ -37,7 +37,7 @@ export class ArticleScreen extends Component<Props, State> {
         this.renderNotification = this.renderNotification.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.inventoryService = serviceLocator.get("IInventoryService");
+        this.InventoryApi = serviceLocator.get("IInventoryApi");
     }
 
     public async componentDidMount(): Promise<void> {
@@ -219,7 +219,7 @@ export class ArticleScreen extends Component<Props, State> {
 
     private async loadArticle(articleId: number): Promise<void> {
         try {
-            const article: Article = await this.inventoryService.getArticle(articleId);
+            const article: Article = await this.InventoryApi.getArticle(articleId);
             this.setState({ article, hasLoaded: true });
         } catch (error) {
             console.error("Error fetching article in ArticleScreen.loadArticle", error);

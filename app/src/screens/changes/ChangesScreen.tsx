@@ -5,7 +5,7 @@ import { Container } from "inversify";
 import { Dayjs } from "dayjs";
 
 import { IClock } from "../../lib/clock";
-import { IInventoryService } from "../../services/InventoryService";
+import { IInventoryApi } from "../../services/InventoryApi";
 import { ChangeFeed } from "../../services/ChangeFeed";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
@@ -31,7 +31,7 @@ export class ChangesScreen extends Component<Props, State> {
         refreshing: false
     };
 
-    private readonly inventoryService: IInventoryService;
+    private readonly InventoryApi: IInventoryApi;
     private readonly clock: IClock;
 
     constructor(props: Props) {
@@ -40,7 +40,7 @@ export class ChangesScreen extends Component<Props, State> {
         this.renderFeedItem = this.renderFeedItem.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.inventoryService = serviceLocator.get("IInventoryService");
+        this.InventoryApi = serviceLocator.get("IInventoryApi");
         this.clock = serviceLocator.get("IClock");
     }
 
@@ -118,7 +118,7 @@ export class ChangesScreen extends Component<Props, State> {
 
     private async loadChangeFeed(): Promise<void> {
         try {
-            const changeFeed: ChangeFeed = await this.inventoryService.getChangeFeed();
+            const changeFeed: ChangeFeed = await this.InventoryApi.getChangeFeed();
 
             this.setState({ changeFeed, hasLoaded: true });
         } catch (error) {

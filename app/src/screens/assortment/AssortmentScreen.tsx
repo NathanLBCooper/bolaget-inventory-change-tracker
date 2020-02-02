@@ -3,7 +3,7 @@ import { View, TextStyle, ViewStyle, FlatList, StyleSheet, TouchableOpacity } fr
 import { Text, ListItem } from "react-native-elements";
 import { Container } from "inversify";
 
-import { IInventoryService } from "../../services/InventoryService";
+import { IInventoryApi } from "../../services/InventoryApi";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { CategoryCollection } from "../../services/CategoryCollection";
@@ -25,13 +25,13 @@ export class AssortmentScreen extends Component<Props, State> {
         hasError: false
     };
 
-    private readonly inventoryService: IInventoryService;
+    private readonly InventoryApi: IInventoryApi;
 
     constructor(props: Props) {
         super(props);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.inventoryService = serviceLocator.get("IInventoryService");
+        this.InventoryApi = serviceLocator.get("IInventoryApi");
     }
 
     public async componentDidMount(): Promise<void> { await this.loadCategories(); }
@@ -96,7 +96,7 @@ export class AssortmentScreen extends Component<Props, State> {
 
     private async loadCategories(): Promise<void> {
         try {
-            const categories: CategoryCollection = await this.inventoryService.getCategories();
+            const categories: CategoryCollection = await this.InventoryApi.getCategories();
 
             this.setState({ categories, hasLoaded: true });
         } catch (error) {
