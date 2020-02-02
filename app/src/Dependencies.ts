@@ -1,5 +1,5 @@
 import { Container, inject } from "inversify";
-import { IInventoryApi, InventoryApi, IInventoryLinksApi, InventoryLinksApi } from "./services/InventoryApi";
+import { IInventoryApi, InventoryApi, IInventoryLinksApi, InventoryLinksApi } from "./api/InventoryApi";
 import { Appsettings } from "./AppSettings";
 import { IClock, Clock } from "./lib/clock";
 

@@ -47,8 +47,8 @@ export class InventoryApi implements IInventoryApi {
 }
 
 export interface IInventoryLinksApi {
-    getCategories(): Promise<Category[]>;
-    getArticlesByCategory(category: Category): Promise<ArticleSummary[]>;
+    getCategories(): Promise<CategoryCollection>;
+    getArticlesByCategory(category: Category): Promise<ArticleSummaryCollection>;
     getArticle(article: ArticleSummary): Promise<Article>;
 }
 
@@ -56,12 +56,12 @@ export interface IInventoryLinksApi {
 export class InventoryLinksApi implements InventoryLinksApi {
     constructor(@inject("Appsettings") private appSettings: Appsettings) { }
 
-    public async getCategories(): Promise<Category[]> {
-        return (await this.getResource(CategoryCollection.Make, "/assortment/")).data;
+    public async getCategories(): Promise<CategoryCollection> {
+        return this.getResource(CategoryCollection.Make, "/assortment/");
     }
 
-    public async getArticlesByCategory(category: Category): Promise<ArticleSummary[]> {
-        return (await this.getResource(ArticleSummaryCollection.Make, category.uri)).data;
+    public async getArticlesByCategory(category: Category): Promise<ArticleSummaryCollection> {
+        return this.getResource(ArticleSummaryCollection.Make, category.uri);
     }
 
     public async getArticle(article: ArticleSummary): Promise<Article> {

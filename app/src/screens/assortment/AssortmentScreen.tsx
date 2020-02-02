@@ -1,54 +1,72 @@
 import React, { Component, ReactNode } from "react";
-import { View, TextStyle, ViewStyle, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, ListItem } from "react-native-elements";
+import { View, TextStyle, ViewStyle, StyleSheet, TouchableOpacity, SectionList, RefreshControl, SectionListData } from "react-native";
+import { Text, ListItem, Divider } from "react-native-elements";
 import { Container } from "inversify";
 
-import { IInventoryApi } from "../../services/InventoryApi";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { CategoryCollection } from "../../services/CategoryCollection";
+import { Category } from "../../api/Category";
+import { ArticleSummary } from "../../api/ArticleSummary";
+import { IInventoryLinksApi } from "../../api/InventoryApi";
 
 type Props = {
     navigation: INavigation
 };
 
 type State = {
-    categories: CategoryCollection,
+    assortmentList: SectionListData<ArticleSummary>[],
     hasLoaded: boolean;
     hasError: boolean;
+    refreshing: boolean;
 };
 
 export class AssortmentScreen extends Component<Props, State> {
     public state: State = {
-        categories: undefined,
+        assortmentList: undefined,
         hasLoaded: false,
-        hasError: false
+        hasError: false,
+        refreshing: false
     };
 
-    private readonly InventoryApi: IInventoryApi;
+    private readonly inventoryApi: IInventoryLinksApi;
 
     constructor(props: Props) {
         super(props);
 
+        this.load = this.load.bind(this);
+
         const serviceLocator: Container = global.serviceLocator;
-        this.InventoryApi = serviceLocator.get("IInventoryApi");
+        this.inventoryApi = serviceLocator.get("IInventoryLinksApi");
     }
 
-    public async componentDidMount(): Promise<void> { await this.loadCategories(); }
+    public async componentDidMount(): Promise<void> { await this.load(); }
 
     public render(): ReactNode {
-        const { categories, hasLoaded, hasError } = this.state;
+        const { assortmentList, hasLoaded, hasError, refreshing } = this.state;
         const { navigation } = this.props;
 
         const styles: {
             container: ViewStyle,
-            categoryItem: ViewStyle
+            sectionHeader: TextStyle,
+            emptySectionHeader: TextStyle,
+            categoryItem: ViewStyle,
             loadingContainer: ViewStyle,
             errorContainer: ViewStyle,
             errorMessage: TextStyle
         } = {
             container: {
                 flex: 1,
+            },
+            sectionHeader: {
+                paddingLeft: 10,
+                backgroundColor: "mediumslateblue",
+                color: "white",
+                paddingTop: 12,
+                paddingBottom: 8
+            },
+            emptySectionHeader: {
+                marginBottom: 12,
+                color: "darkgray"
             },
             categoryItem: {
                 borderBottomWidth: StyleSheet.hairlineWidth,
@@ -70,17 +88,25 @@ export class AssortmentScreen extends Component<Props, State> {
 
         if (hasLoaded) {
             return <View style={styles.container}>
-                <FlatList
-                    data={categories.data}
-                    renderItem={(obj) =>
-                        <TouchableOpacity onPress={() => navigation.navigate("Category", { categoryName: obj.item.name })}><ListItem
+                <SectionList
+                    renderItem={(obj: { item: ArticleSummary, index: number }) => {
+                        return <TouchableOpacity onPress={() => navigation.navigate("Article", { articleId: obj.item.id })}><ListItem
                             key={obj.index}
                             title={
                                 <Text>{obj.item.name}</Text>
                             }
                             style={styles.categoryItem}
-                        /></TouchableOpacity>}
+                        /></TouchableOpacity>;
+                    }}
+                    renderSectionHeader={({ section }) => {
+                        return <Text h4={true}
+                            style={[styles.sectionHeader, section.data.length === 0 ? styles.emptySectionHeader : undefined]}
+                        >{section.key}</Text>;
+                    }}
+                    renderSectionFooter={() => <Divider />}
+                    sections={assortmentList}
                     keyExtractor={(item, index) => index.toString()}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => this.load()} />}
                 />
             </View>;
         } else if (hasError) {
@@ -94,14 +120,32 @@ export class AssortmentScreen extends Component<Props, State> {
         }
     }
 
-    private async loadCategories(): Promise<void> {
+    private async load(): Promise<void> {
         try {
-            const categories: CategoryCollection = await this.InventoryApi.getCategories();
+            const assortment: { category: Category, articles: ArticleSummary[] }[] = [];
+            const categories: Category[] = (await this.inventoryApi.getCategories()).data;
+            for (const category of categories) {
+                try {
+                    assortment.push({ category, articles: (await this.inventoryApi.getArticlesByCategory(category)).data });
+                } catch (error) {
+                    assortment.push({ category, articles: [] });
+                    console.error(`Error fetching articles for category ${category.uri} in AssortmentScreen.load`, error);
+                }
+            }
 
-            this.setState({ categories, hasLoaded: true });
+            const assortmentList: SectionListData<ArticleSummary>[] =
+                assortment.map(a => ({ key: a.category.name, data: sortAlphabetically(a.articles) }));
+
+            this.setState({ assortmentList, hasLoaded: true });
         } catch (error) {
-            console.error("Error fetching categories in AssortmentScreen.loadCategories", error);
+            console.error("Error fetching assortment in AssortmentScreen.load", error);
             this.setState({ hasError: true });
         }
     }
+}
+
+function sortAlphabetically(articles: ArticleSummary[]): ArticleSummary[] {
+    return articles.sort((left, right) => {
+        return left.name < right.name ? -1 : left.name > right.name ? 1 : 0;
+    });
 }

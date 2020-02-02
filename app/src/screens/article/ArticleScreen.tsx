@@ -3,8 +3,8 @@ import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { Container } from "inversify";
 
-import { IInventoryApi } from "../../services/InventoryApi";
-import { Article } from "../../services/Article";
+import { IInventoryApi } from "../../api/InventoryApi";
+import { Article } from "../../api/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { ChangesListItem, EmptyChangeListItem } from "../changes/ChangesListItem";
