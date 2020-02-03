@@ -57,17 +57,17 @@ export class CreateNotificationScreen extends Component<Props, State> {
             formInput: ViewStyle,
             intraInputText: TextStyle,
             label: TextStyle,
+            submitButton: ViewStyle,
             loadingContainer: ViewStyle,
             errorContainer: ViewStyle,
             errorMessage: TextStyle
         } = {
             container: {
                 flex: 1,
-                padding: 30
+                paddingHorizontal: 10
             },
             formInputContainer: {
-                paddingTop: 10,
-                paddingBottom: 20
+                paddingVertical: 8
             },
             formInput: {
                 paddingVertical: 5
@@ -76,7 +76,7 @@ export class CreateNotificationScreen extends Component<Props, State> {
                 color: "rgb(134, 147, 158)",
                 fontSize: 20,
                 fontWeight: "bold",
-                paddingVertical: 15,
+                paddingVertical: 10,
                 paddingHorizontal: 10
             },
             label: {
@@ -84,6 +84,9 @@ export class CreateNotificationScreen extends Component<Props, State> {
                 fontSize: 16,
                 fontWeight: "bold",
                 paddingHorizontal: 10
+            },
+            submitButton: {
+                marginHorizontal: 10
             },
             loadingContainer: {
                 flex: 1,
@@ -154,7 +157,7 @@ export class CreateNotificationScreen extends Component<Props, State> {
                             </ScrollView>
                         </View>
                     </View>
-                    <Button title="Notify me" disabled={selectedFields.length < 1 || hasSubmitted}
+                    <Button style={styles.submitButton} title="Notify me" disabled={selectedFields.length < 1 || hasSubmitted}
                         onPress={() => this.setState({ hasSubmitted: true })} />
                     <Text style={hasSubmitted ? { color: "red", textAlign: "center", padding: 30 } : { display: "none" }}>
                         Whoops! Looks like our lazy developers haven't implemented this yet. Sorry!</Text>
