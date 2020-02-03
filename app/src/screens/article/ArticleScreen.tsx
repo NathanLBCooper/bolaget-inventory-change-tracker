@@ -140,8 +140,7 @@ export class ArticleScreen extends Component<Props, State> {
                 { key: "Alcohol", value: `${article.alcohol}` },
                 { key: "Volume", value: `${article.volume}` },
                 { key: "Expired", value: `${article.expired}` },
-                { key: "Timestamp", value: `${article.timestamp.format("MMMM D YYYY, h:mm:ss a")}` },
-                { key: "Uri", value: `${article.uri}` }
+                { key: "Timestamp", value: `${article.timestamp.format("MMMM D YYYY, h:mm:ss a")}` }
             ];
 
         const styles: {

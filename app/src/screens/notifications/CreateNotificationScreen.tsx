@@ -120,8 +120,7 @@ export class CreateNotificationScreen extends Component<Props, State> {
                 { name: "Volume", id: 24 },
                 { name: "Expired", id: 25 },
                 { name: "History", id: 26 },
-                { name: "Timestamp", id: 27 },
-                { name: "Uri", id: 28 }
+                { name: "Timestamp", id: 27 }
             ];
 
         const { article, hasLoaded, hasError, hasSubmitted, selectedFields } = this.state;
