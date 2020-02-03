@@ -125,6 +125,8 @@ export class ArticleScreen extends Component<Props, State> {
             key: string;
             value: string;
         }[] = [
+                { key: "Id", value: `${article.id}` },
+                { key: "ArticleId", value: `${article.articleId}` },
                 { key: "Name", value: `${article.name}` },
                 { key: "Name2", value: `${article.name2}` },
                 { key: "Producer", value: `${article.producer}` },

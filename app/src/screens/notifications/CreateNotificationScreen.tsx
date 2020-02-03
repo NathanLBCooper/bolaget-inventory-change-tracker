@@ -107,23 +107,24 @@ export class CreateNotificationScreen extends Component<Props, State> {
             id: number;
         }[] = [
                 { name: "Id", id: 10 },
-                { name: "Name", id: 11 },
-                { name: "Name2", id: 12 },
-                { name: "Producer", id: 13 },
-                { name: "Importer", id: 14 },
-                { name: "Type", id: 15 },
-                { name: "Category", id: 16 },
-                { name: "Origin", id: 17 },
-                { name: "Country of Origin", id: 18 },
-                { name: "Packaging", id: 19 },
-                { name: "Vintage", id: 20 },
-                { name: "Price", id: 21 },
-                { name: "Price per Litre", id: 22 },
-                { name: "Alcohol", id: 23 },
-                { name: "Volume", id: 24 },
-                { name: "Expired", id: 25 },
-                { name: "History", id: 26 },
-                { name: "Timestamp", id: 27 }
+                { name: "ArticleId", id: 11 },
+                { name: "Name", id: 12 },
+                { name: "Name2", id: 13 },
+                { name: "Producer", id: 14 },
+                { name: "Importer", id: 15 },
+                { name: "Type", id: 16 },
+                { name: "Category", id: 17 },
+                { name: "Origin", id: 18 },
+                { name: "Country of Origin", id: 19 },
+                { name: "Packaging", id: 20 },
+                { name: "Vintage", id: 21 },
+                { name: "Price", id: 22 },
+                { name: "Price per Litre", id: 23 },
+                { name: "Alcohol", id: 24 },
+                { name: "Volume", id: 25 },
+                { name: "Expired", id: 26 },
+                { name: "History", id: 27 },
+                { name: "Timestamp", id: 28 }
             ];
 
         const { article, hasLoaded, hasError, hasSubmitted, selectedFields } = this.state;
