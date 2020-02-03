@@ -7,7 +7,7 @@ import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { Category } from "../../api/Category";
 import { ArticleSummary } from "../../api/ArticleSummary";
-import { IInventoryLinksApi } from "../../api/InventoryApi";
+import { IInventoryApi } from "../../api/InventoryApi";
 import { CollapsingPanel } from "../../components/CollapsingPanel";
 
 type Props = {
@@ -31,7 +31,7 @@ export class AssortmentScreen extends Component<Props, State> {
         search: ""
     };
 
-    private readonly inventoryApi: IInventoryLinksApi;
+    private readonly inventoryApi: IInventoryApi;
 
     constructor(props: Props) {
         super(props);
@@ -39,7 +39,7 @@ export class AssortmentScreen extends Component<Props, State> {
         this.load = this.load.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
-        this.inventoryApi = serviceLocator.get("IInventoryLinksApi");
+        this.inventoryApi = serviceLocator.get("IInventoryApi");
     }
 
     public async componentDidMount(): Promise<void> { await this.load(); }
