@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from "react";
+import React, { Component, ReactNode, ReactElement } from "react";
 import { View, TextStyle, ViewStyle, StyleSheet, TouchableOpacity, RefreshControl, SectionListData, FlatList } from "react-native";
 import { Text, ListItem, SearchBar } from "react-native-elements";
 import { Container } from "inversify";
@@ -37,6 +37,7 @@ export class AssortmentScreen extends Component<Props, State> {
         super(props);
 
         this.load = this.load.bind(this);
+        this.renderName = this.renderName.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
         this.inventoryApi = serviceLocator.get("IInventoryApi");
@@ -127,9 +128,7 @@ export class AssortmentScreen extends Component<Props, State> {
                                                 onPress={() => navigation.navigate("Article", { articleId: obj.item.id })}>
                                                 <ListItem
                                                     key={obj.index}
-                                                    title={
-                                                        <Text>{obj.item.name}</Text>
-                                                    }
+                                                    title={this.renderName(obj.item)}
                                                     style={styles.categoryItem}
                                                 /></TouchableOpacity>;
                                         }}
@@ -152,6 +151,20 @@ export class AssortmentScreen extends Component<Props, State> {
                 <LoadingSpinner />
             </View>;
         }
+    }
+
+    private renderName(article: ArticleSummary): ReactElement {
+        const styles: {
+            itemTitle: TextStyle,
+        } = {
+            itemTitle: {
+                fontWeight: "bold"
+            }
+        };
+
+        return article.name2 != null && article.name2.length > 0 ?
+            <Text><Text style={styles.itemTitle}>{`${article.name2},  `}</Text>{`${article.name}`}</Text> :
+            <Text style={styles.itemTitle}>{`${article.name}`}</Text>;
     }
 
     private async load(): Promise<void> {
