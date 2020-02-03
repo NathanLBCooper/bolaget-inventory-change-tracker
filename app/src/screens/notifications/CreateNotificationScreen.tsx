@@ -135,21 +135,24 @@ export class CreateNotificationScreen extends Component<Props, State> {
                             disabled={true} />
                         <View style={styles.formInput}>
                             <Text style={styles.label}>and the change is to one of these fields</Text>
-                            <MultiSelect
-                                items={fieldOptions}
-                                uniqueKey="id"
-                                selectedItems={selectedFields}
-                                onSelectedItemsChange={selected => { this.setState({ selectedFields: selected }); }}
-                                styleMainWrapper={{ marginVertical: 15, paddingHorizontal: 10 }}
-                                styleListContainer={{ width: 200 }}
-                                styleTextDropdown={{ paddingHorizontal: 10 }}
-                                selectText="Choose one or more of these fields"
-                                submitButtonText="Choose"
-                                submitButtonColor="rgb(32, 137, 220)"
-                                textInputProps={{ editable: false }}
-                                searchInputPlaceholderText=""
-                                searchIcon={false}
-                            />
+                            <ScrollView>
+                                <MultiSelect
+                                    items={fieldOptions}
+                                    uniqueKey="id"
+                                    selectedItems={selectedFields}
+                                    onSelectedItemsChange={selected => { this.setState({ selectedFields: selected }); }}
+                                    styleMainWrapper={{ marginVertical: 15, paddingHorizontal: 10 }}
+                                    styleListContainer={{ width: 200 }}
+                                    styleTextDropdown={{ paddingHorizontal: 10 }}
+                                    selectText="Choose one or more of these fields"
+                                    submitButtonText="Choose"
+                                    submitButtonColor="rgb(32, 137, 220)"
+                                    textInputProps={{ editable: false }}
+                                    searchInputPlaceholderText=""
+                                    searchIcon={false}
+                                    fixedHeight={true}
+                                />
+                            </ScrollView>
                         </View>
                     </View>
                     <Button title="Notify me" disabled={selectedFields.length < 1 || hasSubmitted}
