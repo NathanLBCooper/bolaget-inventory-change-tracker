@@ -9,8 +9,9 @@ import { IInventoryApi } from "../../api/InventoryApi";
 import { Article } from "../../api/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { ChangesListItem, EmptyChangeListItem } from "../changes/ChangesListItem";
+import { EmptyChangeListItem } from "../changes/ChangesListItem";
 import { ChangeModel } from "../changes/ChangeModel";
+import { ChangesListItemForArticle } from "./ChangesListItemForArticle";
 
 type Props = {
     navigation: INavigation
@@ -188,11 +189,10 @@ export class ArticleScreen extends Component<Props, State> {
 
     private renderChanges(): ReactElement {
         const { article } = this.state;
-        const { navigation } = this.props;
 
         return <FlatList
             data={toChangeListModel(article)}
-            renderItem={(obj) => <ChangesListItem model={obj.item} index={obj.index} navigation={navigation} />}
+            renderItem={(obj) => <ChangesListItemForArticle model={obj.item} index={obj.index}/>}
             keyExtractor={(item, index) => index.toString()}
             ListEmptyComponent={<EmptyChangeListItem />}
         />;
