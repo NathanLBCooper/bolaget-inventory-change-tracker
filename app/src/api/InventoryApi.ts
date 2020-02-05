@@ -6,6 +6,7 @@ import { Article } from "./Article";
 import { CategoryCollection } from "./CategoryCollection";
 import { ArticleSummaryCollection } from "./ArticleCollection";
 import { Category } from "./Category";
+import { ArticleStockLevels } from "./ArticleStockLevels";
 
 function putThisInFilesWithInjectDecorator(): any {
     throw Error("Don't call this"); return inject("");
@@ -16,6 +17,7 @@ export interface IInventoryApi {
     getArticlesByCategory(category: Category): Promise<ArticleSummaryCollection>;
     getChangeFeed(): Promise<ChangeFeed>;
     getArticle(id: number): Promise<Article>;
+    getStockLevels(article: Article): Promise<ArticleStockLevels>;
 }
 
 @injectable()
@@ -36,6 +38,10 @@ export class InventoryApi implements IInventoryApi {
 
     public async getArticle(id: number): Promise<Article> {
         return this.getResource(Article.Make, "/article/" + id);
+    }
+
+    public async getStockLevels(article: Article): Promise<ArticleStockLevels> {
+        return this.getResource(ArticleStockLevels.Make, article.stock);
     }
 
     private async getResource<TResource>(make: (dto: any) => TResource, link: string): Promise<TResource> {
