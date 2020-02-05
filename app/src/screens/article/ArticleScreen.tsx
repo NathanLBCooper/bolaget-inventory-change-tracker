@@ -22,6 +22,7 @@ type State = {
     stock: [dayjs.Dayjs, number][];
     hasLoaded: boolean;
     hasError: boolean;
+    hasErrorFetchingStock: boolean;
 };
 
 export class ArticleScreen extends Component<Props, State> {
@@ -29,7 +30,8 @@ export class ArticleScreen extends Component<Props, State> {
         article: undefined,
         stock: undefined,
         hasLoaded: false,
-        hasError: false
+        hasError: false,
+        hasErrorFetchingStock: false
     };
 
     private readonly InventoryApi: IInventoryApi;
@@ -192,14 +194,14 @@ export class ArticleScreen extends Component<Props, State> {
 
         return <FlatList
             data={toChangeListModel(article)}
-            renderItem={(obj) => <ChangesListItemForArticle model={obj.item} index={obj.index}/>}
+            renderItem={(obj) => <ChangesListItemForArticle model={obj.item} index={obj.index} />}
             keyExtractor={(item, index) => index.toString()}
             ListEmptyComponent={<EmptyChangeListItem />}
         />;
     }
 
     private renderStockLevels(): ReactElement {
-        const { stock } = this.state;
+        const { stock, hasErrorFetchingStock } = this.state;
 
         const styles: {
             emptyText: ViewStyle,
@@ -229,6 +231,9 @@ export class ArticleScreen extends Component<Props, State> {
             }
         };
 
+        if (hasErrorFetchingStock) {
+            return <Text style={styles.emptyText}>Sorry! Something went wrong when fetch the stock levels</Text>;
+        }
 
         if (stock == null || stock.length === 0) {
             return <Text style={styles.emptyText}>No stock level history for this article</Text>;
@@ -275,13 +280,15 @@ export class ArticleScreen extends Component<Props, State> {
         try {
             const article: Article = await this.InventoryApi.getArticle(articleId);
             let stock: [dayjs.Dayjs, number][];
+            let hasErrorFetchingStock: boolean = false;
             try {
                 stock = createChangeHistory((await this.InventoryApi.getStockLevels(article)).stockLevels);
             } catch (error) {
                 console.error("Error fetching stock levels in ArticleScreen.loadArticle", error);
+                hasErrorFetchingStock = true;
             }
 
-            this.setState({ article, stock, hasLoaded: true });
+            this.setState({ article, stock, hasLoaded: true, hasErrorFetchingStock });
         } catch (error) {
             console.error("Error fetching article in ArticleScreen.loadArticle", error);
             this.setState({ hasError: true });
