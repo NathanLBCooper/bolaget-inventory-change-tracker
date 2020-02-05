@@ -2,7 +2,9 @@ import React, { Component, ReactNode, ReactElement } from "react";
 import { View, TextStyle, ViewStyle, FlatList, ScrollView } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { Container } from "inversify";
+import dayjs from "dayjs";
 
+import { sort } from "../../lib/Sort";
 import { IInventoryApi } from "../../api/InventoryApi";
 import { Article } from "../../api/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
@@ -16,6 +18,7 @@ type Props = {
 
 type State = {
     article: Article;
+    stock: [dayjs.Dayjs, number][];
     hasLoaded: boolean;
     hasError: boolean;
 };
@@ -23,6 +26,7 @@ type State = {
 export class ArticleScreen extends Component<Props, State> {
     public state: State = {
         article: undefined,
+        stock: undefined,
         hasLoaded: false,
         hasError: false
     };
@@ -34,6 +38,7 @@ export class ArticleScreen extends Component<Props, State> {
 
         this.renderSummary = this.renderSummary.bind(this);
         this.renderChanges = this.renderChanges.bind(this);
+        this.renderStockLevels = this.renderStockLevels.bind(this);
         this.renderNotification = this.renderNotification.bind(this);
 
         const serviceLocator: Container = global.serviceLocator;
@@ -105,6 +110,8 @@ export class ArticleScreen extends Component<Props, State> {
                     {this.renderNotification()}
                     <Text h4={true} style={styles.sectionHeader}>Recent Changes</Text>
                     {this.renderChanges()}
+                    <Text h4={true} style={styles.sectionHeader}>Recent Stock Levels</Text>
+                    {this.renderStockLevels()}
                 </ScrollView>
             </View>;
         } else if (hasError) {
@@ -191,6 +198,52 @@ export class ArticleScreen extends Component<Props, State> {
         />;
     }
 
+    private renderStockLevels(): ReactElement {
+        const { stock } = this.state;
+
+        const styles: {
+            emptyText: ViewStyle,
+            list: ViewStyle,
+            row: ViewStyle,
+            key: TextStyle,
+            value: TextStyle
+        } = {
+            emptyText: {
+                padding: 10
+            },
+            list: {
+                padding: 10
+            },
+            row: {
+                flexDirection: "row",
+                height: 28
+            },
+            key: {
+                flex: 2,
+                fontSize: 16
+            },
+            value: {
+                flex: 1,
+                fontSize: 14,
+                color: "rgba(0, 0, 0, 0.54)"
+            }
+        };
+
+
+        if (stock == null || stock.length === 0) {
+            return <Text style={styles.emptyText}>No stock level history for this article</Text>;
+        }
+
+        return <FlatList
+            style={styles.list}
+            data={stock}
+            renderItem={({ item }) => <View style={styles.row}>
+                <Text style={styles.key}>{item[0].format('D MMM, h:mm:ss a')}</Text><Text style={styles.value}>{`${item[1]}`}</Text>
+            </View>}
+            keyExtractor={(item, index) => index.toString()}
+        />;
+    }
+
     private renderNotification(): ReactElement {
         const { article } = this.state;
         const { navigation } = this.props;
@@ -221,7 +274,14 @@ export class ArticleScreen extends Component<Props, State> {
     private async loadArticle(articleId: number): Promise<void> {
         try {
             const article: Article = await this.InventoryApi.getArticle(articleId);
-            this.setState({ article, hasLoaded: true });
+            let stock: [dayjs.Dayjs, number][];
+            try {
+                stock = createChangeHistory((await this.InventoryApi.getStockLevels(article)).stockLevels);
+            } catch (error) {
+                console.error("Error fetching stock levels in ArticleScreen.loadArticle", error);
+            }
+
+            this.setState({ article, stock, hasLoaded: true });
         } catch (error) {
             console.error("Error fetching article in ArticleScreen.loadArticle", error);
             this.setState({ hasError: true });
@@ -240,4 +300,22 @@ function toChangeListModel(article: Article): ChangeModel[] {
     }
 
     return models;
+}
+
+function createChangeHistory(stockLevels: [dayjs.Dayjs, number][]): [dayjs.Dayjs, number][] {
+    if (stockLevels.length < 2) {
+        return stockLevels;
+    }
+
+    const changeHistoryLength: number = 30;
+
+    const sortedLevels: [dayjs.Dayjs, number][] = sort(stockLevels, (s) => s[0]);
+    const interestingValues: [dayjs.Dayjs, number][] = [sortedLevels[0]];
+    for (let i: number = 1; i < sortedLevels.length; ++i) {
+        if (sortedLevels[i][1] !== sortedLevels[i - 1][1]) {
+            interestingValues.push(sortedLevels[i]);
+        }
+    }
+
+    return interestingValues.splice(interestingValues.length - changeHistoryLength).reverse();
 }

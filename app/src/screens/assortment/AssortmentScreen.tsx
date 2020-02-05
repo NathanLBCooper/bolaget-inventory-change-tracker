@@ -3,6 +3,7 @@ import { View, TextStyle, ViewStyle, StyleSheet, TouchableOpacity, RefreshContro
 import { Text, ListItem, SearchBar } from "react-native-elements";
 import { Container } from "inversify";
 
+import { sort } from "../../lib/Sort";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { Category } from "../../api/Category";
@@ -189,15 +190,6 @@ export class AssortmentScreen extends Component<Props, State> {
             this.setState({ hasError: true });
         }
     }
-}
-
-function sort<T>(entities: T[], predicate: ((t: T) => {})): T[] {
-    return entities.sort((left, right) => {
-        const leftStr: {} = predicate(left);
-        const rightStr: {} = predicate(right);
-
-        return leftStr < rightStr ? -1 : leftStr > rightStr ? 1 : 0;
-    });
 }
 
 function searchFilter(search: string, data: SectionListData<ArticleSummary>[]): SectionListData<ArticleSummary>[] {
