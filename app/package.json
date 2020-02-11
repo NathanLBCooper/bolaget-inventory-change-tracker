@@ -7,7 +7,8 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "lint": "tslint 'src/**/*.{ts,tsx}' 'App.{ts,tsx}'",
-    "build-web": "expo build:web --no-pwa"
+    "build-web": "expo build:web --no-pwa",
+    "analyse": "yarn run react-native-bundle-visualizer"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",
@@ -37,6 +38,7 @@
     "@types/react-native": "^0.60.15",
     "babel-preset-expo": "^8.0.0",
     "expo-cli": "^3.11.7",
+    "react-native-bundle-visualizer": "^2.1.1",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
