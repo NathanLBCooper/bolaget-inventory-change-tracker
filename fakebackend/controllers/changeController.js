@@ -6,7 +6,7 @@ module.exports = function (app) {
 
 	app.get("/change/recent/:type", function (req, res) {
 		// We have alcohol, vintage, price, type
-		res.send(recentChangesByType[req.params.type]);
+		res.send(recentChangesByType[req.params.type] || recentChangesByType["alcohol"]);
 	});
 };
 
@@ -5197,176 +5197,176 @@ const recentChangesByType = {
 		]
 	},
 	"type": {
-		"timestamp" : new Date(),
-		"data" : [{
-				"id" : 7473401,
-				"name" : "Amarone della Valpolicella",
-				"name2" : "Mezzo Monte",
-				"category" : "Rött vin",
-				"changes" : [{
-						"timestamp" : new Date(),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Kryddigt & Mustigt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7473401"
-			}, {
-				"id" : 7274301,
-				"name" : "Grand Minéral",
-				"name2" : "Chardonnay",
-				"category" : "Vitt vin",
-				"changes" : [{
-						"timestamp" : new Date(),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Friskt & Fruktigt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7274301"
-			}, {
-				"id" : 7352201,
-				"name" : "Weinmann",
-				"name2" : "Grüner Veltliner Klassik",
-				"category" : "Vitt vin",
-				"changes" : [{
-						"timestamp" : new Date(),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Friskt & Fruktigt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7352201"
-			}, {
-				"id" : 7697101,
-				"name" : "Casteloro",
-				"name2" : "Rosso Veneto",
-				"category" : "Rött vin",
-				"changes" : [{
-						"timestamp" : new Date(),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Fruktigt & Smakrikt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7697101"
-			}, {
-				"id" : 7833101,
-				"name" : "Kloster Eberbach",
-				"name2" : "Riesling Trocken",
-				"category" : "Vitt vin",
-				"changes" : [{
-						"timestamp" : new Date(Date.now() - 1 * 864e5),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "Druvigt & Blommigt",
-								"newValue" : ""
-							}, {
-								"name" : "Vintage",
-								"oldValue" : "2016",
-								"newValue" : "2018"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7833101"
-			}, {
-				"id" : 7170901,
-				"name" : "Giacosa Fratelli",
-				"name2" : "Dolcetto d'Alba Sarrocco",
-				"category" : "Rött vin",
-				"changes" : [{
-						"timestamp" : new Date(Date.now() - 4 * 864e5),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Fruktigt & Smakrikt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7170901"
-			}, {
-				"id" : 7099201,
-				"name" : "Ruminat Primitivo",
-				"name2" : "Lunaria Terre di Chieti",
-				"category" : "Rött vin",
-				"changes" : [{
-						"timestamp" : new Date(Date.now() - 4 * 864e5),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Fruktigt & Smakrikt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7099201"
-			}, {
-				"id" : 7420101,
-				"name" : "Borgogno",
-				"name2" : "Barbera d'Alba Superiore",
-				"category" : "Rött vin",
-				"changes" : [{
-						"timestamp" : new Date(Date.now() - 4 * 864e5),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "Mjukt & Bärigt",
-								"newValue" : "Fruktigt & Smakrikt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/7420101"
-			}, {
-				"id" : 8656802,
-				"name" : "O.P. Anderson",
-				"name2" : "Hernö Juniper Cask",
-				"category" : "Akvavit och Kryddat brännvin",
-				"changes" : [{
-						"timestamp" : new Date(Date.now() - 10 * 864e5),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "Gin",
-								"newValue" : "Akvavit"
-							}, {
-								"name" : "Category",
-								"oldValue" : "Gin och Genever",
-								"newValue" : "Akvavit och Kryddat brännvin"
-							}
-						]
-					}
-				],
-				"uri" : "/article/8656802"
-			}, {
-				"id" : 9629401,
-				"name" : "Pichler Krutzler",
-				"name2" : "Grüner Veltliner Supperin",
-				"category" : "Vitt vin",
-				"changes" : [{
-						"timestamp" : new Date(Date.now() - 17 * 864e5),
-						"changes" : [{
-								"name" : "Type",
-								"oldValue" : "",
-								"newValue" : "Friskt & Fruktigt"
-							}
-						]
-					}
-				],
-				"uri" : "/article/9629401"
+		"timestamp": new Date(),
+		"data": [{
+			"id": 7473401,
+			"name": "Amarone della Valpolicella",
+			"name2": "Mezzo Monte",
+			"category": "Rött vin",
+			"changes": [{
+				"timestamp": new Date(),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Kryddigt & Mustigt"
+				}
+				]
 			}
+			],
+			"uri": "/article/7473401"
+		}, {
+			"id": 7274301,
+			"name": "Grand Minéral",
+			"name2": "Chardonnay",
+			"category": "Vitt vin",
+			"changes": [{
+				"timestamp": new Date(),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Friskt & Fruktigt"
+				}
+				]
+			}
+			],
+			"uri": "/article/7274301"
+		}, {
+			"id": 7352201,
+			"name": "Weinmann",
+			"name2": "Grüner Veltliner Klassik",
+			"category": "Vitt vin",
+			"changes": [{
+				"timestamp": new Date(),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Friskt & Fruktigt"
+				}
+				]
+			}
+			],
+			"uri": "/article/7352201"
+		}, {
+			"id": 7697101,
+			"name": "Casteloro",
+			"name2": "Rosso Veneto",
+			"category": "Rött vin",
+			"changes": [{
+				"timestamp": new Date(),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Fruktigt & Smakrikt"
+				}
+				]
+			}
+			],
+			"uri": "/article/7697101"
+		}, {
+			"id": 7833101,
+			"name": "Kloster Eberbach",
+			"name2": "Riesling Trocken",
+			"category": "Vitt vin",
+			"changes": [{
+				"timestamp": new Date(Date.now() - 1 * 864e5),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "Druvigt & Blommigt",
+					"newValue": ""
+				}, {
+					"name": "Vintage",
+					"oldValue": "2016",
+					"newValue": "2018"
+				}
+				]
+			}
+			],
+			"uri": "/article/7833101"
+		}, {
+			"id": 7170901,
+			"name": "Giacosa Fratelli",
+			"name2": "Dolcetto d'Alba Sarrocco",
+			"category": "Rött vin",
+			"changes": [{
+				"timestamp": new Date(Date.now() - 4 * 864e5),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Fruktigt & Smakrikt"
+				}
+				]
+			}
+			],
+			"uri": "/article/7170901"
+		}, {
+			"id": 7099201,
+			"name": "Ruminat Primitivo",
+			"name2": "Lunaria Terre di Chieti",
+			"category": "Rött vin",
+			"changes": [{
+				"timestamp": new Date(Date.now() - 4 * 864e5),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Fruktigt & Smakrikt"
+				}
+				]
+			}
+			],
+			"uri": "/article/7099201"
+		}, {
+			"id": 7420101,
+			"name": "Borgogno",
+			"name2": "Barbera d'Alba Superiore",
+			"category": "Rött vin",
+			"changes": [{
+				"timestamp": new Date(Date.now() - 4 * 864e5),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "Mjukt & Bärigt",
+					"newValue": "Fruktigt & Smakrikt"
+				}
+				]
+			}
+			],
+			"uri": "/article/7420101"
+		}, {
+			"id": 8656802,
+			"name": "O.P. Anderson",
+			"name2": "Hernö Juniper Cask",
+			"category": "Akvavit och Kryddat brännvin",
+			"changes": [{
+				"timestamp": new Date(Date.now() - 10 * 864e5),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "Gin",
+					"newValue": "Akvavit"
+				}, {
+					"name": "Category",
+					"oldValue": "Gin och Genever",
+					"newValue": "Akvavit och Kryddat brännvin"
+				}
+				]
+			}
+			],
+			"uri": "/article/8656802"
+		}, {
+			"id": 9629401,
+			"name": "Pichler Krutzler",
+			"name2": "Grüner Veltliner Supperin",
+			"category": "Vitt vin",
+			"changes": [{
+				"timestamp": new Date(Date.now() - 17 * 864e5),
+				"changes": [{
+					"name": "Type",
+					"oldValue": "",
+					"newValue": "Friskt & Fruktigt"
+				}
+				]
+			}
+			],
+			"uri": "/article/9629401"
+		}
 		]
 	}
 }

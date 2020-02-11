@@ -1,6 +1,6 @@
 module.exports = function (app) {
     app.get("/article/:id", function (req, res) {
-        res.send(articles[req.params.id]);
+        res.send(articles[req.params.id] || articles[7473401]);
     });
 };
 
