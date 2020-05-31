@@ -1,4 +1,4 @@
-# bologat-inventory-change-tracker
+# bolaget-inventory-change-tracker
 
 React Native app displaying changes to the System Bolgat inventory.
 
