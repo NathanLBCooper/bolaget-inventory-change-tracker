@@ -9,7 +9,8 @@ import { ChangesScreen } from "../changes/ChangesScreen";
 import { ArticleScreen } from "../article/ArticleScreen";
 import { AssortmentScreen } from "../assortment/AssortmentScreen";
 import { CreateNotificationScreen } from "../notifications/CreateNotificationScreen";
-import { AnalyticsScreen } from "../analytics/AnalyticsScreen";
+import { DashboardListScreen } from "../analytics/DashboardListScreen";
+import { DashboardScreen } from "../analytics/DashboardScreen";
 
 const ChangesNavigation: NavigationNavigator<any, NavigationProp<NavigationState>> = createStackNavigator(
     {
@@ -85,16 +86,20 @@ const AssortmentNavigation: NavigationNavigator<any, NavigationProp<NavigationSt
 
 const AnalyticsNavigation: NavigationNavigator<any, NavigationProp<NavigationState>> = createStackNavigator(
     {
-        Analytics: {
-            screen: AnalyticsScreen,
+        DashboardList: {
+            screen: DashboardListScreen,
             path: 'dashboards',
             navigationOptions: {
                 headerShown: false,
             }
+        },
+        Dashboard: {
+            screen: DashboardScreen,
+            path: 'dashboard'
         }
     },
     {
-        initialRouteName: "Analytics",
+        initialRouteName: "DashboardList",
         headerMode: 'screen',
         defaultNavigationOptions: {
             headerStyle: {
