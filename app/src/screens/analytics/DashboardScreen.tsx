@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from "react";
 import { View, Platform, ViewStyle, TextStyle } from "react-native";
 import { Text } from "react-native-elements";
+import { WebView } from 'react-native-webview';
 
 import { INavigation } from "../../Navigation";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
@@ -66,7 +67,7 @@ export class DashboardScreen extends Component<Props, State> {
                         <iframe
                             src={url}
                             style={{ height: "100%" }} /> :
-                        <Text>Sorry, Dashboards are not yet supported on your platform</Text>
+                        <WebView source={{ uri: url }} style={{ height: "100%" }} />
                 }
             </View>;
         } else if (hasError) {
