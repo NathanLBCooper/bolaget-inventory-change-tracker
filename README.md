@@ -10,6 +10,7 @@ Show changes in price, vintage, producer, alcohol content, packaging etc
 
 ![Photo and Screenshots](preview.jpg)
 
+The react native app talks to two APIs. The first and main one is the "inventory" api, which sits on top of a large amount of historic Systemet data. The second one, the "redash" api, is a static api which provides access to our Redash graphing platform. The code for the redash api is in this repository.
 
 # Setup
 
@@ -21,7 +22,7 @@ yarn
 yarn run web
 ```
 
-You need a backend as well. By default (in *appsettings.json*) it will use a local express server.
+You need both backends as well. By default (in *appsettings.json*), the app will use a local express server to simulate both.
 In the second window, run this:
 
 
@@ -55,6 +56,10 @@ yarn run lint
 
 # Deploy #
 
+Both the App and the Static API are static files and can be deployed to any CDN. The _header and _redirect configuration for the static API is there to deal with CORs and is in a format specific to the Netlify CDN.
+
+## Deploy the App ##
+
 Install :
 ```sh
 npm install -g surge
@@ -71,3 +76,9 @@ surge
 ```
 
 and then follow the instructions on the command line.
+
+## Deploy the Static API ##
+
+This is deployed on https://app.netlify.com/.
+
+A continuous deployment is set up to deploy the contents of /redash.

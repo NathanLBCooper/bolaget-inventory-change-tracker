@@ -11,14 +11,14 @@ type Props = {
 };
 
 type State = {
-    url: string;
+    uri: string;
     hasLoaded: boolean;
     hasError: boolean;
 };
 
 export class DashboardScreen extends Component<Props, State> {
     public state: State = {
-        url: undefined,
+        uri: undefined,
         hasLoaded: false,
         hasError: false
     };
@@ -28,18 +28,18 @@ export class DashboardScreen extends Component<Props, State> {
     }
 
     public async componentDidMount(): Promise<void> {
-        const url: string = this.props.navigation.getParam("url", undefined);
-        if (url == null) {
-            console.error("Error reading property url");
+        const uri: string = this.props.navigation.getParam("uri", undefined);
+        if (uri == null) {
+            console.error("Error reading property uri");
             this.setState({ hasError: true });
             return;
         }
 
-        this.setState({ url, hasLoaded: true, hasError: false });
+        this.setState({ uri, hasLoaded: true, hasError: false });
     }
 
     public render(): ReactNode {
-        const { url, hasLoaded, hasError } = this.state;
+        const { uri, hasLoaded, hasError } = this.state;
 
         const styles: {
             loadingContainer: ViewStyle,
@@ -65,9 +65,9 @@ export class DashboardScreen extends Component<Props, State> {
                 {
                     Platform.OS === "web" ?
                         <iframe
-                            src={url}
+                            src={uri}
                             style={{ height: "100%" }} /> :
-                        <WebView source={{ uri: url }} style={{ height: "100%" }} />
+                        <WebView source={{ uri }} style={{ height: "100%" }} />
                 }
             </View>;
         } else if (hasError) {

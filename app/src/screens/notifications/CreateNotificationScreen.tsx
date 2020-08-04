@@ -5,8 +5,8 @@ import MultiSelect from 'react-native-multiple-select';
 import { Container } from "inversify";
 
 import { INavigation } from "../../Navigation";
-import { Article } from "../../api/Article";
-import { IInventoryApi } from "../../api/InventoryApi";
+import { Article } from "../../inventory/Article";
+import { IInventoryApi } from "../../inventory/InventoryApi";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 
 type Props = {

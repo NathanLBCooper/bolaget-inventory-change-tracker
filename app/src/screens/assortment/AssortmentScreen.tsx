@@ -6,9 +6,9 @@ import { Container } from "inversify";
 import { sort } from "../../lib/Sort";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { Category } from "../../api/Category";
-import { ArticleSummary } from "../../api/ArticleSummary";
-import { IInventoryApi } from "../../api/InventoryApi";
+import { Category } from "../../inventory/Category";
+import { ArticleSummary } from "../../inventory/ArticleSummary";
+import { IInventoryApi } from "../../inventory/InventoryApi";
 import { CollapsingPanel } from "../../components/CollapsingPanel";
 
 type Props = {

@@ -3,10 +3,10 @@ import { View, ViewStyle, StyleSheet, TextStyle, TouchableOpacity } from 'react-
 import { ListItem, Text } from 'react-native-elements';
 
 import { INavigation } from '../../Navigation';
-import { DashboardModel } from './DashboardModel';
+import { Dashboard } from '../../redash/Dashboard';
 
 type Props = {
-    model: DashboardModel,
+    dashboard: Dashboard,
     navigation: INavigation
 };
 
@@ -37,14 +37,14 @@ export class DashboardListItem extends Component<Props> {
             },
         };
 
-        const { model, navigation } = this.props;
+        const { dashboard, navigation } = this.props;
 
-        return <TouchableOpacity onPress={() => navigation.navigate("Dashboard", { url: model.url })}><ListItem
-            key={model.name}
+        return <TouchableOpacity onPress={() => navigation.navigate("Dashboard", { uri: dashboard.uri })}><ListItem
+            key={dashboard.name}
             title={
-                <View><Text style={styles.itemTitle}>{`${model.name}`}</Text></View>
+                <View><Text style={styles.itemTitle}>{`${dashboard.name}`}</Text></View>
             }
-            subtitle={`${model.description}`}
+            subtitle={`${dashboard.description}`}
             style={styles.item}
         /></TouchableOpacity>;
     }

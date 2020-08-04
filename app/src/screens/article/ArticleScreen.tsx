@@ -5,8 +5,8 @@ import { Container } from "inversify";
 import dayjs from "dayjs";
 
 import { sort } from "../../lib/Sort";
-import { IInventoryApi } from "../../api/InventoryApi";
-import { Article } from "../../api/Article";
+import { IInventoryApi } from "../../inventory/InventoryApi";
+import { Article } from "../../inventory/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { EmptyChangeListItem } from "../changes/ChangesListItem";

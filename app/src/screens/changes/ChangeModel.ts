@@ -1,10 +1,10 @@
 import { Dayjs } from "dayjs";
 
-import { ChangeFeedItem } from "../../api/ChangeFeedItem";
-import { ChangeCollection } from "../../api/ChangeCollection";
+import { ChangeFeedItem } from "../../inventory/ChangeFeedItem";
+import { ChangeCollection } from "../../inventory/ChangeCollection";
 
-import { Change } from "../../api/Change";
-import { Article } from "../../api/Article";
+import { Change } from "../../inventory/Change";
+import { Article } from "../../inventory/Article";
 
 export class ChangeModel {
     public static Make(item: ChangeFeedItem, changeCollection: ChangeCollection, change: Change): ChangeModel {
