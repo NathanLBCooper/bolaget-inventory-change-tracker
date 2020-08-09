@@ -65,8 +65,6 @@ Install :
 npm install -g surge
 ```
 
-Then make sure the appsettings.json is configured to your environment.
-
 ```sh
 cd app
 yarn

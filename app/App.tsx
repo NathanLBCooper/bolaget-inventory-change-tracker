@@ -12,7 +12,8 @@ import { Container } from "inversify";
 import { ConfigureDependencies } from './src/Dependencies';
 import { Appsettings } from './src/AppSettings';
 
-import appSettingsJson from "./appsettings.json";
+import appSettings_Prod from "./appsettings.json";
+import appSettings_Dev from "./appsettings.dev.json";
 
 import { SplashScreen } from './src/screens/splash/SplashScreen';
 import MainContainer from "./src/screens/main/MainContainer";
@@ -23,7 +24,15 @@ declare global {
   };
 }
 
-global.serviceLocator = ConfigureDependencies(appSettingsJson as Appsettings);
+function loadAppSettings(): Appsettings {
+  if (!__DEV__) {
+    return appSettings_Prod;
+  }
+
+  return { ...appSettings_Prod, ...appSettings_Dev };
+}
+
+global.serviceLocator = ConfigureDependencies(loadAppSettings());
 
 const AppNavigator: NavigationNavigator<{}, NavigationProp<NavigationState>> = createSwitchNavigator(
   {
