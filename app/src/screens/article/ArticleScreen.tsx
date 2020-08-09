@@ -5,8 +5,8 @@ import { Container } from "inversify";
 import dayjs from "dayjs";
 
 import { sort } from "../../lib/Sort";
-import { IInventoryApi } from "../../api/InventoryApi";
-import { Article } from "../../api/Article";
+import { IInventoryApi } from "../../inventory/InventoryApi";
+import { Article } from "../../inventory/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { EmptyChangeListItem } from "../changes/ChangesListItem";
@@ -52,7 +52,7 @@ export class ArticleScreen extends Component<Props, State> {
         const articleId: number = this.props.navigation.getParam("articleId", -1);
         if (articleId == null) {
             console.error("Error reading property articleId");
-            this.state.hasError = true;
+            this.setState({ hasError: true });
             return;
         }
 

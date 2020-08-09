@@ -25,7 +25,7 @@ export class InventoryApi implements IInventoryApi {
     constructor(@inject("Appsettings") private appSettings: Appsettings) { }
 
     public async getCategories(): Promise<CategoryCollection> {
-        return this.getResource(CategoryCollection.Make, "/assortment/");
+        return this.getResource(CategoryCollection.Make, "/assortment");
     }
 
     public async getArticlesByCategory(category: Category): Promise<ArticleSummaryCollection> {
@@ -45,7 +45,7 @@ export class InventoryApi implements IInventoryApi {
     }
 
     private async getResource<TResource>(make: (dto: any) => TResource, link: string): Promise<TResource> {
-        const response: Response = await fetch(this.appSettings.baseUrl + link);
+        const response: Response = await fetch(this.appSettings.inventoryApiBaseUri + link);
         const responseJson: any = await response.json();
         return make(responseJson);
     }

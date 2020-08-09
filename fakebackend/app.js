@@ -36,9 +36,11 @@ app.all("/*", function (req, res, next) {
 
 app.get('/', (req, res) => res.send('Hello, this is the fake backend speaking!'))
 
-require("./controllers/changeController")(app);
-require("./controllers/articleController")(app);
-require("./controllers/assortmentController")(app);
-require("./controllers/stockController")(app);
+require("./inventory/changeController")(app);
+require("./inventory/articleController")(app);
+require("./inventory/assortmentController")(app);
+require("./inventory/stockController")(app);
+
+require("./redash/dashboardController")(app)
 
 app.listen(port, () => console.log(`Fake Backend listening on port ${port}!`))
