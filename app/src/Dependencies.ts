@@ -2,7 +2,7 @@ import { Container } from "inversify";
 import { IInventoryApi, InventoryApi } from "./inventory/InventoryApi";
 import { Appsettings } from "./AppSettings";
 import { IClock, Clock } from "./lib/clock";
-import { IRedashApi, RedashApi } from "./redash/redashApi";
+import { IRedashApi, RedashApi } from "./redash/RedashApi";
 
 export function ConfigureDependencies(settings: Appsettings): Container {
     const container: Container = new Container();
