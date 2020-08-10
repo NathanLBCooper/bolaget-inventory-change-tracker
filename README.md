@@ -6,7 +6,7 @@ Show changes in price, vintage, producer, alcohol content, packaging etc
 
 |||
 |-------------|-------------------|
-| **Frontend**  |<a href="http://bolaget.surge.sh" target="_blank">bolaget.surge.sh</a>|
+| **Frontend**  |<a href="https://bolaget.netlify.app" target="_blank">bolaget.netlify.app</a>|
 
 ![Photo and Screenshots](preview.jpg)
 
