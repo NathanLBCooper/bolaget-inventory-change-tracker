@@ -66,4 +66,24 @@ Continuous deployment of both the App and the Static API is setup on https://app
     Static API:
      Publish directory: redash
 
-But are just static files and can go on any CDN. The _header and _redirect configurations for the static API are there to fix CORs issues and would have to be redone in another format for another choice of CDN.
+## Manual deploy ##
+
+The output of all the code here is just static files. So it can go on any CDN. Sort of. The _header and _redirect configurations for the static API (which are there to fix CORs issues) currently tie it to Netlify, but the app can be deployed elsewhere easily.
+
+I've set up the CORs on the inventory api server to allow <a href="https://bolaget.surge.sh/" target="_blank">bolaget.surge.sh</a>, which I use as a sort of test environment. Heres' how to easily push from the command line:
+
+```sh
+npm install -g surge
+```
+
+Ask to be added as a collaberator on this domain.
+
+```sh
+cd app
+yarn
+yarn run build-web
+cd web-build
+surge
+```
+
+Then just type in `https://bolaget.surge.sh` as the domain name when prompted
