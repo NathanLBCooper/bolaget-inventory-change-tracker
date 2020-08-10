@@ -56,27 +56,14 @@ yarn run lint
 
 # Deploy #
 
-Both the App and the Static API are static files and can be deployed to any CDN. The _header and _redirect configuration for the static API is there to deal with CORs and is in a format specific to the Netlify CDN.
+Continuous deployment of both the App and the Static API is setup on https://app.netlify.com/.
 
-## Deploy the App ##
+    App:
+     Base directory: app
+     Build command: yarn run build-web
+     Publish directory: app/web-build
 
-Install :
-```sh
-npm install -g surge
-```
+    Static API:
+     Publish directory: redash
 
-```sh
-cd app
-yarn
-yarn run build-web
-cd web-build
-surge
-```
-
-and then follow the instructions on the command line.
-
-## Deploy the Static API ##
-
-This is deployed on https://app.netlify.com/.
-
-A continuous deployment is set up to deploy the contents of /redash.
+But are just static files and can go on any CDN. The _header and _redirect configurations for the static API are there to fix CORs issues and would have to be redone in another format for another choice of CDN.
