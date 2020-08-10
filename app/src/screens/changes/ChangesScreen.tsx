@@ -9,7 +9,7 @@ import { IInventoryApi } from "../../inventory/InventoryApi";
 import { ChangeFeed } from "../../inventory/ChangeFeed";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
-import { ChangeModel } from "./ChangeModel";
+import { ChangeModel, makeChangeModel } from "./ChangeModel";
 import { ChangesListItem } from "./ChangesListItem";
 
 type State = {
@@ -128,7 +128,7 @@ function toModel(feed: ChangeFeed): ChangeModel[] {
     for (const item of feed.data) {
         for (const change of item.changes.changes) {
             models.push(
-                ChangeModel.Make(item, item.changes, change)
+                makeChangeModel(item, item.changes, change)
             );
         }
     }
@@ -145,7 +145,7 @@ function toAgeInDaysSections(feedModels: ChangeModel[], clock: IClock): SectionL
     const older: ChangeModel[] = [];
 
     for (const model of feedModels) {
-        const ageInDays: number = currentTime.diff(model.timeStamp, "day");
+        const ageInDays: number = currentTime.diff(model.timestamp, "day");
         if (ageInDays < 1) {
             today.push(model);
             continue;

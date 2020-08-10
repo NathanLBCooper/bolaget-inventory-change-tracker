@@ -1,12 +1,12 @@
 import { injectable, inject } from "inversify";
 
 import { Appsettings } from "../AppSettings";
-import { ChangeFeed } from "./ChangeFeed";
-import { Article } from "./Article";
-import { CategoryCollection } from "./CategoryCollection";
-import { ArticleSummaryCollection } from "./ArticleCollection";
+import { ChangeFeed, makeChangeFeed } from "./ChangeFeed";
+import { Article, makeArticle } from "./Article";
+import { CategoryCollection, makeCategoryCollection } from "./CategoryCollection";
+import { ArticleSummaryCollection, makeArticleSummaryCollection } from "./ArticleCollection";
 import { Category } from "./Category";
-import { ArticleStockLevels } from "./ArticleStockLevels";
+import { ArticleStockLevels, makeArticleStockLevels } from "./ArticleStockLevels";
 
 function putThisInFilesWithInjectDecorator(): any {
     throw Error("Don't call this"); return inject("");
@@ -25,23 +25,23 @@ export class InventoryApi implements IInventoryApi {
     constructor(@inject("Appsettings") private appSettings: Appsettings) { }
 
     public async getCategories(): Promise<CategoryCollection> {
-        return this.getResource(CategoryCollection.Make, "/assortment");
+        return this.getResource(makeCategoryCollection, "/assortment");
     }
 
     public async getArticlesByCategory(category: Category): Promise<ArticleSummaryCollection> {
-        return this.getResource(ArticleSummaryCollection.Make, category.uri);
+        return this.getResource(makeArticleSummaryCollection, category.uri);
     }
 
     public async getChangeFeed(): Promise<ChangeFeed> {
-        return this.getResource(ChangeFeed.Make, "/change/recent");
+        return this.getResource(makeChangeFeed, "/change/recent");
     }
 
     public async getArticle(id: number): Promise<Article> {
-        return this.getResource(Article.Make, "/article/" + id);
+        return this.getResource(makeArticle, "/article/" + id);
     }
 
     public async getStockLevels(article: Article): Promise<ArticleStockLevels> {
-        return this.getResource(ArticleStockLevels.Make, article.stock);
+        return this.getResource(makeArticleStockLevels, article.stock);
     }
 
     private async getResource<TResource>(make: (dto: any) => TResource, link: string): Promise<TResource> {

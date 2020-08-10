@@ -1,13 +1,13 @@
-export class Dashboard {
-    public static Make(dto: any): Dashboard {
-        return new Dashboard(dto.name, dto.uri, dto.description);
-    }
+export type Dashboard = {
+    name: string,
+    uri: string,
+    description: string
+};
 
-    constructor(
-        public name: string,
-        public uri: string,
-        public description: string
-    ) { }
+export function makeDashboard(dto: any): Dashboard {
+    return {
+        name: dto.name,
+        uri: dto.uri,
+        description: dto.description
+    };
 }
-
-

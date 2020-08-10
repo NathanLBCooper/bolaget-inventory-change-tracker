@@ -1,10 +1,13 @@
-export class Change {
-    public static Make(dto: any): Change {
-        return new Change(dto.name, dto.oldValue, dto.newValue);
-    }
-    constructor(
-        public name: string,
-        public oldValue: string,
-        public newValue: string
-    ) { }
+export type Change = {
+    name: string;
+    oldValue: string;
+    newValue: string;
+};
+
+export function makeChange(dto: any): Change {
+    return {
+        name: dto.name,
+        oldValue: dto.oldValue,
+        newValue: dto.newValue
+    };
 }

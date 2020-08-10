@@ -1,17 +1,15 @@
 import * as dayJs from "dayjs";
-export const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
 
-import { ChangeFeedItem } from "./ChangeFeedItem";
+import { ChangeFeedItem, makeChangeFeedItem } from "./ChangeFeedItem";
 
-export class ChangeFeed {
-    public static Make(dto: any): ChangeFeed {
-        return new ChangeFeed(
-            createDayJs(dto.timestamp), (dto.data as any[]).map(c => ChangeFeedItem.Make(c))
-        );
-    }
+export type ChangeFeed = {
+    timestamp: dayJs.Dayjs;
+    data: ChangeFeedItem[];
+};
 
-    constructor(
-        public timestamp: dayJs.Dayjs,
-        public data: ChangeFeedItem[]
-    ) { }
+export function makeChangeFeed(dto: any): ChangeFeed {
+    return {
+        timestamp: dayJs(dto.timestamp || 0),
+        data: dto.data == null ? [] : (dto.data as any[]).map(c => makeChangeFeedItem(c))
+    };
 }

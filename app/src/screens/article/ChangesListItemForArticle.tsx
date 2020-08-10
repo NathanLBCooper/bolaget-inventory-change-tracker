@@ -42,7 +42,7 @@ export class ChangesListItemForArticle extends Component<Props> {
             key={index}
             title={`${model.changeName}`}
             subtitle={`changed from "${model.oldValue}" to "${model.newValue}"`}
-            rightTitle={`${model.timeStamp.format('D MMM')}`}
+            rightTitle={`${model.timestamp.format('D MMM')}`}
             style={styles.item}
         />;
     }

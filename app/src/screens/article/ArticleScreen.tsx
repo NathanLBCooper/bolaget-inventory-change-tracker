@@ -10,7 +10,7 @@ import { Article } from "../../inventory/Article";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { INavigation } from "../../Navigation";
 import { EmptyChangeListItem } from "../changes/ChangesListItem";
-import { ChangeModel } from "../changes/ChangeModel";
+import { ChangeModel, makeChangeModelWithArticle } from "../changes/ChangeModel";
 import { ChangesListItemForArticle } from "./ChangesListItemForArticle";
 
 type Props = {
@@ -301,7 +301,7 @@ function toChangeListModel(article: Article): ChangeModel[] {
     for (const changeCollection of article.history) {
         for (const change of changeCollection.changes) {
             models.push(
-                ChangeModel.MakeWithArticle(article, changeCollection, change)
+                makeChangeModelWithArticle(article, changeCollection, change)
             );
         }
     }

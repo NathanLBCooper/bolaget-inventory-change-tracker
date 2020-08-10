@@ -1,16 +1,23 @@
-export class ArticleSummary {
-    public static Make(dto: any): ArticleSummary {
-        return new ArticleSummary(dto.id, dto.name, dto.name2, dto.price, dto.pricePerLitre, dto.alcohol, dto.volume, dto.uri);
-    }
+export type ArticleSummary = {
+    id: number;
+    name: string;
+    name2: string;
+    price: number;
+    pricePerLitre: number;
+    alcohol: string;
+    volume: number;
+    uri: string;
+};
 
-    constructor(
-        public id: number,
-        public name: string,
-        public name2: string,
-        public price: number,
-        public pricePerLitre: number,
-        public alcohol: string,
-        public volume: number,
-        public uri: string
-    ) { }
+export function makeArticleSummary(dto: any): ArticleSummary {
+    return {
+        id: dto.id,
+        name: dto.name,
+        name2: dto.name2,
+        price: dto.price,
+        pricePerLitre: dto.pricePerLitre,
+        alcohol: dto.alcohol,
+        volume: dto.volume,
+        uri: dto.uri
+    };
 }

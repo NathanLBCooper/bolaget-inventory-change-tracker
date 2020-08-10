@@ -1,15 +1,15 @@
 import * as dayJs from "dayjs";
-export const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
 
-import { Change } from "./Change";
+import { Change, makeChange } from "./Change";
 
-export class ChangeCollection {
-    public static Make(dto: any): ChangeCollection {
-        return new ChangeCollection(createDayJs(dto.timestamp), (dto.changes as any[]).map(c => Change.Make(c)));
-    }
-    
-    constructor(
-        public timestamp: dayJs.Dayjs,
-        public changes: Change[]
-    ) { }
+export type ChangeCollection = {
+    timestamp: dayJs.Dayjs;
+    changes: Change[];
+};
+
+export function makeChangeCollection(dto: any): ChangeCollection {
+    return {
+        timestamp: dayJs(dto.timestamp || 0),
+        changes: dto.changes == null ? [] : (dto.changes as any[]).map(c => makeChange(c))
+    };
 }

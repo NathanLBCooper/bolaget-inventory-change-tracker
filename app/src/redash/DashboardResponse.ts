@@ -1,11 +1,11 @@
-import { Dashboard } from "./Dashboard";
+import { Dashboard, makeDashboard } from "./Dashboard";
 
-export class DashboardResponse {
-    public static Make(dto: any): DashboardResponse {
-        return new DashboardResponse((dto.data as any[]).map(c => Dashboard.Make(c)));
-    }
+export type DashboardResponse = {
+    data: Dashboard[];
+};
 
-    constructor(
-        public data: Dashboard[]
-    ) { }
+export function makeDashboardResponse(dto: any): DashboardResponse {
+    return {
+        data: dto.data == null ? [] : (dto.data as any[]).map(c => makeDashboard(c))
+    };
 }

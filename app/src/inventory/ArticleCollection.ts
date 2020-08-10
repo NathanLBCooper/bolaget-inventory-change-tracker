@@ -1,14 +1,17 @@
 import * as dayJs from "dayjs";
-export const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
-import { ArticleSummary } from "./ArticleSummary";
 
-export class ArticleSummaryCollection {
-    public static Make(dto: any): ArticleSummaryCollection {
-        return new ArticleSummaryCollection(dto.etag, createDayJs(dto.timestamp), (dto.data as any[]).map(c => ArticleSummary.Make(c)));
-    }
-    constructor(
-        public etag: string,
-        public timestamp: dayJs.Dayjs,
-        public data: ArticleSummary[]
-    ) { }
+import { ArticleSummary, makeArticleSummary } from "./ArticleSummary";
+
+export type ArticleSummaryCollection = {
+    etag: string;
+    timestamp: dayJs.Dayjs;
+    data: ArticleSummary[];
+};
+
+export function makeArticleSummaryCollection(dto: any): ArticleSummaryCollection {
+    return {
+        etag: dto.etag,
+        timestamp: dayJs(dto.timestamp || 0),
+        data: dto.data == null ? [] : (dto.data as any[]).map(c => makeArticleSummary(c))
+    };
 }

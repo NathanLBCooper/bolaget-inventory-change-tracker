@@ -2,7 +2,7 @@ import { injectable, inject } from "inversify";
 
 import { Appsettings } from "../AppSettings";
 import { Dashboard } from "./Dashboard";
-import { DashboardResponse } from "./DashboardResponse";
+import { makeDashboardResponse } from "./DashboardResponse";
 
 function putThisInFilesWithInjectDecorator(): any {
     throw Error("Don't call this"); return inject("");
@@ -17,7 +17,7 @@ export class RedashApi implements IRedashApi {
     constructor(@inject("Appsettings") private appSettings: Appsettings) { }
 
     public async getDashboards(): Promise<Dashboard[]> {
-        return (await this.getResource(DashboardResponse.Make, "/dashboards")).data;
+        return (await this.getResource(makeDashboardResponse, "/dashboards")).data;
     }
 
     private async getResource<TResource>(make: (dto: any) => TResource, link: string): Promise<TResource> {

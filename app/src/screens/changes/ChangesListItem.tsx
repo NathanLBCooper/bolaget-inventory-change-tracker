@@ -52,7 +52,7 @@ export class ChangesListItem extends Component<Props> {
                 <View>{renderNames()}<Text style={styles.itemSubtitle}>{`${model.category}`}</Text></View>
             }
             subtitle={`${model.changeName} changed from "${model.oldValue}" to "${model.newValue}"`}
-            rightSubtitle={`${model.timeStamp.format('D MMM')}`}
+            rightSubtitle={`${model.timestamp.format('D MMM')}`}
             rightTitle={`${model.changeName}`}
             style={styles.item}
         /></TouchableOpacity>;

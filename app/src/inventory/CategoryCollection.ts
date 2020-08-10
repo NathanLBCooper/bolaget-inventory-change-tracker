@@ -1,14 +1,17 @@
 import * as dayJs from "dayjs";
-export const createDayJs: (date: Date) => dayJs.Dayjs = (dayJs)["default"] || dayJs;
-import { Category } from "./Category";
 
-export class CategoryCollection {
-    public static Make(dto: any): CategoryCollection {
-        return new CategoryCollection(dto.etag, createDayJs(dto.timestamp), (dto.data as any[]).map(c => Category.Make(c)));
-    }
-    constructor(
-        public etag: string,
-        public timestamp: dayJs.Dayjs,
-        public data: Category[]
-    ) { }
+import { Category, makeCategory } from "./Category";
+
+export type CategoryCollection = {
+    etag: string;
+    timestamp: dayJs.Dayjs;
+    data: Category[];
+};
+
+export function makeCategoryCollection(dto: any): CategoryCollection {
+    return {
+        etag: dto.etag,
+        timestamp: dayJs(dto.timestamp || 0),
+        data: dto.data == null ? [] : (dto.data as any[]).map(c => makeCategory(c))
+    };
 }
