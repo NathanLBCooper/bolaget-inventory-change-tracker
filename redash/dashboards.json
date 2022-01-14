@@ -2,27 +2,27 @@
     "data": [
         {
             "name": "Whisky",
-            "uri": "https://redash.daata.xyz/public/dashboards/tiiyPrBcHWPkTvUcL5SqSYdpiMo9Tg7HgqxHymgP?org_slug=default",
+            "uri": "https://redash.alcoholmarketdata.se/public/dashboards/tiiyPrBcHWPkTvUcL5SqSYdpiMo9Tg7HgqxHymgP?org_slug=default",
             "description": "Historical data examples based on the whisky category"
         },
         {
             "name": "Lagavulin 16 years",
-            "uri": "https://redash.daata.xyz/public/dashboards/BliybrcRCz8ID7Av8P7RfRORop1enjfayJz1FbyH?org_slug=default",
+            "uri": "https://redash.alcoholmarketdata.se/public/dashboards/BliybrcRCz8ID7Av8P7RfRORop1enjfayJz1FbyH?org_slug=default",
             "description": "Historical data examples based on Lagavulin 16 years"
         },
         {
             "name": "Importers",
-            "uri": "https://redash.daata.xyz/public/dashboards/5RwExEJALqTrp87i9P2gImOUhrYSckqKpsGBHkeh?org_slug=default",
+            "uri": "https://redash.alcoholmarketdata.se/public/dashboards/5RwExEJALqTrp87i9P2gImOUhrYSckqKpsGBHkeh?org_slug=default",
             "description": "Historical data examples based on Importers"
         },
         {
             "name": "Articles",
-            "uri": "https://redash.daata.xyz/public/dashboards/OiTSD91uxXG2OnUHyCljJSSf5hJ7X2glAE9E9qZw?org_slug=default",
+            "uri": "https://redash.alcoholmarketdata.se/public/dashboards/OiTSD91uxXG2OnUHyCljJSSf5hJ7X2glAE9E9qZw?org_slug=default",
             "description": "Historical data examples based on Articles"
         },
         {
             "name": "Enjoy Wine & Spirits AB",
-            "uri": "https://redash.daata.xyz/public/dashboards/wWYPqYIHXN4K1fE5wuKD8GB5al8Fq7FnDC6tp1jp?org_slug=default",
+            "uri": "https://redash.alcoholmarketdata.se/public/dashboards/wWYPqYIHXN4K1fE5wuKD8GB5al8Fq7FnDC6tp1jp?org_slug=default",
             "description": "Historical data examples based on the importer Enjoy Wine & Spirits AB"
         }
     ]
